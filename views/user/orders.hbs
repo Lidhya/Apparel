@@ -1,0 +1,87 @@
+<style>
+.head{
+   background-color: #14213d;
+}
+p{
+     all:unset;
+}
+</style>
+{{#if orders}}
+<section class="vh-100 pt-5">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center  h-100">
+             <h3 class="fw-normal mb-0 pb-3 text-black text-uppercase">Orders</h3>
+            <div class="col-12">
+
+                {{#each orders}}
+                    <div class="card rounded-5 mb-4">
+                        <div class="card-body px-0 pt-0">
+                            <div class="d-flex head flex-wrap align-items-center p-3 justify-content-around text-white rounded-top" >
+                                <p class="my-auto mx-auto">Order placed on {{date}}</p>
+                                  {{#if this.cancel}}
+                                <p class="my-auto mx-auto">Payment Cancelled</p>
+                                {{else}}
+                                <p class="my-auto mx-auto">Payment is {{this.status}} </p>
+                                {{/if}}
+                                <p class="my-auto mx-auto">Total spend &#x20b9;{{this.total}}</p>
+                                <p class="my-auto mx-auto">Payment:{{this.payment_method}}</p>
+                                {{#if this.cancel}}
+                                  <p class="my-auto mx-auto fw-bold">Status: cancelled</p>
+                                  {{else}}
+                                  <a href="/cancel-order/{{this._id}}" class="btn btn-danger p-2" onclick="return confirm('Do you want to cancel this order')" >Cancel order</a>
+                                {{/if}}
+                               
+                            </div>
+                         
+                         {{#if items}}
+                            {{!-- ------------ --}}
+                            <div class="row d-flex justify-content-between align-items-center">
+
+                                <div class="col-md-3 col-lg-3 col-xl-3 ">
+                                  <img style="height: 5rem; width: 5rem;" class="m-2" src="/product-images/62f495092df20679d12cd1e0.jpg" alt="product image">
+                                </div>
+
+                                 <div class="col-md-2 col-lg-2 col-xl-2">
+                                    <p class="lead fw-normal mb-2">{{this.payment_method}}</p>
+                                </div>
+
+                                 <div class="col-md-2 col-lg-2 col-xl-2 offset-lg-1">
+                                    <h5 class="mb-0"> &#x20b9;{{this.total}}</h5>
+                                </div>
+
+                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                    <p class="lead fw-normal mb-2">{{this.payment_method}}</p>
+                                </div>
+
+                                 <div class="col-md-2 col-lg-2 col-xl-2">
+                                    <p class="lead fw-normal mb-2">{{this.delivery_details.address}}</p>
+                                </div>
+
+                            </div>
+                            {{!-- ----------- --}}
+                       {{/if}}
+                        </div>
+                    </div>
+                {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{else}}
+<div class="container pt-5">
+ <div class="col-md-12 pt-5">
+        <div class="card mb-4">
+          <div class="card-body">
+           
+            <div class="d-flex flex-column justify-content-center align-items-center">
+              <h3 class="fw-light text-uppercase">Your orders is empty</h3>
+            <img style="width: 20rem; height: 20rem;" src="/images/Add to Cart-amico.png" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+
+</div>
+{{/if}}

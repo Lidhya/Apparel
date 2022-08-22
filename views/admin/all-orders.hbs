@@ -1,0 +1,88 @@
+
+<section class="pt-5">
+<div class="container pt-5">
+  <div class="p-3 mt-3 mb-5  rounded" style="background-color: white;">
+   {{#if updateStatus}}
+    <p style="color: green;">{{updateStatus}}</p>
+   {{/if}}
+  <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
+  <thead>
+    <tr>
+      <th scope="col">SL No.</th>
+      <th scope="col">Ordered on </th>
+      <th scope="col">Delivery Address</th>
+      <th scope="col">Payment method</th>
+      <th scope="col">&#x20b9; Total</th>
+      <th scope="col">Payment status</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each orders}}
+    <tr>
+      <td></td>
+      <td>{{this.date}}</td> 
+      <td>{{this.delivery_details.address}}</td>
+      <td>{{this.payment_method}}</td>
+      <td>&#x20b9; {{this.total}}</td>
+      {{#if this.cancel}}
+      <td> <p class="text-danger">CANCELLED</p></td>
+      {{else}}
+      {{#ifCond this.status 'Pending'}}
+      <td><form action="/admin/update-order/{{this._id}}" method="post">
+        <select name="status" id="update">
+        <option class="text-danger" value="{{this.status}}">Pending</option>
+        <option class="text-success" value="Success">Success</option>
+        </select> 
+      <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
+      </form>
+      </td>
+      {{else}}
+      <td class="text-success">{{this.status}}</td>
+      {{/ifCond}}
+      {{/if}}
+      <td>
+        {{#if this.cancel}}
+         <p class="text-danger">ORDER CANCELLED</p>
+         {{else}}
+         <a href="/admin/cancel-order/{{this._id}}" class="btn btn-danger p-2" onclick="return confirm('Do you want to cancel this order')" >Cancel order</a>
+         {{/if}}
+      </td>
+    </tr>
+     {{/each}}
+  </tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<script> 
+ $(document).ready(function() {
+    var table = $('#table1').DataTable( {
+        rowReorder: {
+            selector: 'td:nth-child(2)'
+        },
+        responsive: true,
+         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+        $('td:eq(0)', nRow).html(iDisplayIndexFull +1);
+    }
+    } );
+ });
+
+ jQuery('#update').validate({
+      rules:{
+       status:'required'
+
+      },
+      messages:{
+       status:{
+        required:'update needed'
+       }
+      },
+      submitHandler:function(form){
+        form.submit();
+      }
+    })
+
+</script>

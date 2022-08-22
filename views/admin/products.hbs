@@ -1,0 +1,67 @@
+
+
+<section class="pt-5">
+<div class="container">
+  <div class="d-flex">
+    <a href="/admin/add-product" class="btn btn-success mt-4 ms-auto ms-2">Add Product</a>
+  </div>
+  <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
+     <h4 class="text-dark text-center fw-light">PRODUCT DETAILS</h4>
+   {{#if updateStatus}}
+    <p style="color: green;">{{updateStatus}}</p>
+   {{/if}}
+  <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
+  <thead>
+    <tr>
+      <th scope="col">SL No.</th>
+      <th scope="col">Product name</th>
+      <th scope="col">category</th>
+      <th scope="col">Description</th>
+      <th scope="col">Material type</th>
+      <th scope="col">Image</th>
+      <th scope="col">&#x20b9; Price</th>
+      <th scope="col">&#x20b9; Discount price</th>
+      <th scope="col">Sizes</th>
+      <th scope="col">Stock</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each products}}
+    <tr>
+      <td></td>
+      <td>{{this.name}}</td>
+      <td>{{this.category}}</td>
+      <td>{{this.description}}</td>
+      <td>{{this.material_type}}</td>
+      <td><img style="height: 50px; width: 50px;" src="/product-images/{{this._id}}.jpg" alt="product image"></td>
+      <td>&#x20b9;{{this.actual_price}}</td>
+      <td>&#x20b9;{{this.discount_price}}</td>
+      <td>{{this.sizes}}</td>
+      <td>{{this.stock}}</td>
+      <td>
+         <a href="/admin/product-edit/{{this._id}}" class="btn btn-warning"><i class="fa-regular fa-lg fa-pen-to-square"></i></a>
+        <a href="/admin/delete-products/{{this._id}}" class=" btn btn-danger text-white p-2 " onclick="return confirm('Do you want to delete {{this.name}}')"><i class="fas fa-trash fa-lg"></i></a>
+      </td>
+    </tr>
+     {{/each}}
+  </tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<script> 
+ $(document).ready(function() {
+    var table = $('#table1').DataTable( {
+        rowReorder: {
+            selector: 'td:nth-child(2)'
+        },
+        responsive: true,
+         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+        $('td:eq(0)', nRow).html(iDisplayIndexFull +1);
+    }
+    } );
+} );
+</script>

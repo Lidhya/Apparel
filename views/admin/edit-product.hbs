@@ -1,0 +1,252 @@
+ <head>
+    <!-- Cropper -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+ </head>
+ 
+ <div class="pt-5">
+ <div class="container bg-light mt-5 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,
+             -5px -5px 14px #ededed;">
+
+ <div class="container tm-mt-big tm-mb-big pt-5 ">
+      <div class="row">
+        <div class="col-xl-9 col-lg-10 col-md-12 col-sm-12 mx-auto">
+          <div class="tm-bg-primary-dark tm-block tm-block-h-auto">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="tm-block-title d-inline-block logo">Edit Product</h2>
+              </div>
+              {{#if updateStatus}}
+    <p style="color: green;">{{updateStatus}}</p>
+   {{/if}}
+            </div>
+            <div class="row tm-edit-product-row">
+              <div class="col-xl-6 col-lg-6 col-md-12">
+            <form action="/admin/edit-product/{{productDetails._id}}" method="post" id="form3" class="tm-edit-product-form" enctype="multipart/form-data">
+                  <div class="form-group mb-3">
+                    <label
+                      for="name"
+                      >Product Name
+                    </label>
+                    <input
+                      id="product_name"
+                      name="name"
+                      type="text"
+                      class="form-control validate"
+                      value="{{productDetails.name}}"
+                    />
+                  </div>
+                  <div class="form-group mb-3">
+                    <label
+                      for="description"
+                      >Description</label
+                    >
+                    <input
+                      name="description"
+                      class="form-control validate"
+                       type="text"
+                      rows="3"
+                      value="{{productDetails.description}}"
+                    ></input>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label
+                      for="category"
+                      >Category</label
+                    >
+                    <select
+                      name="category"
+                      class="custom-select tm-select-accounts"
+                      id="category"
+                    >
+                      <option value="{{productDetails.category}}">{{productDetails.category}}</option>
+                      {{#each categories}}
+                      <option value="{{this.category}}">{{this.category}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                  <div class="row">
+                      <div class="form-group mb-3 col-xs-12 col-L-6">
+                          <label
+                            for="sizes"
+                            >Sizes available
+                          </label><br>
+                           <p class="text-success">Currently available sizes : {{productDetails.sizes}}</p>
+                           <input type="checkbox" id="XS" name="sizes" value="XS">
+                           <label for="XS">XS</label>&nbsp;
+                            <input type="checkbox" id="S" name="sizes" value="S">
+                           <label for="S">S</label>&nbsp;&nbsp;
+                            <input type="checkbox" id="M" name="sizes" value="M">
+                           <label for="M">M</label>&nbsp;&nbsp;
+                           <input type="checkbox" id="L" name="sizes" value="L">
+                           <label for="L">L</label>&nbsp;&nbsp;
+                           <input type="checkbox" id="XL" name="sizes" value="XL">
+                           <label for="XL">XL</label>&nbsp;
+                           <input type="checkbox" id="XXL" name="sizes" value="XXL">
+                           <label for="XXL">XXL</label>&nbsp;
+                           <input type="checkbox" id="XXXL" name="sizes" value="XXXL">
+                           <label for="XXXL">XXXL</label>&nbsp;
+                        </div>
+                        <div class="form-group mb-3 col-xs-12 col-sm-6">
+                          <label
+                            for="stock"
+                            >Units In Stock
+                          </label>
+                          <input
+                            id="stock"
+                            name="stock"
+                            type="number"
+                            class="form-control validate"
+                            value={{productDetails.stock}}
+                          />
+                        </div>
+                   <div class="form-group mb-3 col-xs-12 col-sm-6">
+                    <label
+                      for="material type"
+                      >Material Type
+                    </label>
+                    <input
+                      id="material-type"
+                      name="material_type"
+                      type="text"
+                      class="form-control validate"
+                       value="{{productDetails.material_type}}"
+                    />
+                   </div>
+
+                <div class="col-12">
+                  <button type="submit" class="btn btn-dark text-uppercase">Edit Product Now</button>
+                </div>
+                  </div>
+                  
+                 </div>
+                 <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
+                 <div class="form-group mb-3 ">
+                          <label
+                            for="price"
+                            >&#x20b9; Actual price
+                          </label>
+                          <input
+                            id="price"
+                            name="actual_price"
+                            type="number"
+                            class="form-control validate" 
+                            value={{productDetails.actual_price}}                          
+                          />
+                        </div>
+
+                        <div class="form-group mb-3 ">
+                          <label
+                            for="discount_price"
+                            >&#x20b9; Discount price
+                          </label>
+                          <input
+                            id="discount_price"
+                            name="discount_price"
+                            type="number"
+                            class="form-control validate"
+                            value={{productDetails.discount_price}}      
+                          />
+                        </div>
+
+                   {{!-- <div class="custom-file mt-3 mb-3">
+                  <img src="/product-images/{{productDetails._id}}.jpg" alt="image" style="width: 100px; height: auto;">
+                  <input id="image" name="image" type="file"  />
+                   </div> --}}
+
+                <img src="/product-images/{{productDetails._id}}.jpg" id="imgView1" alt="" style="height:100px">
+                <input type="file" id="id_image1" name="image" accept="image/*" onchange="viewImage1(event)"style="width:100%;"><br>
+                <div class="vald-info" id="info"></div>
+                <h5 class="error_form text-danger" id="image1_error_message"></h5>
+                <div style="display:flex">
+                  <div id="image-box1" class="image-container" style="height: 300px; width:20%"></div>
+                  <button type="button" class="btn btn-outline-info" id="crop-btn1" style=" margin-top: 10px; display: none;
+                        width:  50% ; margin: 20rem 0rem 0rem 0rem;">Crop</button>
+                </div>
+  
+  
+                </div>
+  
+               
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+
+     <script>
+
+    const imagebox1 = document.getElementById('image-box1')
+    const crop_btn1 = document.getElementById('crop-btn1')
+    const input1 = document.getElementById('id_image1')
+    function viewImage1(event) {
+
+
+      var fileInput1 = document.getElementById('id_image1');
+
+      var filePath1 = fileInput1.value;
+      var allowedExtensions = /(\.jpg)$/i;
+      if (!allowedExtensions.exec(filePath1)) {
+        fileInput1.value = '';
+        swal("There is a problem!", "Please choose image file.");
+        return false;
+      } else {
+        document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
+
+      }
+
+    }
+
+
+    // When user uploads the image this event will get triggered
+    input1.addEventListener('change', () => {
+      // Getting image file object from the input variable
+      const img_data1 = input1.files[0]
+      // createObjectURL() static method creates a DOMString containing a URL representing the object given in the parameter.
+      // The new object URL represents the specified File object or Blob object.
+      const url1 = URL.createObjectURL(img_data1)
+      // Creating a image tag inside imagebox which will hold the cropping view image(uploaded file) to it using the url created before.
+      imagebox1.innerHTML = `<img src="${url1}" id="image1" style="width:100%;">`
+      // Storing that cropping view image in a variable
+      const image1 = document.getElementById('image1')
+
+      // Displaying the image box
+      document.getElementById('image-box1').style.display = 'block'
+      // Displaying the Crop buttton
+      document.getElementById('crop-btn1').style.display = 'block'
+      // Hiding the Post button
+      const cropper1 = new Cropper(image1, {
+        autoCropArea: 1,
+        viewMode: 1,
+        scalable: false,
+        zoomable: false,
+        movable: false,
+        minCropBoxWidth: 50,
+        minCropBoxHeight: 50,
+      })
+      // When crop button is clicked this event will get triggered
+      crop_btn1.addEventListener('click', () => {
+        // This method coverts the selected cropped image on the cropper canvas into a blob object
+        cropper1.getCroppedCanvas().toBlob((blob) => {
+          // Gets the original image data
+          let fileInputElement1 = document.getElementById('id_image1');
+          // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+          let file1 = new File([blob], img_data1.name, { type: "image/*", lastModified: new Date().getTime() });
+          // Create a new container
+          let container1 = new DataTransfer();
+          // Add the cropped image file to the container
+          container1.items.add(file1);
+          // Replace the original image file with the new cropped image file
+          fileInputElement1.files = container1.files;
+          document.getElementById('imgView1').src = URL.createObjectURL(fileInputElement1.files[0])
+          // Hide the cropper box
+          document.getElementById('image-box1').style.display = 'none'
+          // Hide the crop button
+          document.getElementById('crop-btn1').style.display = 'none'
+        })
+      })
+    })
+    </script>

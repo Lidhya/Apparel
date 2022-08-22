@@ -1,0 +1,120 @@
+<section class="h-100 h-custom pt-5">
+  <div class="container py-5 h-100 pt-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 ">
+        <div class="card card-registration card-registration-2" >
+          <div class="card-body p-0">
+             <form action="" id="checkout-form">
+            <div class="row g-0">
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <h3 class="fw-normal mb-5 logo" style="color: #4a1942;">Shipping details</h3>
+                  <div class="row">
+                    {{!-- <div class="col-md-6 mb-4 pb-2">
+                      <div class="form-outline">
+                        <input type="checkbox" id="form3Examplev1" name="address" />
+                        <label class="form-label" for="form3Examplev1">Use saved address</label>
+                      </div>
+
+                    </div> --}}
+                    
+                  </div>
+
+                  <Address class="mb-4 pb-2">
+                    <div class="form-outline">
+                      <input type="text" id="form3Examplev2" name="order_address" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Examplev2">Address</label>
+                    </div>
+                  </Address>
+                  
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline">
+                      <input type="tel" id="form3Examplev3" name="mobile" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Examplev3">Mobile</label>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-4 pb-2 mb-md-0 pb-md-0">
+
+                      <div class="form-outline">
+                        <input type="text" id="form3Examplev4" name="pincode" class="form-control form-control-lg" />
+                        <label class="form-label" for="form3Examplev4">Pincode</label>
+                      </div>
+
+                    </div>
+                  
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-lg-6 text-white" style="background-color: #4a1942;" >
+                <div class="p-5">
+                  <h3 class="fw-normal mb-5 logo">Payment Details</h3>
+
+                  <div class="mb-4 pb-2">
+                    <div class="d-flex justify-content-between align-items-center text-white">
+                   <h4>Total amount</h4> <h5 class="float-left">&#x20b9;{{total}}/-</h5>
+                    </div>
+                      <hr>
+                  </div>
+
+                  <div class="row">
+                    <div class="mb-4 pb-2 border rounded">
+                        <div class="text-white p-4">
+                            <label class="mb-2 fw-bold" for="payment method">Select a payment method</label><br>
+                            <input type="radio" id="cod" name="payment_method" value="COD">
+                            <label for="html">Cash on delivery</label><br>
+                            <input type="radio" id="online" name="payment_method" value="Online">
+                            <label for="css">Online</label><br>
+                        </div>
+
+                    </div>
+                    <input class="d-none" type="text" name="userId" value="{{user._id}}">
+                  </div>
+
+                 
+
+                  {{!-- <div class="form-check d-flex justify-content-start mb-4 pb-3">
+                    <input class="form-check-input me-3" type="checkbox" value="" id="form2Example3c" />
+                    <label class="form-check-label text-white" for="form2Example3">
+                      I do accept the <a href="#!" class="text-white"><u>Terms and Conditions</u></a> of your
+                      site.
+                    </label>
+                  </div> --}}
+                   <a href="/cart" class="btn btn-dark border btn-lg"
+                    data-mdb-ripple-color="dark">Go back</a>
+
+                  <button type="submit" class="btn btn-light btn-lg"
+                    data-mdb-ripple-color="dark">Checkout</button>
+
+                    
+
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+$("#checkout-form").submit((e)=>{
+    e.preventDefault()
+    $.ajax({
+   url:'/place-order',
+   method:'post',
+   data:$("#checkout-form").serialize(),
+   success:(response)=>{
+    if(response.status){
+    location.href='/order-success'
+    //alert("Your order is successfully placed")
+    }
+   }
+    })
+})
+</script>

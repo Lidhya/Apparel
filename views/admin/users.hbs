@@ -1,0 +1,56 @@
+
+<section class="pt-5">
+<div class="container pt-5">
+  <div class="p-3 mt-3 mb-5  rounded" style="background-color: white;">
+   {{#if updateStatus}}
+    <p style="color: green;">{{updateStatus}}</p>
+   {{/if}}
+  <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
+  <thead>
+    <tr>
+      <th scope="col">SL No.</th>
+      <th scope="col">First name</th>
+      <th scope="col">Last name</th>
+      <th scope="col">Email address</th>
+      <th scope="col">Contact</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each usersData}}
+    <tr>
+      <td></td>
+      <td>{{this.fname}}</td> 
+      <td>{{this.lname}}</td>
+      <td>{{this.email}}</td>
+      <td>{{this.mobile}}</td>
+      <td>
+        {{#if this.block}}
+        <a href="/admin/user-unblock/{{this._id}}" class=" btn btn-success text-white p-2 " onclick="return confirm('Do you want to unblock {{this.fname}}')">Unblock</a>
+        {{else}}
+         <a href="/admin/user-block/{{this._id}}" class="btn btn-danger" onclick="return confirm('Do you want to block {{this.fname}}')" >Block</a>
+         {{/if}}
+      </td>
+    </tr>
+     {{/each}}
+  </tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<script> 
+ $(document).ready(function() {
+    var table = $('#table1').DataTable( {
+        rowReorder: {
+            selector: 'td:nth-child(2)'
+        },
+        responsive: true,
+         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+        $('td:eq(0)', nRow).html(iDisplayIndexFull +1);
+    }
+    } );
+ });
+
+</script>

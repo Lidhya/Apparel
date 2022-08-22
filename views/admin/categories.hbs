@@ -1,0 +1,30 @@
+ <section class="pt-5">
+ <div class="pt-5 container ">
+ <div class="col-sm-12 col-md-12 bg-light rounded p-5 tm-block-col pt-5">
+          <div class="tm-bg-primary-dark tm-block tm-block-product-categories">
+            <h2 class="tm-block-title">Product Categories</h2>
+            <div class="tm-product-table-container">
+              <table class="table tm-table-small tm-product-table">
+                <tbody>
+                  {{#each categories}}
+                  <tr>
+                    <td class="tm-product-name">{{this.category}}</td>
+                    <td class="text-center">
+                         <a href="/admin/delete-category/{{this._id}}" class=" btn text-dark p-2 " onclick="return confirm('Do you want to delete {{this.category}}')"><i class="fas fa-trash fa-lg"></i></a>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+            <!-- table container -->
+            <form action="/admin/add-category" method="post" class="d-flex flex-wrap align-items-center">
+            <input type="text" class="form-control w-25" name="category" placeholder="Enter new category">
+            <button type="submit" class="btn btn-dark text-uppercase m-2">
+              Add new category
+            </button>
+            </form>
+          </div>
+        </div>
+        </div>
+        </section>
