@@ -1,11 +1,11 @@
-var db = require('../config/connection')
-var collection = require('../config/collection')
+const db = require('../config/connection')
+const collection = require('../config/collection')
 const bcrypt = require('bcrypt')
 const Promise = require('promise')
 const { response } = require('express')
 const { resolve, reject } = require('promise')
-var objectId = require('mongodb').ObjectId
-var moment = require('moment');
+const objectId = require('mongodb').ObjectId
+const moment = require('moment');
 
 module.exports = {
     doSignup: (userData) => {
@@ -84,9 +84,49 @@ module.exports = {
         })
     },
 
-    addToCart: (proId, userId) => {
+    updateProfile:(details, userId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
+            let emailCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: {$ne: objectId(userId) } , email:details.email})
+            bcrypt.compare(details.password, user.password).then((status)=>{
+                if(status){
+                    console.log(emailCheck)
+                    if(emailCheck){
+                        let err='Email already registered by someone else'
+                        reject(err)
+                    }else{
+                        db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({ _id: objectId(userId) },{
+                            $set:{
+                                fname:details.fname,
+                                lname:details.lname,
+                                email:details.email,
+                                phone:details.phone
+                            }
+                        }).then(async(status)=>{
+                            console.log(status.value)
+                            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
+                            resolve(user)
+                        }).catch(()=>{
+                            let err='Something went wrong'
+                            reject(err)
+                        })
+                    }
+                }else{
+                    let err='Incorrect password'
+                    reject(err)
+                }
+            })
+          
+        })
+
+    },
+
+    addToCart: async(proId, userId) => {
+       let proData=await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
+       console.log(proData.name)
         let proObj = {
             item: objectId(proId),
+            name:proData.name,
             quantity: 1,
             subtotal:0
         }
@@ -143,7 +183,8 @@ module.exports = {
                     $project: {
                         item: '$products.item',
                         quantity: '$products.quantity',
-                        subtotal: '$products.subtotal'
+                        subtotal: '$products.subtotal',
+                        name: '$products.name'
                     }
                 },
                 {
@@ -159,6 +200,7 @@ module.exports = {
                         item: 1,
                         quantity: 1,
                         subtotal:1,
+                        name:1,
                         products: {
                             $arrayElemAt: ['$products', 0]
                         }
@@ -306,17 +348,18 @@ module.exports = {
     },
 
     placeOrder: (order, products, total) => {
-        return new Promise(async(resolve, reject) => {
-          
+        return new Promise(async(resolve, reject) => { 
             let  date=new Date()
             console.log(moment(date).format('MMMM Do YYYY, h:mm:ss a'));
             let fDate= moment(date).format('MMMM Do YYYY, h:mm:ss a')
             let status = order.payment_method === 'COD' ? 'Success' : 'Pending'
             let orderObj = {
                 delivery_details: {
-                    mobile: order.mobile,
-                    address: order.order_address,
-                    pincode: order.pincode
+                    title: order.title,
+                    address: order.address,
+                    city: order.city,
+                    pincode: order.pincode,
+                    phone: order.phone
                 },
                 userId: objectId(order.userId),
                 payment_method: order.payment_method,
@@ -336,46 +379,10 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: objectId(userId) }).sort({date:-1}).toArray()
             // console.log(orders)
-            resolve(orders)
+            resolve(orders,)
         })
     },
-    getOrderedProducts: (userId) => {
-        return new Promise(async (resolve, reject) => {
-            let orderItems = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
-                {
-                    $match: { user: objectId(userId) }
-                },
-                {
-                    $unwind: '$products'
-                },
-                {
-                    $project: {
-                        item: '$products.item',
-                        quantity: '$products.quantity'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: collection.PRODUCT_COLLECTION,
-                        localField: 'item',
-                        foreignField: '_id',
-                        as: 'products'
-                    }
-                },
-                {
-                    $project: {
-                        item: 1,
-                        quantity: 1,
-                        products: {
-                            $arrayElemAt: ['$products', 0]
-                        }
-                    }
-                }
-            ]).toArray()
-            console.log(orderItems)
-            resolve(orderItems)
-        })
-    },
+   
 
     cancelOrder: (orderId) => {
         return new Promise((resolve, reject) => {
@@ -385,6 +392,72 @@ module.exports = {
             }).catch((err) => {
                 console.log(err)
                 reject(err)
+            })
+        })
+    },
+
+    updateAddress:(addressData, userId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let addressObj={
+                title:addressData.title,
+                address:addressData.address,
+                city:addressData.city,
+                pincode:addressData.pincode,
+                phone:addressData.phone
+            }
+            let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(userId), addresses:{$elemMatch:{ title: addressData.title}}})
+            console.log(userCheck)
+            if(userCheck){
+                let err='Title already exists'
+                reject(err)
+            }else{
+                 
+                db.get().collection(collection.USER_COLLECTION).updateOne({_id: objectId(userId)},{
+                    $push:{
+                        addresses:addressObj
+                    }
+                }).then(async(response)=>{
+                    let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
+                    resolve(user)
+                    }).catch((err)=>{
+                        reject()
+                    })
+            }
+           
+
+        })
+    },
+
+    updatePassword:(pwdData,userId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId)})
+            bcrypt.compare(pwdData.password, user.password).then(async(status)=>{
+                if(status){
+                    pwdData.new_password = await bcrypt.hash(pwdData.new_password, 10)
+                    db.get().collection(collection.USER_COLLECTION).updateOne({_id: objectId(userId)},{
+                        $set:{
+                            password:pwdData.new_password
+                        }
+                    }).then((data) => {
+                        resolve(data)
+                    })
+                }else{
+                    let err='Incorrect password'
+                    reject(err)
+                }
+            })
+        })
+    },
+
+    deleteAddress: async(title, userId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.USER_COLLECTION).updateOne({_id: objectId(userId)},{
+                $pull:{
+                    addresses:{ title:title }
+                }
+            }).then(async(response)=>{
+                let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
+                resolve(user)
             })
         })
     }

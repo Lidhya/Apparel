@@ -1,8 +1,8 @@
 const { response } = require('express');
-var express = require('express');
+const express = require('express');
 const productHelpers = require('../helpers/product-helpers');
-var router = express.Router();
-var userHelpers=require('../helpers/user-helpers');
+const router = express.Router();
+const userHelpers=require('../helpers/user-helpers');
 
 
 const verifyLogin=(req,res,next)=>{
@@ -92,11 +92,12 @@ router.get('/product-details/:id',verifyLogin,async (req,res)=>{
 })
 
 router.get('/cart', verifyLogin, async function(req, res, next) {
+  req.session.orderAddress=false
   let categories=await productHelpers.getCategories()
   let products= await userHelpers.getCartProducts(req.session.user._id)
   let total=await userHelpers.getTotalAmount(req.session.user._id) 
   console.log(total)
-  res.render('user/cart',{ title:' | Cart',categories, user:true, products, total});
+  res.render('user/cart',{ title:' | Cart',categories, user:req.session.user, products, total});
 });
 
 router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
@@ -123,18 +124,33 @@ router.post('/remove-from-cart',verifyLogin,(req,res)=>{
 router.get('/place-order', verifyLogin, async function(req, res, next) {
   let total=await userHelpers.getTotalAmount(req.session.user._id)
   if(total){
-    res.render('user/checkout',{ title: '| Checkout', total, user:req.session.user});
+    res.render('user/checkout',{ 
+      title: '| Checkout',
+       total, user:req.session.user,
+       'addressErr': req.session.addressErr,
+       'orderAddress': req.session.orderAddress
+      });
+      req.session.addressErr=false
   }
 
 });
 
-router.post('/place-order',async function(req, res, next) {
+router.post('/place-order',verifyLogin,async function(req, res, next) {
+console.log(req.body)
   let products= await userHelpers.getCartProductList(req.session.user._id)
   let total=await userHelpers.getTotalAmount(req.session.user._id)
-  userHelpers.placeOrder( req.body, products, total).then(()=>{
+  userHelpers.placeOrder(req.body, products, total).then(()=>{
     res.json({status:true})
   })
+  res.json({status:true})
 });
+
+router.post('/deliver-here',verifyLogin,(req,res)=>{
+  let title=req.body.order_address
+ req.session.orderAddress=title
+ res.redirect('/place-order')
+})
+
 
 router.get('/order-success', verifyLogin, async function(req, res, next) {
  res.render('user/order-success',{ title: '| Success', user:req.session.user})
@@ -148,8 +164,20 @@ let orders=await userHelpers.getUserOrders(req.session.user._id)
 
 router.get('/account', verifyLogin, async function(req, res, next) {
   cartCount= await userHelpers.getCartCount(req.session.user._id)
-    res.render('user/account',{ title: '| Account', user:req.session.user, cartCount})
+    res.render('user/account',{ 
+      title: '| Account', 
+      user:req.session.user, 
+      cartCount, 
+      'profileUpdateErr': req.session.profileUpdateErr,
+      'pwd':req.session.pwdErr,
+      'addressErr': req.session.addressErr
+    })
+    req.session.profileUpdateErr=false
+    req.session.pwdErr=false
+    req.session.addressErr=false
    });
+
+
 
 router.get('/cancel-order/:id',verifyLogin,(req,res)=>{
   let orderId=req.params.id
@@ -158,6 +186,59 @@ router.get('/cancel-order/:id',verifyLogin,(req,res)=>{
      })
 })
 
+router.post('/update-profile',verifyLogin,(req,res)=>{
+  let userId=req.session.user._id
+     userHelpers.updateProfile( req.body, userId).then((user)=>{
+      req.session.user=user
+      console.log('success')
+      res.redirect('/account')
+     }).catch((err)=>{
+      req.session.profileUpdateErr=err
+      console.log( req.session.profileUpdateErr)
+      res.redirect('/account')
+     })
+})
+
+router.post('/update-address',verifyLogin,(req,res)=>{
+  console.log(req.body)
+     userHelpers.updateAddress(req.body, req.session.user._id).then((user)=>{
+      req.session.user=user
+      res.redirect('/account')
+     }).catch((err)=>{
+      req.session.addressErr=err
+      res.redirect('/account')
+     })
+})
+
+router.post('/update-address-checkout',verifyLogin,(req,res)=>{
+  console.log(req.body)
+     userHelpers.updateAddress(req.body, req.session.user._id).then((user)=>{
+      req.session.user=user
+      res.redirect('/place-order')
+     }).catch((err)=>{
+      req.session.addressErr=err
+      res.redirect('/place-order')
+     })
+})
+
+router.post('/update-password',verifyLogin,(req,res)=>{
+  console.log(req.body)
+     userHelpers.updatePassword(req.body, req.session.user._id).then((response)=>{
+      res.redirect('/account')
+     }).catch((err)=>{
+      req.session.pwdErr=err
+      res.redirect('/account')
+     })
+})
+
+router.get('/delete-address/:id',verifyLogin, (req,res)=>{
+  let title=req.params.id
+  let userId=req.session.user._id
+  userHelpers.deleteAddress(title, userId).then((user)=>{
+    req.session.user=user
+    res.redirect('/account')
+  })
+})
 
 
 router.get('/logout',verifyLogin,(req,res)=>{

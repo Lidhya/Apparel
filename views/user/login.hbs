@@ -1,5 +1,4 @@
-
-<section class="pt-5" >
+<section class="pt-5">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col col-xl-10">
@@ -12,15 +11,15 @@
             <div class="col-md-6 col-lg-7 d-flex align-items-center">
               <div class="card-body p-4 p-lg-5 text-black">
 
-                <form action="/login" method="post" id="form1" >
+                <form action="/login" method="post" id="form1">
 
                   <div class="d-flex align-items-center justify-content-between mb-3 pb-1">
                     <span class="h1 fw-bold mb-0 logo">Apparel</span>
                   </div>
 
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Log into your account</h5>
-                   {{#if loginErr}}
-                  <p class="alert alert-danger" >{{loginErr}}</p>
+                  {{#if loginErr}}
+                  <p class="alert alert-danger">{{loginErr}}</p>
                   {{/if}}
 
                   <div class="form-outline mb-4">
@@ -34,17 +33,18 @@
                   </div>
 
                   <div class="pt-1 mb-4">
-                    <button class="btn btn-dark btn-lg btn-block"  type="submit">Login</button>
+                    <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                   </div>
-<div class="pt-1 mb-4">
+                  <div class="pt-1 mb-4">
 
                     <a href="/otp" id="otp-login" class="btn btn-outline-dark btn-block">Login with OTP </a>
-</div>
+                  </div>
 
                   {{!-- <a class="small text-muted" href="#!">Forgot password?</a> --}}
-                  <p class="mb-2 pb-lg-2" style="color: #393f81;">Don't have an account? 
-                    <a href="/signup"style="color: #393f81; text-decoration: underline">Register here</a></p>
-                  
+                  <p class="mb-2 pb-lg-2" style="color: #393f81;">Don't have an account?
+                    <a href="/signup" style="color: #393f81; text-decoration: underline">Register here</a>
+                  </p>
+
                   {{!-- <a href="#!" class="small text-muted">Terms of use.</a>
                   <a href="#!" class="small text-muted">Privacy policy</a> --}}
                 </form>
@@ -57,4 +57,3 @@
     </div>
   </div>
 </section>
-

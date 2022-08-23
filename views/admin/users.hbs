@@ -26,9 +26,9 @@
       <td>{{this.mobile}}</td>
       <td>
         {{#if this.block}}
-        <a href="/admin/user-unblock/{{this._id}}" class=" btn btn-success text-white p-2 " onclick="return confirm('Do you want to unblock {{this.fname}}')">Unblock</a>
+        <a  class=" btn btn-success text-white p-2 " onclick="confirmationMsg('{{this._id}}','{{this.fname}}')" >Unblock</a>
         {{else}}
-         <a href="/admin/user-block/{{this._id}}" class="btn btn-danger" onclick="return confirm('Do you want to block {{this.fname}}')" >Block</a>
+         <a  class="btn btn-danger" onclick="confirmation('{{this._id}}','{{this.fname}}')" >Block</a>
          {{/if}}
       </td>
     </tr>
@@ -53,4 +53,40 @@
     } );
  });
 
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function confirmation(id, name){
+    Swal.fire({
+  title: 'Are you sure?',
+  text: `Do you want to block ${name}!`,
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, block!'
+}).then((result) => {
+  if (result.isConfirmed) {   
+    location.href = `/admin/user-block/${id}`    
+  }
+
+})
+  }
+
+  function confirmationMsg(id, name){
+    Swal.fire({
+  title: 'Are you sure?',
+  text: `Do you want to unblock ${name}!`,
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, unblock!'
+}).then((result) => {
+  if (result.isConfirmed) {   
+    location.href = `/admin/user-unblock/${id}`    
+  }
+
+})
+  }
 </script>

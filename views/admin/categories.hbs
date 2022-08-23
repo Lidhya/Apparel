@@ -10,7 +10,7 @@
                   <tr>
                     <td class="tm-product-name">{{this.category}}</td>
                     <td class="text-center">
-                         <a href="/admin/delete-category/{{this._id}}" class=" btn text-dark p-2 " onclick="return confirm('Do you want to delete {{this.category}}')"><i class="fas fa-trash fa-lg"></i></a>
+                         <a  class=" btn text-dark p-2 " onclick="confirmation('{{this._id}}')"><i class="fas fa-trash fa-lg"></i></a>
                     </td>
                   </tr>
                   {{/each}}
@@ -28,3 +28,23 @@
         </div>
         </div>
         </section>
+
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function confirmation(id){
+    Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {   
+    location.href = `/admin/delete-category/${id}`    
+  }
+
+})
+  }
+</script>

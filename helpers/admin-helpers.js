@@ -1,8 +1,8 @@
-var db=require('../config/connection')
-var collection=require('../config/collection')
+const db=require('../config/connection')
+const collection=require('../config/collection')
 const bcrypt=require('bcrypt')
 const Promise=require('promise')
-var objectId=require('mongodb').ObjectId
+const objectId=require('mongodb').ObjectId
 
 module.exports={
 

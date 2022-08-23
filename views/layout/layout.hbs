@@ -36,7 +36,8 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   
+    
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/javascripts/script.js"></script>
 
   </head>
@@ -198,6 +199,30 @@
         form.submit();
       }
     })
+
+    jQuery('#passwordForm').validate({
+    rules: {
+        password: {
+            required: true,
+            minlength: 5
+        },
+        new_password:{
+            minlength: 5
+        },
+        confirm_password: {
+            minlength: 5,
+            equalTo: "#newPassword"
+        }
+    },
+    messages:{
+        confirm_password: {
+          equalTo:"Enter the same value"
+        }
+
+    }
+}); 
  </script> 
+
+ 
   </body>
 </html>

@@ -1,20 +1,20 @@
 require('dotenv').config()
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
 const cors = require('cors');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var usersRouter = require('./routes/users');
-var adminRouter = require('./routes/admin');
-var authRouter = require('./routes/auth')
-var hbs=require('express-handlebars')
-var app = express();
-var fileUpload=require('express-fileupload')
-var flash        = require('req-flash');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
+const authRouter = require('./routes/auth')
+const hbs=require('express-handlebars')
+const app = express();
+const fileUpload=require('express-fileupload')
+const flash        = require('req-flash');
 
-var db=require('./config/connection')
-var session=require('express-session')
+const db=require('./config/connection')
+const session=require('express-session')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,7 +31,7 @@ app.use(express.static("images"));
 app.use(session({secret:"key",resave:false, saveUninitialized:true})) 
 app.use(fileUpload())
 
-var method = hbs.create({});
+const method = hbs.create({});
 
 // register new function
 method.handlebars.registerHelper('ifCond', function(v1, v2, options) {

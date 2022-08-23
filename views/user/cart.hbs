@@ -1,62 +1,66 @@
-<section class="h-100 pt-5" >
+<section class="h-100 pt-5">
   <div class="container h-100 py-5">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-10">
         <div class="col-md-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h3 class="fw-normal mb-0 text-black text-uppercase">Shopping Cart</h3>
-          {{!-- <div>
-            <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!" class="text-body">price <i
-                  class="fas fa-angle-down mt-1"></i></a></p>
-          </div> --}}
-        </div>
-{{#each products}}
-        <div class="card rounded-3 mb-4">
-          <div class="card-body p-4">
-            <div class="row d-flex justify-content-between align-items-center">
-              <div class="col-md-2 col-lg-2 col-xl-2">
-                <img
-                  src="/product-images/{{this.products._id}}.jpg"
-                  class="img-fluid rounded-3 shadow" alt="Cotton T-shirt">
-              </div>
-              <div class="col-md-3 col-lg-3 col-xl-3">
-                <p class="lead fw-normal mb-2">{{this.products.name}}</p>
-                <span class="text-muted">Size: <span class="fw-normal text-dark">M</span></span>
-                <span class="mb-0 px-3 fw-normal fs-5"> &#x20b9;{{this.products.discount_price}}</span>
-              </div>
-              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                <button class="btn btn-link px-2 py-2"
-                  onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.products.discount_price}}',-1)">
-                  <i class="fas fa-minus"></i>
-                </button>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-normal mb-0 text-black text-uppercase">Shopping Cart</h3>
+            {{!-- <div>
+              <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!" class="text-body">price <i
+                    class="fas fa-angle-down mt-1"></i></a></p>
+            </div> --}}
+          </div>
+          {{#each products}}
+          <div class="card rounded-3 mb-4">
+            <div class="card-body p-4">
+              <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-md-2 col-lg-2 col-xl-2">
+                  <img src="/product-images/{{this.products._id}}.jpg" class="img-fluid rounded-3 shadow"
+                    alt="Cotton T-shirt">
+                </div>
+                <div class="col-md-3 col-lg-3 col-xl-3">
+                  <a href="/product-details/{{this.products._id}}"
+                    class="lead fw-normal mb-2 text-dark fw-bold">{{this.products.name}}</a><br>
+                  <span class="text-muted">Size: <span class="fw-normal text-dark">M</span></span>
+                  <span class="mb-0 px-3 fw-normal fs-5"> &#x20b9;{{this.products.discount_price}}</span>
+                </div>
+                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                  <button class="btn btn-link px-2 py-2"
+                    onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.products.discount_price}}',-1)">
+                    <i class="fas fa-minus"></i>
+                  </button>
 
-                <span  class="form-control py-2" style="width: 2rem;" id="{{this.products._id}}" >{{this.quantity}}</span>
-                
+                  <span class="form-control py-2" style="width: 2rem;"
+                    id="{{this.products._id}}">{{this.quantity}}</span>
 
-                <button class="btn btn-link px-2 py-2"
-                  onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.products.discount_price}}',1)">
-                  <i class="fas fa-plus"></i>
-                </button>
-              </div>
-              {{#if this.subtotal}}
-               <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                <span class="mb-0 fs-4 " id="{{this.products.name}}"> &#x20b9;{{this.subtotal}}.00</span>
-              </div>
-              {{else}}
-              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                <span class="mb-0 fs-4 " id="{{this.products.name}}"> &#x20b9;{{this.products.discount_price}}.00</span>
-              </div>
-              {{/if}}
-              <div class="col-md-1 col-lg-1 col-xl-1 ">
-                 <a href="" class="text-dark pe-3 " ><i class="fa-regular fa-heart fa-lg "></i></a>
-                <button onclick="removeFromCart('{{this._id}}','{{this.products._id}}')" class="text-dark border-0 p-0" style="background-color: white;"><i class="fas fa-trash fa-lg"></i></button>
+
+                  <button class="btn btn-link px-2 py-2"
+                    onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.products.discount_price}}',1)">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+                {{#if this.subtotal}}
+                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                  <span class="mb-0 fs-4 " id="{{this.products.name}}"> &#x20b9;{{this.subtotal}}.00</span>
+                </div>
+                {{else}}
+                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                  <span class="mb-0 fs-4 " id="{{this.products.name}}">
+                    &#x20b9;{{this.products.discount_price}}.00</span>
+                </div>
+                {{/if}}
+                <div class="col-md-1 col-lg-1 col-xl-1 ">
+                  <a href="" class="text-dark pe-3 "><i class="fa-regular fa-heart fa-lg "></i></a>
+                  <button onclick="removeFromCart('{{this._id}}','{{this.products._id}}')"
+                    class="text-dark border-0 p-0" style="background-color: white;"><i
+                      class="fas fa-trash fa-lg"></i></button>
+                </div>
               </div>
             </div>
           </div>
+          {{/each}}
+
         </div>
-{{/each}}
-       
-</div>
         {{!-- <div class="card mb-4">
           <div class="card-body p-4 d-flex flex-row">
             <div class="form-outline flex-fill">
@@ -67,47 +71,45 @@
           </div>
         </div> --}}
 
-         <div class="col-md-12">
-        <div class="card mb-4">
-          <div class="card-header py-3">
-            <h5 class="mb-0 fw-normal">Summary</h5>
-          </div>
-          <div class="card-body">
-            {{#if total}}
-            <ul class="list-group list-group-flush">
-              {{!-- <li
-                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                Products
-                <span> &#x20b9;53.98</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                Shipping
-                <span>Gratis</span>
-              </li> --}}
-              <li
-                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-                <div class="text-dark fs-5">
-                  <strong>Total amount</strong>
-                  {{!-- <strong>
-                    <p class="mb-0">(including TAX)</p>
-                  </strong> --}}
-                </div>
-                <p class="text-success fw-bolder fs-4"> &#x20b9; <span id="total">{{total}}.00</span></p>
-              </li>
-            </ul>
-
-            <a type="button" href="/place-order" class="btn btn-primary btn-lg btn-block">
-             Proceed to checkout
-            </a>
-            {{else}}
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <h3 class="fw-light text-uppercase">Your cart is empty</h3>
-            <img style="width: 20rem; height: 20rem;" src="/images/Add to Cart-amico.png" alt="">
+        <div class="col-md-12">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0 fw-normal">Summary</h5>
             </div>
-            {{/if}}
+            <div class="card-body">
+              {{#if total}}
+              <ul class="list-group list-group-flush">
+                {{!-- <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Products
+                  <span> &#x20b9;53.98</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                  Shipping
+                  <span>Gratis</span>
+                </li> --}}
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                  <div class="text-dark fs-5">
+                    <strong>Total amount</strong>
+                    {{!-- <strong>
+                      <p class="mb-0">(including TAX)</p>
+                    </strong> --}}
+                  </div>
+                  <p class="text-success fw-bolder fs-4"> &#x20b9; <span id="total">{{total}}.00</span></p>
+                </li>
+              </ul>
+
+              <a type="button" href="/place-order" class="btn btn-primary btn-lg btn-block">
+                Proceed to checkout
+              </a>
+              {{else}}
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <h3 class="fw-light text-uppercase">Your cart is empty</h3>
+                <img style="width: 20rem; height: 20rem;" src="/images/Add to Cart-amico.png" alt="">
+              </div>
+              {{/if}}
+            </div>
           </div>
         </div>
-      </div>
 
         {{!-- <div class="card">
           <div class="card-body">
@@ -122,50 +124,50 @@
 
 <script>
 
-  function changeQuantity(cartId, proId, name, dPrice, count){
-let quantity=parseInt(document.getElementById(proId).innerHTML)
- count=parseInt(count)
+  function changeQuantity(cartId, proId, name, dPrice, count) {
+    let quantity = parseInt(document.getElementById(proId).innerHTML)
+    count = parseInt(count)
 
     $.ajax({
-      url:'/change-product-quantity',
-      method:'post',
-      data:{
-        'cartId':cartId,
-        'proId' :proId,
-        'count' :count,
-        'quantity':quantity,
-        'subtotal':(quantity+count)*dPrice
+      url: '/change-product-quantity',
+      method: 'post',
+      data: {
+        'cartId': cartId,
+        'proId': proId,
+        'count': count,
+        'quantity': quantity,
+        'subtotal': (quantity + count) * dPrice
       },
-      success:(response)=>{
-        if(response.removeProduct){
-        alert('The product is removed from cart')
-        location.reload()
-        }else{
+      success: (response) => {
+        if (response.removeProduct) {
+          alert('The product is removed from cart')
+          location.reload()
+        } else {
           console.log(response)
-          document.getElementById(proId).innerHTML=quantity+count
-          document.getElementById(name).innerHTML=' &#x20b9;'+(quantity+count)*dPrice+'.00'
-          document.getElementById('total').innerHTML=response.total
+          document.getElementById(proId).innerHTML = quantity + count
+          document.getElementById(name).innerHTML = ' &#x20b9;' + (quantity + count) * dPrice + '.00'
+          document.getElementById('total').innerHTML = response.total
         }
-       
-      }
-    })
-  }
-
-  function removeFromCart(cartId, proId){
-    if(confirm('Do you want to remove the product?')){
-$.ajax({
-      url:'/remove-from-cart',
-      method:'post',
-      data:{
-        'cartId':cartId,
-        'proId' :proId
-      },
-      success:(response)=>{
-        location.reload()
 
       }
     })
   }
+
+  function removeFromCart(cartId, proId) {
+    if (confirm('Do you want to remove the product?')) {
+      $.ajax({
+        url: '/remove-from-cart',
+        method: 'post',
+        data: {
+          'cartId': cartId,
+          'proId': proId
+        },
+        success: (response) => {
+          location.reload()
+
+        }
+      })
     }
-     
+  }
+
 </script>

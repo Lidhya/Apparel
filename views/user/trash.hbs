@@ -1,0 +1,111 @@
+ {{!-- <h3 class="fw-normal mb-5 logo" style="color: #4a1942;">Shipping details</h3>
+                  <div class="row">
+                    {{!-- <div class="col-md-6 mb-4 pb-2">
+                      <div class="form-outline">
+                        <input type="checkbox" id="form3Examplev1" name="address" />
+                        <label class="form-label" for="form3Examplev1">Use saved address</label>
+                      </div>
+
+                    </div> --}}
+                    
+                  </div>
+
+                  <Address class="mb-4 pb-2">
+                    <div class="form-outline">
+                      <input type="text" id="form3Examplev2" name="order_address" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Examplev2">Address</label>
+                    </div>
+                  </Address>
+                  
+                  <div class="mb-4 pb-2">
+                    <div class="form-outline">
+                      <input type="tel" id="form3Examplev3" name="mobile" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Examplev3">Mobile</label>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-4 pb-2 mb-md-0 pb-md-0">
+
+                      <div class="form-outline">
+                        <input type="text" id="form3Examplev4" name="pincode" class="form-control form-control-lg" />
+                        <label class="form-label" for="form3Examplev4">Pincode</label>
+                      </div>
+
+                    </div>
+                  
+                  </div> --}}
+
+
+
+
+add address form
+
+                  <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
+
+                          <div class="mb-4 pb-2">
+                            <div class="form-outline">
+                              <input type="text" name="title" class="form-control form-control-lg"
+                                placeholder="eg. home, office" />
+                              <label class="form-label" for="form3Examplev3">Title</label>
+                            </div>
+                          </div>
+
+                          <Address class="mb-4 pb-2">
+                            <div class="form-outline">
+                              <textarea name="address" cols="3" class="form-control form-control-lg"></textarea>
+                              <label class="form-label" for="form3Examplev2">Address</label>
+                            </div>
+                          </Address>
+
+                          <div class="mb-4 pb-2">
+                            <div class="form-outline">
+                              <input type="text" name="city" class="form-control form-control-lg" />
+                              <label class="form-label" for="form3Examplev3">City</label>
+                            </div>
+                          </div>
+
+                          <div class="mb-4 pb-2">
+                            <div class="form-outline">
+                              <input type="number" name="pincode" class="form-control form-control-lg" />
+                              <label class="form-label" for="form3Examplev3">Pincode</label>
+                            </div>
+                          </div>
+
+                          <div class="mb-4 pb-2">
+                            <div class="form-outline">
+                              <input type="tel" name="phone" class="form-control form-control-lg" />
+                              <label class="form-label" for="form3Examplev3">Mobile</label>
+                            </div>
+                          </div>
+
+                          <!-- Submit button -->
+                          <button type="submit" class="btn btn-dark btn-block mb-3 update-address-btn">Add address</button>
+
+                        </div>
+
+
+
+
+                        use address 
+                         <div class="tab-pane fade show active" id="pills-login" role="tabpanel"
+                        aria-labelledby="tab-login">
+                        {{#if user.addresses}}
+                        <h5 class="fw-light">Choose an address</h5>
+                        {{#each user.addresses}}
+                        <div class="p-3 rounded-5" style="background-color: rgb(238, 234, 234);">
+                          <input type="radio" name="saved_address" value="{{this.title}}">
+                          <label class="fw-bold" for="address">{{this.title}}</label>
+                          <p class="mb-0 ps-3">{{this.address}} {{this.pincode}}</p>
+                          <p class="mb-0 ps-3">+91 {{this.phone}}</p>
+                        </div>
+                        {{/each}}
+                        {{else}}
+                        <div class="p-3 row rounded-5" style="background-color: rgb(238, 234, 234);">
+                          <label class="fw-bold text-center" for="address">You haven't saved any addresses yet</label>
+                        </div>
+                        {{/if}}
+
+
+
+                      </div>

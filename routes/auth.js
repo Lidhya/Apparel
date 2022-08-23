@@ -1,7 +1,7 @@
 require('dotenv').config()
-var express = require('express');
-var router = express.Router();
-var userHelpers=require('../helpers/user-helpers')
+const express = require('express');
+const router = express.Router();
+const userHelpers=require('../helpers/user-helpers')
 
 const accountSid = process.env.ACCOUNT_SID;
 const authToken = process.env.AUTH_TOKEN;

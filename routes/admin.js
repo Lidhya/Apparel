@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var productHelper=require("../helpers/product-helpers")
-var adminHelpers=require("../helpers/admin-helpers");
+const express = require('express');
+const router = express.Router();
+const productHelper=require("../helpers/product-helpers")
+const adminHelpers=require("../helpers/admin-helpers");
 const productHelpers = require('../helpers/product-helpers');
 const { response } = require('express');
 const verifyLogin=(req,res,next)=>{
