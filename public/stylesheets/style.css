@@ -209,3 +209,10 @@ color: #000000;
     cursor: none;
     background-color: rgb(101, 99, 99);
   }
+
+  .dt-button{
+    background-color:  #eaeaea;
+    border:1px solid rgb(176, 171, 171) ;
+    border-radius: 10px;
+    margin: 2px;
+  }

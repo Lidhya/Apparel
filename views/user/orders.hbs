@@ -19,43 +19,49 @@
           <div class="card-body px-0 pt-0">
             <div class="d-flex head flex-wrap align-items-center p-3 justify-content-around text-white rounded-top">
               <p class="my-auto mx-auto">Order placed on {{this.date}}</p>
-              {{#if this.cancel}}
-              <p class="my-auto mx-auto">Payment Cancelled</p>
+              {{#ifCond this.delivery_status 'Cancelled'}}
+              <p class="my-auto mx-auto">Order is Cancelled</p>
               {{else}}
-              <p class="my-auto mx-auto">Payment is {{this.status}} </p>
-              {{/if}}
+              <p class="my-auto mx-auto">Order is {{this.status}} </p>
+              {{/ifCond}}
               <p class="my-auto mx-auto">Total spend &#x20b9;{{this.total}}</p>
-              <p class="my-auto mx-auto">Payment:{{this.payment_method}}</p>
-              {{#if this.cancel}}
-              <p class="my-auto mx-auto fw-bold">Status: cancelled</p>
+              <p class="my-auto mx-auto">Payment thorough {{this.payment_method}}</p>
+              <p class="my-auto mx-auto">Order is {{this.delivery_status}}</p>
+
+              {{#ifCond this.delivery_status 'Cancelled'}}
+              <p class="my-auto mx-auto fw-bold">Order is cancelled</p>
+              {{else}}
+              {{#ifCond this.delivery_status 'Delivered'}}
+               <p class="my-auto mx-auto fw-bold">DELIVERED</p>
               {{else}}
               <a class="btn btn-danger p-2" onclick="confirmation('{{this._id}}')">Cancel order</a>
-              {{/if}}
+              {{/ifCond}}
+              {{/ifCond}}
 
             </div>
 
 
-            {{#each this.products}}
             {{!-- ------------ --}}
             <div class="row d-flex justify-content-around align-items-center ms-1">
 
               <div class="col-md-4 col-xl-4 ">
+            {{#each this.products}}
                 <img style="height: 5rem; width: 5rem;" class="m-2 rounded-5" src="/product-images/{{item}}.jpg"
                   alt="product image">
-                  <a href="/product-details/{{item}}" class="text-dark"> <p class="lead fw-normal mb-2">{{name}}</p></a>
+                  <a href="/product-details/{{item}}" class="text-dark"> <p class="lead fw-normal mb-2">{{name}}</p></a> <br>
+            {{/each}}
+              </div>
+             
+              <div class="col-md-3 col-lg-3 col-xl-3">
+                <p class="lead fw-normal mb-2"> <span class="fw-bold">Delivery address</span><br> {{this.delivery_details.address}} {{this.delivery_details.city}} {{this.delivery_details.pincode}}</p>
               </div>
 
               <div class="col-md-2 col-lg-2 col-xl-2">
-                <p class="lead fw-normal mb-2">{{../this.delivery_details.address}}</p>
-              </div>
-
-              <div class="col-md-2 col-lg-2 col-xl-2">
-                <p class="lead fw-normal mb-2">{{../this.delivery_details.phone}}</p>
+                <p class="lead fw-normal mb-2"><span class="fw-bold">Contact info</span><br>{{this.delivery_details.phone}}</p>
               </div>
 
             </div>
             {{!-- ----------- --}}
-            {{/each}}
 
            
           </div>

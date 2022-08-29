@@ -38,7 +38,11 @@
       <td>&#x20b9;{{this.actual_price}}</td>
       <td>&#x20b9;{{this.discount_price}}</td>
       <td>{{this.sizes}}</td>
-      <td>{{this.stock}}</td>
+      {{#if this.stock}}
+      <td class="text-success">{{this.stock}}</td>
+      {{else}}
+        <td class="text-danger">Out of stock</td>
+      {{/if}}
       <td>
          <a href="/admin/product-edit/{{this._id}}" class="btn btn-warning"><i class="fa-regular fa-lg fa-pen-to-square"></i></a>
         <a  class=" btn btn-danger text-white p-2 " onclick="confirmation('{{this._id}}')"><i class="fas fa-trash fa-lg"></i></a>

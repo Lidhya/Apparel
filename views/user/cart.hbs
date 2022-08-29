@@ -33,22 +33,16 @@
                   <span class="form-control py-2" style="width: 2rem;"
                     id="{{this.products._id}}">{{this.quantity}}</span>
 
-
                   <button class="btn btn-link px-2 py-2"
                     onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.products.discount_price}}',1)">
                     <i class="fas fa-plus"></i>
                   </button>
+
                 </div>
-                {{#if this.subtotal}}
                 <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                   <span class="mb-0 fs-4 " id="{{this.products.name}}"> &#x20b9;{{this.subtotal}}.00</span>
                 </div>
-                {{else}}
-                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                  <span class="mb-0 fs-4 " id="{{this.products.name}}">
-                    &#x20b9;{{this.products.discount_price}}.00</span>
-                </div>
-                {{/if}}
+               
                 <div class="col-md-1 col-lg-1 col-xl-1 ">
                   <a href="" class="text-dark pe-3 "><i class="fa-regular fa-heart fa-lg "></i></a>
                   <button onclick="removeFromCart('{{this._id}}','{{this.products._id}}')"
@@ -98,7 +92,7 @@
                 </li>
               </ul>
 
-              <a type="button" href="/place-order" class="btn btn-primary btn-lg btn-block">
+              <a type="button" href="/checkout" class="btn btn-primary btn-lg btn-block">
                 Proceed to checkout
               </a>
               {{else}}
@@ -153,8 +147,18 @@
     })
   }
 
+
   function removeFromCart(cartId, proId) {
-    if (confirm('Do you want to remove the product?')) {
+    Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
       $.ajax({
         url: '/remove-from-cart',
         method: 'post',
@@ -168,6 +172,7 @@
         }
       })
     }
+  })
   }
 
 </script>

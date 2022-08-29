@@ -6,6 +6,13 @@ const { response } = require('express')
 const { resolve, reject } = require('promise')
 const objectId = require('mongodb').ObjectId
 const moment = require('moment');
+const Razorpay = require('razorpay');
+
+
+var instance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET_KEY,
+});
 
 module.exports = {
     doSignup: (userData) => {
@@ -17,6 +24,7 @@ module.exports = {
                 reject(err)
             } else {
                 userData.password = await bcrypt.hash(userData.password, 10)
+                userData.block=false
                 db.get().collection(collection.USER_COLLECTION).insertOne(userData).then((data) => {
                     resolve(data)
                 })
@@ -84,51 +92,51 @@ module.exports = {
         })
     },
 
-    updateProfile:(details, userId)=>{
-        return new Promise(async(resolve,reject)=>{
+    updateProfile: (details, userId) => {
+        return new Promise(async (resolve, reject) => {
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
-            let emailCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: {$ne: objectId(userId) } , email:details.email})
-            bcrypt.compare(details.password, user.password).then((status)=>{
-                if(status){
+            let emailCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: { $ne: objectId(userId) }, email: details.email })
+            bcrypt.compare(details.password, user.password).then((status) => {
+                if (status) {
                     console.log(emailCheck)
-                    if(emailCheck){
-                        let err='Email already registered by someone else'
+                    if (emailCheck) {
+                        let err = 'Email already registered by someone else'
                         reject(err)
-                    }else{
-                        db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({ _id: objectId(userId) },{
-                            $set:{
-                                fname:details.fname,
-                                lname:details.lname,
-                                email:details.email,
-                                phone:details.phone
+                    } else {
+                        db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({ _id: objectId(userId) }, {
+                            $set: {
+                                fname: details.fname,
+                                lname: details.lname,
+                                email: details.email,
+                                phone: details.phone
                             }
-                        }).then(async(status)=>{
+                        }).then(async (status) => {
                             console.log(status.value)
                             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
                             resolve(user)
-                        }).catch(()=>{
-                            let err='Something went wrong'
+                        }).catch(() => {
+                            let err = 'Something went wrong'
                             reject(err)
                         })
                     }
-                }else{
-                    let err='Incorrect password'
+                } else {
+                    let err = 'Incorrect password'
                     reject(err)
                 }
             })
-          
+
         })
 
     },
 
-    addToCart: async(proId, userId) => {
-       let proData=await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
-       console.log(proData.name)
+    addToCart: async (proId, userId) => {
+        let proData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
+        console.log(proData.name)
         let proObj = {
             item: objectId(proId),
-            name:proData.name,
+            name: proData.name,
             quantity: 1,
-            subtotal:0
+            subtotal: proData.discount_price
         }
         return new Promise(async (resolve, reject) => {
             let userCart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
@@ -137,12 +145,13 @@ module.exports = {
 
                 let proExist = userCart.products.findIndex(product => product.item == proId)
                 if (proExist != -1) {
+
                     db.get().collection(collection.CART_COLLECTION)
                         .updateOne({ user: objectId(userId), 'products.item': objectId(proId) },
                             {
                                 $inc: { 'products.$.quantity': 1 }
                             }
-                        ).then(() => {
+                        ).then((data) => {
                             resolve()
                         })
                 } else {
@@ -199,8 +208,8 @@ module.exports = {
                     $project: {
                         item: 1,
                         quantity: 1,
-                        subtotal:1,
-                        name:1,
+                        subtotal: 1,
+                        name: 1,
                         products: {
                             $arrayElemAt: ['$products', 0]
                         }
@@ -240,17 +249,17 @@ module.exports = {
         })
     },
 
-    changeProductQuantity:(details) => {
+    changeProductQuantity: (details) => {
         count = parseInt(details.count)
         quantity = parseInt(details.quantity)
 
-        return new Promise( async(resolve, reject) => {
-            let userCart= await db.get().collection(collection.CART_COLLECTION)
-            .updateOne({ _id: objectId(details.cartId), 'products.item': objectId(details.proId) },
-                {
-                    $set: { 'products.$.subtotal': details.subtotal }
-                }
-            )
+        return new Promise(async (resolve, reject) => {
+            let userCart = await db.get().collection(collection.CART_COLLECTION)
+                .updateOne({ _id: objectId(details.cartId), 'products.item': objectId(details.proId) },
+                    {
+                        $set: { 'products.$.subtotal': details.subtotal }
+                    }
+                )
             if (count == -1 && quantity == 1) {
                 db.get().collection(collection.CART_COLLECTION)
                     .updateOne({ _id: objectId(details.cartId) },
@@ -284,6 +293,8 @@ module.exports = {
                     }
                 ).then((response) => {
                     resolve({ removeProduct: true })
+                }).catch((err)=>{
+                    reject(err)
                 })
         })
     },
@@ -330,7 +341,6 @@ module.exports = {
                     }
                 }
             ]).toArray()
-            console.log(total)
             if (total[0]) {
                 resolve(total[0].total)
             } else {
@@ -341,21 +351,22 @@ module.exports = {
 
     getCartProductList: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let cart = await  db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
+            let cart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
             resolve(cart.products)
         })
 
     },
 
     placeOrder: (order, products, total) => {
-        return new Promise(async(resolve, reject) => { 
-            let  date=new Date()
-            console.log(moment(date).format('MMMM Do YYYY, h:mm:ss a'));
-            let fDate= moment(date).format('MMMM Do YYYY, h:mm:ss a')
-            let status = order.payment_method === 'COD' ? 'Success' : 'Pending'
+        return new Promise(async (resolve, reject) => {
+            let date = new Date()
+            console.log(order.payment_method );
+            let fDate = moment(date).format('YYYY-MM-DD')
+            let status = order.payment_method === 'COD' ? 'Placed' : 'Pending'
             let orderObj = {
                 delivery_details: {
                     title: order.title,
+                    name:order.name,
                     address: order.address,
                     city: order.city,
                     pincode: order.pincode,
@@ -366,28 +377,40 @@ module.exports = {
                 products: products,
                 total: total,
                 date: fDate,
-                status: status
+                status: status,
+                delivery_status:'Pending'
             }
-            db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then((response) => {
+
+            console.log('vann vannn')
+            db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then(async(response) => {
+                   for(var x in products){
+                    console.log(products[x].item)
+                  await  db.get().collection(collection.PRODUCT_COLLECTION).updateOne({"_id": objectId(products[x].item)},
+                    {
+                        $inc: { stock : -products[x].quantity }
+                    })
+                }
                 db.get().collection(collection.CART_COLLECTION).deleteOne({ user: objectId(order.userId) })
-                resolve()
+                resolve(response.insertedId)
+            }).catch((err) => {
+                reject(err)
             })
         })
     },
 
     getUserOrders: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: objectId(userId) }).sort({date:-1}).toArray()
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: objectId(userId) }).sort({ date: -1 }).toArray()
             // console.log(orders)
             resolve(orders,)
         })
     },
-   
+
 
     cancelOrder: (orderId) => {
         return new Promise((resolve, reject) => {
             let query = { _id: objectId(orderId) };
-            db.get().collection(collection.ORDER_COLLECTION).findOneAndUpdate(query, { $set: { cancel: true } }).then((response) => {
+            db.get().collection(collection.ORDER_COLLECTION).findOneAndUpdate(query, { $set: { delivery_status:'Cancelled'} }).then((response) => {
                 resolve(response)
             }).catch((err) => {
                 console.log(err)
@@ -396,71 +419,128 @@ module.exports = {
         })
     },
 
-    updateAddress:(addressData, userId)=>{
-        return new Promise(async(resolve,reject)=>{
-            let addressObj={
-                title:addressData.title,
-                address:addressData.address,
-                city:addressData.city,
-                pincode:addressData.pincode,
-                phone:addressData.phone
+    updateAddress: (addressData, userId) => {
+        return new Promise(async (resolve, reject) => {
+            let addressObj = {
+                title: addressData.title,
+                address: addressData.address,
+                city: addressData.city,
+                pincode: addressData.pincode,
+                phone: addressData.phone
             }
-            let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(userId), addresses:{$elemMatch:{ title: addressData.title}}})
+            let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId), addresses: { $elemMatch: { title: addressData.title } } })
             console.log(userCheck)
-            if(userCheck){
-                let err='Title already exists'
+            if (userCheck) {
+                let err = 'Title already exists'
                 reject(err)
-            }else{
-                 
-                db.get().collection(collection.USER_COLLECTION).updateOne({_id: objectId(userId)},{
-                    $push:{
-                        addresses:addressObj
+            } else {
+
+                db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
+                    $push: {
+                        addresses: addressObj
                     }
-                }).then(async(response)=>{
+                }).then(async (response) => {
                     let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
                     resolve(user)
-                    }).catch((err)=>{
-                        reject()
-                    })
+                }).catch((err) => {
+                    reject()
+                })
             }
-           
+
 
         })
     },
 
-    updatePassword:(pwdData,userId)=>{
-        return new Promise(async(resolve,reject)=>{
-            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId)})
-            bcrypt.compare(pwdData.password, user.password).then(async(status)=>{
-                if(status){
+    updatePassword: (pwdData, userId) => {
+        return new Promise(async (resolve, reject) => {
+            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
+            bcrypt.compare(pwdData.password, user.password).then(async (status) => {
+                if (status) {
                     pwdData.new_password = await bcrypt.hash(pwdData.new_password, 10)
-                    db.get().collection(collection.USER_COLLECTION).updateOne({_id: objectId(userId)},{
-                        $set:{
-                            password:pwdData.new_password
+                    db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
+                        $set: {
+                            password: pwdData.new_password
                         }
                     }).then((data) => {
                         resolve(data)
                     })
-                }else{
-                    let err='Incorrect password'
+                } else {
+                    let err = 'Incorrect password'
                     reject(err)
                 }
             })
         })
     },
 
-    deleteAddress: async(title, userId)=>{
-        return new Promise((resolve,reject)=>{
-            db.get().collection(collection.USER_COLLECTION).updateOne({_id: objectId(userId)},{
-                $pull:{
-                    addresses:{ title:title }
+    deleteAddress: async (title, userId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
+                $pull: {
+                    addresses: { title: title }
                 }
-            }).then(async(response)=>{
+            }).then(async (response) => {
                 let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
                 resolve(user)
             })
         })
-    }
+    },
 
+    generateRazorpay: (orderId, total) => {
+        return new Promise((resolve, reject) => {
+
+            instance.orders.create({
+                amount: total*100,
+                currency: "INR",
+                receipt: ""+orderId,
+                // notes: {
+                //     key1: "value3",
+                //     key2: "value2"
+                // }
+            },(err, order)=>{
+                if(err){
+                    console.log(err)
+                    reject(err)
+                }else{
+                    console.log(order)
+                    resolve(order)
+                }
+            })
+
+        })
+    },
+
+    verifyPayment:(data)=>{
+        return  new Promise((resolve,reject)=>{
+            console.log(data);
+            const crypto=require('crypto')
+            let hmac=crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
+            hmac.update(data['payment[razorpay_order_id]']+'|'+data['payment[razorpay_payment_id]']);
+            hmac=hmac.digest('hex')
+            console.log(hmac +'\n'+data['payment[razorpay_signature]']);
+            if(hmac==data['payment[razorpay_signature]']){
+                resolve()
+            }else{
+                reject()
+            }
+        })
+
+    },
+
+    changePaymentStatus:(orderId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(orderId) }, {
+                $set: {
+                    status: "Placed"
+                }
+        }).then(()=>{
+            resolve()
+        }).catch((err)=>{
+            console.log(err)
+            reject(err)
+        })
+
+    })
+
+}
 
 }

@@ -1,4 +1,7 @@
-function addToCart(proId){
+function addToCart(proId, stock){
+  if(stock<=0){
+    document.getElementById(proId).style.display = "none";
+  }else{
     $.ajax({
       url:'/add-to-cart/'+proId,
       method:'get',
@@ -10,4 +13,6 @@ function addToCart(proId){
         }
       }
     })
+  }
+    
   }

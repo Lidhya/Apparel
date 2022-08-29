@@ -11,10 +11,12 @@
       <th scope="col">SL No.</th>
       <th scope="col">Products bought</th>
       <th scope="col">Ordered on </th>
+      <th scope="col">Customer details</th>
       <th scope="col">Delivery Address</th>
       <th scope="col">Payment method</th>
       <th scope="col">&#x20b9; Total</th>
-      <th scope="col">Payment status</th>
+      <th scope="col">Order status</th>
+      <th scope="col">Delivery status</th>
       <th scope="col">Options</th>
     </tr>
   </thead>
@@ -24,22 +26,28 @@
       <td></td>
       <td><ul class="ps-0 mb-1" style="list-style: none;">
         {{#each this.products}}
-           <li><img style="height: 5rem; width: 5rem;" class="py-1 rounded-5" src="/product-images/{{item}}.jpg"alt="product image"> <span>{{name}}</span></li>
+           <li><img style="height: 50px; width: 50px;" class="py-1 rounded-5" src="/product-images/{{item}}.jpg"alt="product image"> 
+           <span>{{name}}-</span>
+           <span>Qty: {{quantity}}</span></li>
         {{/each}}
         </ul>
       </td>
       <td>{{this.date}}</td> 
-      <td>{{this.delivery_details.address}}</td>
+      <td>ID: {{this.userId}} <br> {{this.delivery_details.name}} <br>+91{{this.delivery_details.phone}}</td>
+      <td>{{this.delivery_details.name}} <br>
+        {{this.delivery_details.address}}<br>
+        {{this.delivery_details.city}}<br>
+        {{this.delivery_details.pincode}}</td>
       <td>{{this.payment_method}}</td>
       <td>&#x20b9; {{this.total}}</td>
-      {{#if this.cancel}}
+      {{#ifCond this.delivery_status 'Cancelled'}}
       <td> <p class="text-danger">CANCELLED</p></td>
       {{else}}
       {{#ifCond this.status 'Pending'}}
       <td><form action="/admin/update-order/{{this._id}}" method="post">
         <select name="status" id="update">
         <option class="text-danger" value="{{this.status}}">Pending</option>
-        <option class="text-success" value="Success">Success</option>
+        <option class="text-success" value="Success">Placed</option>
         </select> 
       <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
       </form>
@@ -47,13 +55,35 @@
       {{else}}
       <td class="text-success">{{this.status}}</td>
       {{/ifCond}}
-      {{/if}}
+      {{/ifCond}}
       <td>
-        {{#if this.cancel}}
-         <p class="text-danger">ORDER CANCELLED</p>
+          {{#ifCond this.delivery_status 'Cancelled'}}
+           <p class="text-danger">CANCELLED</p>
+          {{else}}
+        {{#ifNot this.delivery_status 'Delivered'}}
+        <form action="/admin/update-status/{{this._id}}" method="post">
+        <select name="status" id="update">
+        <option class="text-dark" value="{{this.delivery_status}}">{{this.delivery_status}}</option>
+        <option class="text-dark" value="Shipped">Shipped</option>
+        <option class="text-success" value="Delivered">Delivered</option>
+        </select> 
+      <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
+      </form>
+      {{else}}
+       <p class="text-success">DELIVERED</p>
+      {{/ifNot}}
+          {{/ifCond}}
+      </td>
+      <td>
+          {{#ifCond this.delivery_status 'Cancelled'}}
+           <p class="text-danger">CANCELLED</p>
+          {{else}}
+          {{#ifCond this.delivery_status 'Delivered'}}
+           <p class="text-success">DELIVERED</p>
          {{else}}
          <a  class="btn btn-danger p-2" onclick="confirmation('{{this._id}}')" >Cancel order</a>
-         {{/if}}
+         {{/ifCond}}
+         {{/ifCond}}
       </td>
     </tr>
      {{/each}}

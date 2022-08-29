@@ -1,3 +1,8 @@
+
+<head>
+  <script src="https://www.paypal.com/sdk/js?client-id=AV7yuXizNCGxBbqJfHW-lDU3HKojwCKzaZV-Ai_UlhnZ3LVimlYExPnI2mYIJ9Co6RUV0NxGP-Cd1mrq&currency=USD"></script>
+
+</head>
 <section class="h-100 h-custom pt-5">
   <div class="container py-5 h-100 pt-5">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -28,7 +33,7 @@
                     <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
                       <form action="/deliver-here" method="post" id="deliver-form" class="deliver-form">
                         {{#if user.addresses}}
-                       
+
                         {{#if orderAddress}}
                         {{#each user.addresses}}
                         {{#ifCond this.title ../orderAddress}}
@@ -41,7 +46,7 @@
                         {{/each}}
 
                         {{else}}
-                         <h5 class="fw-light">Choose an address</h5>
+                        <h5 class="fw-light">Choose an address</h5>
                         {{#each user.addresses}}
                         <div class="p-3 mb-2 rounded-5" id="address-div" style="background-color: rgb(238, 234, 234);">
                           <input type="radio" name="order_address" value="{{this.title}}">
@@ -61,45 +66,46 @@
                     </div>
 
                     <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-                      <form action="/update-address-checkout" class="update-address-form" method="post" >
-                         <div class="mb-4 pb-2">
-                            <div class="form-outline">
-                              <input type="text" name="title" class="form-control form-control-lg"
-                                placeholder="eg. home, office" />
-                              <label class="form-label" for="form3Examplev3">Title</label>
-                            </div>
+                      <form action="/update-address-checkout" class="update-address-form" method="post">
+                        <div class="mb-4 pb-2">
+                          <div class="form-outline">
+                            <input type="text" name="title" class="form-control form-control-lg"
+                              placeholder="eg. home, office" />
+                            <label class="form-label" for="form3Examplev3">Title</label>
                           </div>
+                        </div>
 
-                          <Address class="mb-4 pb-2">
-                            <div class="form-outline">
-                              <textarea name="address" cols="3" class="form-control form-control-lg"></textarea>
-                              <label class="form-label" for="form3Examplev2">Address</label>
-                            </div>
-                          </Address>
-
-                          <div class="mb-4 pb-2">
-                            <div class="form-outline">
-                              <input type="text" name="city" class="form-control form-control-lg" />
-                              <label class="form-label" for="form3Examplev3">City</label>
-                            </div>
+                        <Address class="mb-4 pb-2">
+                          <div class="form-outline">
+                            <textarea name="address" cols="3" class="form-control form-control-lg"></textarea>
+                            <label class="form-label" for="form3Examplev2">Address</label>
                           </div>
+                        </Address>
 
-                          <div class="mb-4 pb-2">
-                            <div class="form-outline">
-                              <input type="number" name="pincode" class="form-control form-control-lg" />
-                              <label class="form-label" for="form3Examplev3">Pincode</label>
-                            </div>
+                        <div class="mb-4 pb-2">
+                          <div class="form-outline">
+                            <input type="text" name="city" class="form-control form-control-lg" />
+                            <label class="form-label" for="form3Examplev3">City</label>
                           </div>
+                        </div>
 
-                          <div class="mb-4 pb-2">
-                            <div class="form-outline">
-                              <input type="tel" name="phone" class="form-control form-control-lg" />
-                              <label class="form-label" for="form3Examplev3">Mobile</label>
-                            </div>
+                        <div class="mb-4 pb-2">
+                          <div class="form-outline">
+                            <input type="number" name="pincode" class="form-control form-control-lg" />
+                            <label class="form-label" for="form3Examplev3">Pincode</label>
                           </div>
+                        </div>
 
-                          <!-- Submit button -->
-                          <button type="submit" class="btn btn-dark btn-block mb-3 update-address-btn">Add address</button>
+                        <div class="mb-4 pb-2">
+                          <div class="form-outline">
+                            <input type="tel" name="phone" class="form-control form-control-lg" />
+                            <label class="form-label" for="form3Examplev3">Mobile</label>
+                          </div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-dark btn-block mb-3 update-address-btn">Add
+                          address</button>
 
                       </form>
                     </div>
@@ -113,54 +119,57 @@
               <div class="col-lg-6 text-white" style="background-color: #4a1942;">
                 <div class="p-5">
                   <form action="" id="checkout-form">
-                  <h3 class="fw-normal mb-5 logo">Payment Details</h3>
+                    <h3 class="fw-normal mb-5 logo">Payment Details</h3>
 
-                  <div class="mb-4 pb-2">
-                    <div class="d-flex justify-content-between align-items-center text-white">
-                      <h4>Total amount</h4>
-                      <h5 class="float-left">&#x20b9;{{total}}/-</h5>
-                    </div>
-                    <hr>
-                  </div>
-
-                  <div class="row">
-                    <div class="mb-4 pb-2 border rounded">
-                      <div class="text-white p-4">
-                        <label class="mb-2 fw-bold" for="payment method">Select a payment method</label><br>
-                        <input type="radio" id="cod" name="payment_method" value="COD">
-                        <label for="cod">Cash on delivery</label><br>
-                        <input type="radio" id="razorpay" name="payment_method" value="Razorpay">
-                        <label for="razorpay">Razorpay</label><br>
-                        <input type="radio" id="paypal" name="payment_method" value="Paypal">
-                        <label for="paypal">Paypal</label><br>
+                    <div class="mb-4 pb-2">
+                      <div class="d-flex justify-content-between align-items-center text-white">
+                        <h4>Total amount</h4>
+                        <h5 class="float-left">&#x20b9;{{total}}/-</h5>
                       </div>
+                      <hr>
+                    </div>
+
+                    <div class="row">
+                      <div class="mb-4 pb-2 border rounded">
+                        <div class="text-white p-4">
+                          <label class="mb-2 fw-bold" for="payment method">Select a payment method</label><br>
+                          <input type="radio" id="cod" name="payment_method" value="COD" required>
+                          <label for="cod">Cash on delivery</label><br>
+                          <input type="radio" id="razorpay" name="payment_method" value="Razorpay">
+                          <label for="razorpay">Razorpay</label><br>
+                          <input type="radio" id="paypal" name="payment_method" value="Paypal">
+                          <label for="paypal">Paypal</label><br>
+                        </div>
+
+                      </div>
+                      <input class="d-none" type="text" name="userId" value="{{user._id}}">
+                      <input class="d-none" type="text" name="title" value="{{orderAddress}}">
+                      <input class="d-none" type="text" name="name" value="{{user.fname}} {{user.lname}}">
+                      {{#each user.addresses}}
+                      {{#ifCond this.title ../orderAddress}}
+                      <input class="d-none" type="text" name="address" value="{{this.address}}">
+                      <input class="d-none" type="text" name="city" value="{{this.city}}">
+                      <input class="d-none" type="number" name="pincode" value="{{this.pincode}}">
+                      <input class="d-none" type="tel" name="phone" value="{{this.phone}}">
+                      {{/ifCond}}
+                      {{/each}}
 
                     </div>
-                    <input class="d-none" type="text" name="userId" value="{{user._id}}">
-                    <input class="d-none" type="text" name="title" value="{{orderAddress}}">
-                    {{#each user.addresses}}
-                        {{#ifCond this.title ../orderAddress}}
-                    <input class="d-none" type="text" name="address" value="{{this.address}}">
-                    <input class="d-none" type="text" name="city" value="{{this.city}}">
-                    <input class="d-none" type="number" name="pincode" value="{{this.pincode}}">
-                    <input class="d-none" type="tel" name="phone" value="{{this.phone}}">
-                     {{/ifCond}}
-                        {{/each}}
 
-                  </div>
+                    {{!-- <div class="form-check d-flex justify-content-start mb-4 pb-3">
+                      <input class="form-check-input me-3" type="checkbox" value="" id="form2Example3c" />
+                      <label class="form-check-label text-white" for="form2Example3">
+                        I do accept the <a href="#!" class="text-white"><u>Terms and Conditions</u></a> of your
+                        site.
+                      </label>
+                    </div> --}}
+                     <div id="paypal-button-container"></div>
 
-                  {{!-- <div class="form-check d-flex justify-content-start mb-4 pb-3">
-                    <input class="form-check-input me-3" type="checkbox" value="" id="form2Example3c" />
-                    <label class="form-check-label text-white" for="form2Example3">
-                      I do accept the <a href="#!" class="text-white"><u>Terms and Conditions</u></a> of your
-                      site.
-                    </label>
-                  </div> --}}
 
-                  <a href="/cart" class="btn btn-dark border btn-lg" data-mdb-ripple-color="dark">Go back</a>
+                    <a href="/cart" class="btn btn-dark border btn-lg" data-mdb-ripple-color="dark">Go back</a>
                     {{#if orderAddress}}
-                  <button type="submit" class="btn btn-light btn-lg" data-mdb-ripple-color="dark">Checkout</button>
-                  {{/if}}
+                    <button type="submit" class="btn btn-light btn-lg" data-mdb-ripple-color="dark">Checkout</button>
+                    {{/if}}
                   </form>
                 </div>
               </div>
@@ -171,62 +180,90 @@
     </div>
   </div>
 </section>
-
+ <script src="/javascripts/paypal.js"></script>
 <script>
-//   jQuery('#checkout-form').validate({
-//      rules:{
-//        payment_method:{
-//          required:true,
-//        }
-//
-//      },
-//      messages:{
-//        
-//       payment_method:{
-//          required:"A payment method must be choosed",
-//        }
-//      },
-//      submitHandler:function(form){
-//        form.submit((e) => {
-//  
-//$.ajax({
-//     url: '/place-order',
-//     method: 'post',
-//     data: $("#checkout-form").serialize(),
-//     success: (response) => {
-//       if (response.status) {
-//         location.href = '/order-success'
-//         //alert("Your order is successfully placed")
-//       }
-//     }
-//   })
-// 
-//   
-// });
-//      }
-//    })
-//
-    $('button.update-address-btn').click( function() {
-        $('form.update-address-form').submit();
-    });
+  $('button.update-address-btn').click(function () {
+    $('form.update-address-form').submit();
+  });
 
- $("#checkout-form").submit((e) => {
-  
-$.ajax({
-     url: '/place-order',
-     method: 'post',
-     data: $("#checkout-form").serialize(),
-     success: (response) => {
-       if (response.status) {
-         location.href = '/order-success'
-         //alert("Your order is successfully placed")
-       }
-     }
-   })
- 
-   
- })
+  $("#checkout-form").submit((e) => {
+    $.ajax({
+      url: '/place-order',
+      method: 'post',
+      data: $("#checkout-form").serialize(),
+      success: (response) => {
+        if (response.codSuccess) {
+          location.href = '/order-success'
+        }
+        else if (response.order) {
 
- 
+          razorpayPayment(response.order)
+        }else if (response.paypal){
+          console.log('successssss')
+            location.href = '/order-success'
+         
+        } else {
+            location.href = '/cart'
+        }
+      }
+    })
+
+
+  })
+
+  function razorpayPayment(order) {
+    var options = {
+      "key": "rzp_test_2GzGro7H4ySHD3", // Enter the Key ID generated from the Dashboard
+      "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      "currency": "INR",
+      "name": "Apparel",
+      "description": "Test Transaction",
+      "image": "https://example.com/your_logo",
+      "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      "handler": function (response) {
+
+        verifyPayment(response, order)
+      },
+      "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9999999999"
+      },
+      "notes": {
+        "address": "Razorpay Corporate Office"
+      },
+      "theme": {
+        "color": "#eaeaea"
+      }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+    rzp1.on('payment.failed', function (response) {
+     alert('something went wrong')
+       location.href = "/cart";
+    })
+
+  }
+
+  function verifyPayment(payment, order) {
+    $.ajax({
+      url: '/verify-payment',
+      method: 'post',
+      data: {
+        payment,
+        order
+      },
+      success: (response) => {
+        if (response.status) {
+          location.href = '/order-success'
+        } else {
+          alert('payment failed')
+        }
+      }
+    })
+  }
+
+
 
 </script>

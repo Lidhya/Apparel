@@ -1,9 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
 const productHelper=require("../helpers/product-helpers")
 const adminHelpers=require("../helpers/admin-helpers");
 const productHelpers = require('../helpers/product-helpers');
 const { response } = require('express');
+const path=require('path')
+const multer=require('multer')
+
+const storage=multer.diskStorage({
+  destination:(req,file,cb)=>{
+    cb(null,'Images')
+  }
+})
 const verifyLogin=(req,res,next)=>{
   if(req.session.loggedIn){
     next()
@@ -12,8 +21,15 @@ const verifyLogin=(req,res,next)=>{
  }
 }
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.redirect('/');
+router.get('/',async function(req, res, next) {
+if(req.session.loggedIn && req.session.admin){               
+  var admin=req.session.admin
+  let details=await adminHelpers.getReport()
+  res.setHeader('cache-control','no-store')
+  res.render('admin/dashboard',{title: " | Admin",admin, details});
+}else{
+  res.redirect('/')
+}
 });
 
 router.get('/products',verifyLogin, (req, res, next)=> {
@@ -59,19 +75,33 @@ router.get('/add-product',verifyLogin,async (req, res, next)=>{
 
 router.post('/add-product',(req,res)=>{
   console.log(req.body)
-  console.log(req.files.image);
-
  productHelper.addProduct(req.body,(id)=>{
-  let image=req.files.image
-  console.log(id)
- image.mv('./public/product-images/'+id+'.jpg',(err,done)=>{
-  if(!err){
-    req.session.updateStatus="Product added successfully"
-    res.redirect('/admin/add-product');
-  }else{
-    console.log(err)
-  }
- })
+  let images = []
+  let  image_path=[]
+            if(req.files?.Image1){images.push(req.files?.Image1)}
+            if(req.files?.Image2){images.push(req.files?.Image2)}
+            if(req.files?.Image3){images.push(req.files?.Image3)}
+            if(images.length){
+              for (let i = 0; i <images.length; i++) {
+                  var uploadPath = './public/product-images/'+ id+'-'+ i+'.jpg'
+                  var img ='/product-images/'+ id+'-'+i+'.jpg'
+                  image_path.push(img)
+                  images[i]?.mv(uploadPath,(err)=>{
+                  if(err){
+                      console.log(err);
+                      req.session.updateStatus="Something went wrong"
+                      return res.status(500).send(err);
+                  }else{
+                    req.session.updateStatus="Product added successfully"
+                  }
+                  })
+                  }
+          }
+          productHelper.addImagePath(image_path, id).then((response)=>{
+            res.redirect('/admin/add-product')
+          }).catch((err)=>{
+            console.log(err);
+          })
  })
 })
 
@@ -86,12 +116,52 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
   })
 
   router.post('/edit-product/:id', (req,res)=>{
-   productHelpers.updateProduct(req.params.id,req.body).then(()=>{
-    res.redirect('/admin/products')
-    if(req.files.image){
-      let image=req.files.image
-      image.mv('./public/product-images/'+req.params.id+'.jpg')
-    }
+   productHelpers.updateProduct(req.params.id,req.body).then((response)=>{
+    console.log('vann vann  '+response)
+    let id=req.params.id
+
+              if(req.files?.Image1){
+                console.log('vann vann  img 1')
+               let image1=req.files?.Image1
+              // var imgpath1='/product-images/'+ id+'-0.jpg'
+               fs.unlinkSync('./public/product-images/'+ id+'-0.jpg')
+                image1.mv('./public/product-images/'+ id+'-0.jpg',(err)=>{
+                  if(err){
+                      console.log(err);
+                  }
+                  })
+              }
+
+              if(req.files?.Image2){
+                console.log('vann vann  img2')
+                let image2=req.files?.Image2
+               // var imgpath2='/product-images/'+ id+'-1.jpg'
+                fs.unlinkSync('./public/product-images/'+ id+'-1.jpg')
+                 image2.mv('./public/product-images/'+ id+'-1.jpg',(err)=>{
+                   if(err){
+                       console.log(err);
+                   }
+                   })
+                  }
+
+              if(req.files?.Image3){
+                console.log('vann vann  img3')
+                let image3=req.files?.Image3
+                var imgpath3='/product-images/'+ id+'-2.jpg'
+                fs.unlinkSync('./public/product-images/'+ id+'-2.jpg')
+                 image3.mv('./public/product-images/'+ id+'-2.jpg',(err)=>{
+                   if(err){
+                       console.log(err);
+                   }
+                   })
+                  }
+             
+            // productHelper.addImagePath(image_path, id).then((response)=>{
+            //   res.redirect('/admin/products')
+            // }).catch((err)=>{
+            //   console.log(err);
+            // })
+            res.redirect('/admin/products')
    })
   })
 
@@ -99,6 +169,9 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
   router.get('/delete-products/:id',verifyLogin,(req,res)=>{
     let proId=req.params.id
     console.log(proId)
+    for(let i=0; i<3;i++){
+      fs.unlinkSync('./public/product-images/'+ proId+'-'+i+'.jpg')
+    }
     productHelpers.deleteProduct(proId).then((response)=>{
       res.redirect('/admin/products')
     })
@@ -131,13 +204,25 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
      })
   })
 
-
   router.post('/update-order/:id',verifyLogin, (req,res)=>{
     let orderId=req.params.id
     console.log(req.body)
      adminHelpers.updateOrder(orderId, req.body).then((response)=>{
       res.redirect('/admin/all-orders')
      })
+  })
+
+  router.post('/update-status/:id',verifyLogin, (req,res)=>{
+    let orderId=req.params.id
+    console.log(req.body)
+     adminHelpers.updateStatus(orderId, req.body).then((response)=>{
+      res.redirect('/admin/all-orders')
+     })
+  })
+
+  router.get('/get-report',verifyLogin, async (req,res)=>{
+    let details=await adminHelpers.getReport()
+    res.json(details)
   })
 
 module.exports = router;

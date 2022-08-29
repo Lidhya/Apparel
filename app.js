@@ -1,3 +1,4 @@
+
 require('dotenv').config()
 const createError = require('http-errors');
 const express = require('express');
@@ -11,7 +12,7 @@ const authRouter = require('./routes/auth')
 const hbs=require('express-handlebars')
 const app = express();
 const fileUpload=require('express-fileupload')
-const flash        = require('req-flash');
+
 
 const db=require('./config/connection')
 const session=require('express-session')
@@ -36,6 +37,13 @@ const method = hbs.create({});
 // register new function
 method.handlebars.registerHelper('ifCond', function(v1, v2, options) {
   if(v1 == v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
+method.handlebars.registerHelper('ifNot', function(v1, v2, options) {
+  if(v1 != v2) {
     return options.fn(this);
   }
   return options.inverse(this);

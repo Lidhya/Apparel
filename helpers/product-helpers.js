@@ -3,6 +3,7 @@ const collection = require('../config/collection')
 const Promise = require('promise')
 const { resolve, reject } = require('promise')
 const { Timestamp } = require('mongodb')
+const { response } = require('express')
 const objectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -30,6 +31,21 @@ module.exports = {
             callback(data.insertedId)
         }).catch((err) => {
             console.log(err)
+        })
+    },
+
+    addImagePath:(image_path,proId)=>{
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:objectId(proId)},
+            {
+                $set:{
+                    image_path:image_path
+                }
+            }).then((response)=>{
+                resolve()
+            }).catch((err)=>{
+                reject(err)
+            })
         })
     },
     getAllProducts: () => {
@@ -66,7 +82,7 @@ module.exports = {
                         modified_date: new Date().toISOString(),
                     }
                 }).then((response) => {
-                    resolve()
+                    resolve(response)
                 })
         })
     },

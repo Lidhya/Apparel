@@ -25,7 +25,7 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.4.0/mdb.min.css"
   rel="stylesheet"
 />
-    {{!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css"> --}}
+   
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css">
@@ -37,10 +37,13 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/javascripts/script.js"></script>
 
   </head>
+  
   <body style="background-color: #eaeaea;">
     {{#if admin}}
      {{>admin-header}}
@@ -147,10 +150,21 @@
           minlength:"Atleast 5 character required"
           }
       },
+      messages:{
+        email :{
+          required:"Enter valid email address",
+          email:"Enter valid email Id"
+        },
+        password:{
+          required:"Password is required",
+          minlength:"Atleast 5 character required"
+          }
+      },
       submitHandler:function(form){
         form.submit();
       }
     })
+
 
      jQuery('#form3').validate({
       rules:{
@@ -165,18 +179,38 @@
         material_type:'required',
          actual_price:'required',
         discount_price:'required',
-        amount:'required',
         sizes:'required',
-        stock:'required'
-       
+        stock:'required',
+        Image1: { required: true, extension: "jpe?g" },
+        Image2: { required: true, extension: "jpe?g" },
+        Image3: { required: true, extension: "jpe?g" }
       },
       submitHandler:function(form){
         form.submit();
       }
     })
-
-
     
+    jQuery('#form-edit').validate({
+      rules:{
+        name:'required',
+
+        description:{
+          required:true
+        },
+        category:{
+          required:true
+        },
+        material_type:'required',
+         actual_price:'required',
+        discount_price:'required',
+        sizes:'required',
+        stock:'required',
+      
+      },
+      submitHandler:function(form){
+        form.submit();
+      }
+    })
 
       jQuery('#form5').validate({
       rules:{
