@@ -110,13 +110,20 @@ module.exports = {
 
     },
     deleteCategory: (catId) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             console.log(objectId(catId))
             let query = { _id: objectId(catId) };
-            db.get().collection(collection.CATEGORY_COLLECTION).deleteOne(query).then((response) => {
-                console.log(response)
-                resolve(response)
-            })
+            let proCheck= await db.get().collection(collection.PRODUCT_COLLECTION).find({categoryId: objectId(catId)})
+            if(proCheck){
+                let err= 'Products exist in this category'
+                reject(err)
+            }else{
+                db.get().collection(collection.CATEGORY_COLLECTION).deleteOne(query).then((response) => {
+                    console.log(response)
+                    resolve(response)
+                })
+            }
+           
         })
     },
     deleteProduct: (proId) => {

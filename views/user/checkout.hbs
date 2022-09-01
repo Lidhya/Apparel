@@ -1,6 +1,6 @@
 
 <head>
-  <script src="https://www.paypal.com/sdk/js?client-id=AV7yuXizNCGxBbqJfHW-lDU3HKojwCKzaZV-Ai_UlhnZ3LVimlYExPnI2mYIJ9Co6RUV0NxGP-Cd1mrq&currency=USD"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AZ7HWqCqHO1XNjFH8ogly6t3fTKVcu1N969VigFyhS7Nf5PIxe3CxYGzdpSrPIofgpyzN-SBXjymLfR9&currency=USD"></script>
 
 </head>
 <section class="h-100 h-custom pt-5">
@@ -137,8 +137,10 @@
                           <label for="cod">Cash on delivery</label><br>
                           <input type="radio" id="razorpay" name="payment_method" value="Razorpay">
                           <label for="razorpay">Razorpay</label><br>
-                          <input type="radio" id="paypal" name="payment_method" value="Paypal">
+                          <input type="radio"  name="payment_method" onclick="paypalDisplay()" value="Paypal">
                           <label for="paypal">Paypal</label><br>
+                            <div id="paypal-button-container" class="d-none mt-3"></div>
+
                         </div>
 
                       </div>
@@ -163,12 +165,11 @@
                         site.
                       </label>
                     </div> --}}
-                     <div id="paypal-button-container"></div>
-
+                   
 
                     <a href="/cart" class="btn btn-dark border btn-lg" data-mdb-ripple-color="dark">Go back</a>
                     {{#if orderAddress}}
-                    <button type="submit" class="btn btn-light btn-lg" data-mdb-ripple-color="dark">Checkout</button>
+                    <button type="submit" id="checkout-btn" class="btn btn-light btn-lg" data-mdb-ripple-color="dark">Checkout</button>
                     {{/if}}
                   </form>
                 </div>
@@ -196,8 +197,8 @@
           location.href = '/order-success'
         }
         else if (response.order) {
-
           razorpayPayment(response.order)
+
         }else if (response.paypal){
           console.log('successssss')
             location.href = '/order-success'
@@ -262,6 +263,11 @@
         }
       }
     })
+  }
+
+  function paypalDisplay(){
+   var element = document.getElementById("paypal-button-container");
+  element.classList.toggle("d-none");
   }
 
 

@@ -4,7 +4,8 @@ const express = require('express');
 const productHelpers = require('../helpers/product-helpers');
 const router = express.Router();
 const userHelpers = require('../helpers/user-helpers');
-const paypal=require('./paypal')
+const offerHelpers = require('../helpers/offer-helpers');
+const paypal=require('../helpers/paypal')
 
 const verifyLogin = (req, res, next) => {
   if (req.session.loggedIn) {
@@ -80,10 +81,14 @@ router.get('/product-details/:id', verifyLogin, async (req, res) => {
   let proId = req.params.id;
   let products = await productHelpers.getAllProducts()
   productHelpers.getProductDetails(proId).then(async (productDetails) => {
-    console.log(productDetails.category);
+    let category = await offerHelpers.getOffer(productDetails.categoryId)
+    if(category.offer.isEnabled){
+      let offerPrice=parseFloat((productDetails.actual_price/100)*category.offer.percent)
+      productDetails.discount_price-=offerPrice
+    }
     let cartCount = await userHelpers.getCartCount(req.session.user._id)
     res.setHeader('cache-control', 'no-store')
-    res.render('user/product-details', { title: '| Product details', productDetails, user: req.session.user, cartCount, products });
+    res.render('user/product-details', { title: '| Product details', productDetails, user: req.session.user, cartCount, products ,category});
   })
 })
 
@@ -99,11 +104,11 @@ router.get('/cart', verifyLogin, async function (req, res, next) {
   res.render('user/cart', { title: ' | Cart', categories, user: req.session.user, products, total });
 });
 
-router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
+router.post('/add-to-cart/:id', verifyLogin, (req, res) => {
   console.log('api call')
-  userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
+  console.log(req.body)
+  userHelpers.addToCart(req.params.id, req.session.user._id, req.body).then(() => {
     res.status(200).json({ status: true });
-    // res.redirect('/')
   })
 })
 

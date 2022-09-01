@@ -4,15 +4,11 @@ const fs = require('fs');
 const productHelper=require("../helpers/product-helpers")
 const adminHelpers=require("../helpers/admin-helpers");
 const productHelpers = require('../helpers/product-helpers');
+const offerHelpers = require('../helpers/offer-helpers');
 const { response } = require('express');
 const path=require('path')
-const multer=require('multer')
 
-const storage=multer.diskStorage({
-  destination:(req,file,cb)=>{
-    cb(null,'Images')
-  }
-})
+
 const verifyLogin=(req,res,next)=>{
   if(req.session.loggedIn){
     next()
@@ -32,6 +28,11 @@ if(req.session.loggedIn && req.session.admin){
 }
 });
 
+router.get('/get-report',verifyLogin, async (req,res)=>{
+  let details=await adminHelpers.getReport()
+  res.json(details)
+})
+
 router.get('/products',verifyLogin, (req, res, next)=> {
   res.setHeader('cache-control','no-store')
   productHelper.getAllProducts().then((products)=>{
@@ -50,7 +51,8 @@ router.get('/users',verifyLogin, (req, res, next)=> {
 router.get('/categories',verifyLogin, async (req, res, next)=> {
   let categories=await productHelpers.getCategories()
   res.setHeader('cache-control','no-store')
-  res.render('admin/categories',{admin:true,categories});
+  res.render('admin/categories',{admin:true,categories, "catErr":req.session.catErr});
+  req.session.catErr=false
 })
 
 router.post('/add-category',((req,res)=>{
@@ -63,6 +65,9 @@ router.get('/delete-category/:id',verifyLogin,(req,res)=>{
   let catId=req.params.id
   console.log(catId)
   productHelpers.deleteCategory(catId).then((response)=>{
+    res.redirect('/admin/categories')
+  }).catch((err)=>{
+    req.session.catErr=err
     res.redirect('/admin/categories')
   })
 })
@@ -115,7 +120,7 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
     });
   })
 
-  router.post('/edit-product/:id', (req,res)=>{
+  router.post('/edit-product/:id',verifyLogin, (req,res)=>{
    productHelpers.updateProduct(req.params.id,req.body).then((response)=>{
     console.log('vann vann  '+response)
     let id=req.params.id
@@ -165,7 +170,6 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
    })
   })
 
-
   router.get('/delete-products/:id',verifyLogin,(req,res)=>{
     let proId=req.params.id
     console.log(proId)
@@ -176,7 +180,6 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
       res.redirect('/admin/products')
     })
   })
-
 
   router.get('/user-block/:id',verifyLogin,(req,res)=>{
     let userId=req.params.id;
@@ -220,9 +223,53 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
      })
   })
 
-  router.get('/get-report',verifyLogin, async (req,res)=>{
-    let details=await adminHelpers.getReport()
-    res.json(details)
+  router.get('/category-offers',verifyLogin, async(req,res)=>{
+    let categories= await  productHelpers.getCategories()
+    res.render('admin/category-offers',{title: " | Admin",admin:true, categories})
+  })
+
+  router.get('/add-offer',verifyLogin, async(req,res)=>{
+    let categories= await  productHelpers.getCategories()
+    res.render('admin/add-cate-offer',{title: " | Admin",admin:true, categories, "offerErr":req.session.offerErr})
+    req.session.offerErr=false
+  })
+
+  router.post('/add-offer',verifyLogin, async(req,res)=>{
+    offerHelpers.addOffer(req.body).then((response)=>{
+      res.redirect('/admin/category-offers')
+     }).catch((err)=>{
+      req.session.offerErr=err
+      res.redirect('/admin/add-offer')
+     })
+  })
+
+  router.get('/edit-offer/:id',verifyLogin, async(req,res)=>{
+    let categories= await  productHelpers.getCategories()
+    let offerDetails=await offerHelpers.getOffer(req.params.id)
+    res.render('admin/edit-cate-offer',{title: " | Admin",admin:true, categories, offerDetails})
+  })
+
+  router.get('/offer-enable/:id',verifyLogin, async(req,res)=>{
+    offerHelpers.enableOffer(req.params.id).then((response)=>{
+      res.redirect('/admin/category-offers')
+     })
+  })
+
+  router.get('/offer-disable/:id',verifyLogin, async(req,res)=>{
+    offerHelpers.disableOffer(req.params.id).then((response)=>{
+      res.redirect('/admin/category-offers')
+     })
+  })
+
+  router.post('/edit-offer',verifyLogin, async(req,res)=>{
+    offerHelpers.editOffer(req.body).then((response)=>{
+      res.redirect('/admin/category-offers')
+     })
+  })
+
+  router.get('/delete-offer/:id',verifyLogin, async(req,res)=>{
+    let categories= await  offerHelpers.deleteOffer(req.params.id)
+    res.render('admin/add-cate-offer',{title: " | Admin",admin:true, categories})
   })
 
 module.exports = router;

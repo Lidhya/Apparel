@@ -15,7 +15,7 @@
             <div class="card-body p-4">
               <div class="row d-flex justify-content-between align-items-center">
                 <div class="col-md-2 col-lg-2 col-xl-2">
-                  <img src="/product-images/{{this.products._id}}.jpg" class="img-fluid rounded-3 shadow"
+                  <img src="{{this.products.image_path.[0]}}" class="img-fluid rounded-3 shadow"
                     alt="Cotton T-shirt">
                 </div>
                 <div class="col-md-3 col-lg-3 col-xl-3">
@@ -40,7 +40,11 @@
 
                 </div>
                 <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                  <span class="mb-0 fs-4 " id="{{this.products.name}}"> &#x20b9;{{this.subtotal}}.00</span>
+                  {{#if this.subtotal}}
+                  <span class="mb-0 fs-4 " id="{{this.products.name}}"> ₹{{this.subtotal}}</span>
+                  {{else}}
+                  <span class="mb-0 fs-4 " id="{{this.products.name}}"> ₹{{this.products.discount_price}}</span>
+                  {{/if}}
                 </div>
                
                 <div class="col-md-1 col-lg-1 col-xl-1 ">
@@ -101,6 +105,7 @@
                 <img style="width: 20rem; height: 20rem;" src="/images/Add to Cart-amico.png" alt="">
               </div>
               {{/if}}
+
             </div>
           </div>
         </div>
@@ -139,7 +144,7 @@
         } else {
           console.log(response)
           document.getElementById(proId).innerHTML = quantity + count
-          document.getElementById(name).innerHTML = ' &#x20b9;' + (quantity + count) * dPrice + '.00'
+          document.getElementById(name).innerHTML = ' &#x20b9;' + (quantity + count) * dPrice 
           document.getElementById('total').innerHTML = response.total
         }
 

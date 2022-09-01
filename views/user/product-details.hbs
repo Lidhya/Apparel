@@ -15,9 +15,9 @@
 							</div>
 
 							<div class="sub-images mt-2 ms-3 ">
-								<img class="m-2 sub" src="{{productDetails.image_path.[0]}}" style="height: 5rem; width: 5rem;" alt="">
-								<img class="m-2 sub" src="{{productDetails.image_path.[1]}}" style="height: 5rem; width: 5rem;" alt="">
-								<img class="m-2 sub" src="{{productDetails.image_path.[2]}}" style="height: 5rem; width: 5rem;" alt="">
+								<img class="m-2 sub" src="{{productDetails.image_path.[0]}}" style="height: 5rem; width: 5rem;" alt="product image">
+								<img class="m-2 sub" src="{{productDetails.image_path.[1]}}" style="height: 5rem; width: 5rem;" alt="product image">
+								<img class="m-2 sub" src="{{productDetails.image_path.[2]}}" style="height: 5rem; width: 5rem;" alt="product image">
 							</div>
 
 						</div>
@@ -39,7 +39,11 @@
 						<p class="product-description">{{productDetails.description}}</p>
 						<p class="fw-bold">Price: 
 							<del class="text-danger fs-5 fw-light">₹{{productDetails.actual_price}}</del>  
+							{{#if category.offer.isEnabled}}
+							<p class="text-success"><span class="fs-4">₹{{productDetails.discount_price}}  </span>{{category.offer.percent}}% OFF</p>
+							{{else}}
 							<span class="text-success fs-4">₹{{productDetails.discount_price}}</span>
+							{{/if}}
 							</p>
 							 {{#if productDetails.stock}}
             <p class="card-text py-1 text-success">In stock</p>
@@ -47,7 +51,6 @@
             <p class="card-text py-1 text-danger">Out of stock</p>
             {{/if}}
 							
-						
 						<select name="sizes" id="">
 							<option>Size</option>
 							{{#each productDetails.sizes}}
@@ -56,7 +59,7 @@
 						</select>
 						
 						<div class="action mt-5">
-							<button class=" btn btn-dark" onclick="addToCart('{{productDetails._id}}','{{productDetails.stock}}')" id="{{productDetails._id}}" type="button">add to cart</button>
+							<button class=" btn btn-dark" onclick="addToCart('{{productDetails._id}}','{{productDetails.stock}}','{{productDetails.discount_price}}')" id="{{productDetails._id}}" type="button">add to cart</button>
 							<button class="btn btn-outline-dark" type="button"><span
 									class="fa fa-heart"></span></button>
 						</div>
@@ -81,7 +84,7 @@
 
           <div class="card h-100 p-0" style="background-color: transparent;">
             <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
-              <img src="/product-images/{{this._id}}.jpg" class="w-100" style="height: 25rem;" />
+              <img src="{{this.image_path.[0]}}" class="w-100" style="height: 25rem;" />
               <a href="/product-details/{{this._id}}">
                 {{! <div class="mask">
                   <div class="d-flex justify-content-start align-items-end h-100">
@@ -104,9 +107,9 @@
                 <p>category</p>
               </a> --}}
               {{#if this.discount_price}}
-              <h6 class="text-start"> &#x20b9;{{this.discount_price}}</h6>
+              <h6 class="text-start"> ₹{{this.discount_price}}</h6>
               {{else}}
-              <h6 class="text-start"> &#x20b9;{{this.actual_price}}</h6>
+              <h6 class="text-start"> ₹{{this.actual_price}}</h6>
               {{/if}}
 
 

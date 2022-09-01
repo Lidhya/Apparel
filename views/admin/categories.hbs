@@ -4,6 +4,9 @@
           <div class="tm-bg-primary-dark tm-block tm-block-product-categories">
             <h2 class="tm-block-title">Product Categories</h2>
             <div class="tm-product-table-container">
+              {{#if catErr}}
+                  <p class="alert alert-danger">{{catErr}}</p>
+                  {{/if}}
               <table class="table tm-table-small tm-product-table">
                 <tbody>
                   {{#each categories}}

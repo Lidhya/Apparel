@@ -1,17 +1,19 @@
 <head>
-    <!-- Custom styles -->
+  <!-- Custom styles -->
   <link rel="stylesheet" href="/stylesheets/admin.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
+
 <body>
-    
+
   <!--Main layout-->
   <main class="pt-5">
     <div class="container pt-4">
 
 
-       <!--Section: Statistics with subtitles-->
+      <!--Section: Statistics with subtitles-->
       <section>
         <div class="row">
 
@@ -61,36 +63,177 @@
       </section>
       <!--Section: Statistics with subtitles-->
 
-<div class="row align-items-center">
-      <!-- Section: Main chart -->
-      <section class="mb-4 col-md-7 ">
-        <div class="card ">
-          <div class="card-header py-3">
-            <h5 class="mb-0 text-center"><strong>Sales</strong></h5>
-          </div>
-          <div class="card-body">
-            <canvas class="my-4 w-100" id="myChart" height="380"></canvas>
-          </div>
-        </div>
-      </section>
-      <!-- Section: Main chart -->
+      <div class="row align-items-center">
+        <!-- Section: Main chart -->
+        <section class="mb-4 col-md-7 ">
+          <div class="card ">
+            <div class="card-header py-3">
+              <h5 class="mb-0 text-center"><strong>Sales</strong></h5>
+            </div>
+            <div class="card-body">
+              <canvas class="my-4 w-100" id="myChart" height="380"></canvas>
+              <div class="d-flex justify-content-start ">
+                <div><span class="ms-2">From:</span><input id="from" class="form-control " type="date"
+                    min="{{details.date1.[0]}}"></div>
+                <div class="ms-2"><span class="">To:</span><input id="to" class="form-control " type="date"
+                    min="{{details.date1.[0]}}"></div>
 
-  <!-- Section: pie chart -->
-       <section class="mb-4 col-md-5 ">
-        <div class="card ">
-          <div class="card-header py-3">
-            <h5 class="mb-0 text-center"><strong>Payments</strong></h5>
+              </div>
+              <div class="pt-2"><button onclick="filterDate()" class="btn ms-2 ">Filter</button>
+                <button onclick="resetDate()" class="btn ms-2 ">Reset</button>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <canvas class="my-4 w-100" id="Chart" height="380"></canvas>
+        </section>
+        <!-- Section: Main chart -->
+
+        <!-- Section: doughnut chart -->
+        <section class="mb-4 col-md-5 ">
+          <div class="card ">
+            <div class="card-header py-3">
+              <h5 class="mb-0 text-center"><strong>Payments</strong></h5>
+            </div>
+            <div class="card-body" style="height: 380;">
+              <canvas class="my-4 w-100" id="Chart" height="270"></canvas>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+        <!-- Section: doughnut chart -->
+      </div>
+
+      {{!-- ------product Purchase Report--------- --}}
+      <section class="row mb-4  justify-content-center">
+         <div class="card-header text-center py-3">
+            <h5 class="mb-0 text-center">
+              <strong>Products Purchase Report</strong>
+            </h5>
+          </div>
+
+
+<!-- Section: pie chart -->
+        <section class="mb-4 col-md-6 m-2">
+          <div class="card ">
+            <div class="card-header py-3">
+              <h5 class="mb-0 text-center"><strong>Category wise sales</strong></h5>
+            </div>
+            <div class="card-body chart-container" style="position: relative; ">
+              <canvas class="my-4" id="category-sale" ></canvas>
+            </div>
+          </div>
+        </section>
         <!-- Section: pie chart -->
-</div>
-    
 
-                      <!--Section: Sales Performance KPIs-->
+{{!-- ---------------Products Most Sold------------------- --}}
+        <div class="card col-md-5 m-2">
+          <div class="card-header text-center py-3">
+            <h5 class="mb-0 text-center">
+              <strong>Products Most Sold</strong>
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+
+              <table id="productsTable" class="display table table-hover text-nowrap">
+                <thead>
+                  <tr>
+                    <th scope="col">Products</th>
+                    {{!-- <th scope="col">Category</th> --}}
+                    <th scope="col">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each details.mostSoldProducts}}
+                  <tr>
+                    <td>
+                      <img height="40px" width="40px" src="/product-images/{{this._id}}-0.jpg" alt="most sold">
+                      <span>{{this.name}}</span>
+                    </td>
+                    {{!-- <td>{{this.category}}</td> --}}
+                    <td>{{this.sum}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+          {{!-- ---------------Products Most Sold------------------- --}}
+
+          {{!-- ---------------Products Most Ordered------------------- --}}
+        <div class="card col-md-5 m-2">
+          <div class="card-header text-center py-3">
+            <h5 class="mb-0 text-center">
+              <strong>Products Most Ordered</strong>
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+
+              <table id="productsTable" class="display table table-hover text-nowrap">
+                <thead>
+                  <tr>
+                    <th scope="col">Products</th>
+                    <th scope="col">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each details.mostOrderedProducts}}
+                  <tr>
+                    <td>
+                      <img height="40px" width="40px" src="/product-images/{{this._id}}-0.jpg" alt="most sold">
+                      <span>{{this.name}}</span>
+                    </td>
+                    <td>{{this.sum}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+          {{!-- ---------------Products Most Ordered------------------- --}}
+
+          
+          {{!-- ---------------Products Most Cancelled------------------- --}}
+
+        <div class="card col-md-6 m-2">
+          <div class="card-header text-center py-3">
+            <h5 class="mb-0 text-center">
+              <strong>Products Most Cancelled</strong>
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+
+              <table id="productsTable" class="display table table-hover text-nowrap">
+                <thead>
+                  <tr>
+                    <th scope="col">Products</th>
+                    <th scope="col">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each details.mostCancelledProducts}}
+                  <tr>
+                    <td>
+                      <img height="40px" width="40px" src="/product-images/{{this._id}}-0.jpg" alt="most sold">
+                       <span>{{this.name}}</span>
+                    </td>
+                    <td>{{this.sum}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <hr>
+      </section>
+          {{!-- ---------------Products Most Cancelled------------------- --}}
+    {{!-- ------product Purchase Report--------- --}}
+
+
+      <!--Section: Sales report-->
       <section class="mb-4">
         <div class="card">
           <div class="card-header text-center py-3">
@@ -100,7 +243,7 @@
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-hover text-nowrap" id="myTable">
+              <table class="table table-hover text-nowrap" id="saleReport">
                 <thead>
                   <tr>
                     <th scope="col"></th>
@@ -110,8 +253,8 @@
                     <th scope="col">Razorpay</th>
                     <th scope="col">Paypal</th>
                     <th scope="col">Avg. Revenue</th>
-                    
-                    <th scope="col">Orders delivered</th>
+
+                    <th scope="col">Total Orders</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,90 +266,90 @@
                     <td>{{details.dailyRazorCount}}</td>
                     <td>{{details.dailyPaypalCount}}</td>
                     <td>{{details.dailyAvgRevenue}}</td>
-                  
+
                     <td>{{details.dailySalesCount}}</td>
                   </tr>
                   <tr>
                     <th scope="row">Weekly</th>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.productsCount}}</span>
+                        <span>{{details.productsCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.revenue}}</span>
+                        <span>{{details.revenue}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.codCount}}</span>
+                        <span>{{details.codCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.razorCount}}</span>
+                        <span>{{details.razorCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.paypalCount}}</span>
+                        <span>{{details.paypalCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.avgRevenue}}</span>
+                        <span>{{details.avgRevenue}}</span>
                       </span>
                     </td>
-                   
+
                     <td>
                       <span class="text-dark">
-                       <span>{{details.salesCount}}</span>
+                        <span>{{details.salesCount}}</span>
                       </span>
                     </td>
-                   
-                    
+
+
                   </tr>
                   <tr>
                     <th scope="row">Yearly</th>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.productsCount}}</span>
+                        <span>{{details.productsCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.revenue}}</span>
+                        <span>{{details.revenue}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.codCount}}</span>
+                        <span>{{details.codCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.razorCount}}</span>
+                        <span>{{details.razorCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.paypalCount}}</span>
+                        <span>{{details.paypalCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.avgRevenue}}</span>
+                        <span>{{details.avgRevenue}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.OrderCount}}</span>
+                        <span>{{details.OrderCount}}</span>
                       </span>
                     </td>
                     <td>
                       <span class="text-dark">
-                       <span>{{details.salesCount}}</span>
+                        <span>{{details.salesCount}}</span>
                       </span>
                     </td>
                   </tr>
@@ -217,117 +360,169 @@
         </div>
       </section>
       <!--Section: Sales Performance KPIs-->
-      
 
-     
     </div>
   </main>
   <!--Main layout-->
 
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
 
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function () {
-            $('#myTable').DataTable({
-               rowReorder: {
-            selector: 'td:nth-child(2)'
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+      $('#saleReport').DataTable({
+        rowReorder: {
+          selector: 'td:nth-child(2)'
         },
         responsive: true,
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
-            });
-        });
-    </script>
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+      });
+
+
+    });
+  </script>
 
 </body>
 
 <script>
-   // Graph
-var ctx = document.getElementById("myChart");
-var ct = document.getElementById("Chart");
- var Orderdate= []                            
-var revenueData=[]
-  $(window).on('load',function(){
-     $.ajax({
-        url:'/admin/get-report',
-        method:'get',
-        success:(details)=>{
-         Orderdate=details.date1
-         revenueData=details.total1
-         revenueData.reverse()
-         Orderdate.reverse()
+  // Graph
+  var ctx = document.getElementById("myChart");
+  var ct = document.getElementById("Chart");
+  var Orderdate = []
+  var revenueData = []
+  var convertedDates = []
+  var catName = []
+  var catCount = []
+  var myChart;
+  $(window).on('load', function () {
+    $.ajax({
+      url: '/admin/get-report',
+      method: 'get',
+      success: (details) => {
+        details.date1.forEach(function (x) { Orderdate.push(x) })
+        details.total1.forEach(function (x) { revenueData.push(x) })
+        convertedDates = Orderdate.map(date => new Date(date).setHours(0, 0, 0, 0));
+        console.log(Orderdate)
+        for(let i in details.catSale){
+        catName.push(details.catSale[i].cat_name)
+        catCount.push(details.catSale[i].cat_count)
         }
-  })
+      }
+    })
 
-setTimeout(()=>{
-var myChart = new Chart(ctx, {
-  type: "bar",
-  data: {
-    labels: Orderdate,
-    datasets: [
-      {
-        label:"Daily Sales",
-        data: revenueData,
-        lineTension: 0,
-        backgroundColor: 'blue',
-        pointBackgroundColor: "#007bff",
-      },
-    ],
-  },
-  options: {
-    scales: {
-     
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: false,
+    setTimeout(() => {
+      myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: Orderdate,
+          datasets: [
+            {
+              label: "Daily Sales",
+              data: revenueData,
+              lineTension: 0,
+              backgroundColor: '#8a84e2',
+              borderColor: 'rgba(255, 26, 164, 1)',
+              pointBackgroundColor: "#007bff",
+            },
+          ],
+        },
+        options: {
+          scales: {
+            xAxes: {
+              type: 'time',
+              time: {
+                unit: 'day'
+              }
+            },
+            yAxes:
+            {
+              ticks: {
+                beginAtZero: false,
+              },
+            },
+          },
+          legend: {
+            display: false,
           },
         },
-      ],
-    },
-    legend: {
-      display: false,
-    },
-  },
-});
+      });
 
-},300)
-  })
-
- 
-
-
-console.log(Orderdate)
-new Chart(ct, {
-            type: "pie",
-            data: {
-                labels:  [
-      "COD",
-      "Razorpay",
-      "Paypal"
-    ],
-                datasets: [{
-               backgroundColor:  ["#c2a691", "#fa003f", "#242423"],
-                    data:[{{details.codCount}}, {{details.razorCount}}, {{details.paypalCount}}]
+      new Chart(ct, {
+        type: 'doughnut',
+        data: {
+          labels: [
+            "COD",
+            "Razorpay",
+            "Paypal"
+          ],
+          datasets: [{
+            backgroundColor: ["#ff5d73", "#fbb13c", "#32e875"],
+            data: [{{ details.codCount }}, {{ details.razorCount }}, {{ details.paypalCount }}]
                 }]
             },
-            options: {
-                title: {
-                    display: true,
-                }
-            }
+    options: {
+    title: {
+      display: true,
+    }
+  }
         });
 
+new Chart(document.getElementById("category-sale"), {
+    type: 'pie',
+    data: {
+      labels: catName,
+      datasets: [{
+        label: "Category wise sale",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
+        data: catCount
+      }]
+    },
+    options: {
+      maintainAspectRatio:false,
+      title: {
+        display: true,
+      }
+    }
+});
+}, 300)
+
+})
 
 
 
- 
+  function filterDate() {
+    // (new Date('2021-11-01 00:00:00 G4T+9800')
+    const from1 = new Date(document.getElementById('from').value);
+    const from = from1.setHours(0, 0, 0, 0)
+    const to1 = new Date(document.getElementById('to').value);
+    const to = to1.setHours(0, 0, 0, 0)
+
+    const filterOrderDates = convertedDates.filter(date => date >= from && date <= to)
+    myChart.data.labels = filterOrderDates
+    //working on data
+    const startArray = convertedDates.indexOf(filterOrderDates[0])
+    const endArray = convertedDates.indexOf(filterOrderDates[filterOrderDates.length - 1])
+    const dupRevenueData = [...revenueData]
+    dupRevenueData.splice(endArray + 1, filterOrderDates.length)
+    dupRevenueData.splice(0, startArray)
+    myChart.data.datasets[0].data = dupRevenueData
+    myChart.update()
+  }
+
+  function resetDate() {
+    myChart.data.labels = convertedDates
+    myChart.data.datasets[0].data = revenueData
+    myChart.update()
+  }
+
+
+
 </script>

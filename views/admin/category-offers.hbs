@@ -1,0 +1,81 @@
+<section class="pt-5">
+<div class="container pt-5">
+  <div class="d-flex">
+    <a href="/admin/add-offer" class="btn btn-success mt-4 ms-auto ms-2">Add new offer</a>
+  </div>
+  <div class="p-3 mt-3 mb-5  rounded" style="background-color: white;">
+   {{#if updateStatus}}
+    <p style="color: green;">{{updateStatus}}</p>
+   {{/if}}
+  <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
+  <thead>
+    <tr>
+      <th scope="col">SL No.</th>
+      <th scope="col">Category</th>
+      <th scope="col">Offer %</th>
+      <th scope="col">Valid from</th>
+      <th scope="col">Valid till</th>
+      <th scope="col">Status</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each categories}}
+      {{#if this.offer}}
+    <tr>
+      <td></td>
+      <td>{{this.category}}</td>
+      <td>{{this.offer.percent}}</td> 
+      <td>{{this.offer.valid_from}}</td>
+      <td>{{this.offer.valid_till}}</td>
+       <td>
+        {{#if this.offer.isEnabled}}
+        <a  class=" btn btn-danger text-white p-2 " href="/admin/offer-disable/{{this._id}}" >Disable</a>
+        {{else}}
+         <a  class="btn btn-success"  href="/admin/offer-enable/{{this._id}}" >Enable</a>
+         {{/if}}
+      </td>
+      <td>
+         <a href="/admin/edit-offer/{{this._id}}" class="btn "><i class="fa-regular fa-lg fa-pen-to-square"></i></a>
+        <a  class=" btn  text-dark p-2 " onclick="confirmation('{{this._id}}')"><i class="fas fa-trash fa-lg"></i></a>
+      </td>
+    </tr>
+    {{/if}}
+     {{/each}}
+  </tbody>
+</table>
+</div>
+</div>
+
+</section>
+
+<script>
+    $(document).ready(function() {
+    var table = $('#table1').DataTable( {
+        rowReorder: {
+            selector: 'td:nth-child(2)'
+        },
+        responsive: true,
+         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+        $('td:eq(0)', nRow).html(iDisplayIndexFull +1);
+    }
+    } );
+ });
+
+ function confirmation(id){
+    Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {   
+    location.href = `/admin/delete-offer/${id}`    
+  }
+
+})
+  }
+</script>

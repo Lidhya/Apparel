@@ -129,14 +129,18 @@ module.exports = {
 
     },
 
-    addToCart: async (proId, userId) => {
+    addToCart: async (proId, userId, dPrice) => {
+       await db.get().collection(collection.PRODUCT_COLLECTION).updateOne({ _id: objectId(proId) },
+        {
+            $set:{offer_price:dPrice}
+        })
         let proData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
         console.log(proData.name)
         let proObj = {
             item: objectId(proId),
             name: proData.name,
             quantity: 1,
-            subtotal: proData.discount_price
+            categoryId:proData.categoryId,
         }
         return new Promise(async (resolve, reject) => {
             let userCart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
@@ -193,7 +197,8 @@ module.exports = {
                         item: '$products.item',
                         quantity: '$products.quantity',
                         subtotal: '$products.subtotal',
-                        name: '$products.name'
+                        name: '$products.name',
+                        categoryId:'$products.categoryId'
                     }
                 },
                 {
@@ -210,6 +215,7 @@ module.exports = {
                         quantity: 1,
                         subtotal: 1,
                         name: 1,
+                        categoryId:1,
                         products: {
                             $arrayElemAt: ['$products', 0]
                         }
@@ -335,7 +341,7 @@ module.exports = {
                         _id: null,
                         total: {
                             $sum: {
-                                $multiply: ['$quantity', '$products.discount_price']
+                                $multiply: ['$quantity', '$products.offer_price']
                             }
                         }
                     }
