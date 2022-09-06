@@ -4,6 +4,7 @@ const Promise = require('promise')
 const { resolve, reject } = require('promise')
 const { Timestamp } = require('mongodb')
 const { response } = require('express')
+const moment = require('moment');
 const objectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -89,11 +90,9 @@ module.exports = {
 
     getCategories: () => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.CATEGORY_COLLECTION).find().toArray().then((categories) => {
-                // console.log(categories);
-                resolve(categories)
+            db.get().collection(collection.CATEGORY_COLLECTION).find().toArray().then((category)=>{
+                resolve(category)
             })
-
         })
 
     },

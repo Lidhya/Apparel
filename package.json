@@ -29,7 +29,6 @@
     "paypal-rest-sdk": "^1.8.1",
     "promise": "^8.1.0",
     "razorpay": "^2.8.3",
-    "req-flash": "^0.0.3",
     "twilio": "^3.80.1"
   }
 }

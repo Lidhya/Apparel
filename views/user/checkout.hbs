@@ -21,10 +21,13 @@
                       <a class="nav-link active" id="tab-login" data-mdb-toggle="pill" href="#pills-login" role="tab"
                         aria-controls="pills-login" aria-selected="true">Use saved address</a>
                     </li>
+                    {{#if orderAddress}}
+                    {{else}}
                     <li class="nav-item" role="presentation">
                       <a class="nav-link" id="tab-register" data-mdb-toggle="pill" href="#pills-register" role="tab"
                         aria-controls="pills-register" aria-selected="false">Add another address</a>
                     </li>
+                    {{/if}}
                   </ul>
                   <!-- Pills navs -->
 
@@ -181,7 +184,8 @@
     </div>
   </div>
 </section>
- <script src="/javascripts/paypal.js"></script>
+<script src="/javascripts/paypal.js"></script>
+
 <script>
   $('button.update-address-btn').click(function () {
     $('form.update-address-form').submit();
@@ -208,8 +212,6 @@
         }
       }
     })
-
-
   })
 
   function razorpayPayment(order) {
@@ -269,7 +271,5 @@
    var element = document.getElementById("paypal-button-container");
   element.classList.toggle("d-none");
   }
-
-
 
 </script>

@@ -3,10 +3,11 @@
   <div class="d-flex">
     <a href="/admin/add-offer" class="btn btn-success mt-4 ms-auto ms-2">Add new offer</a>
   </div>
-  <div class="p-3 mt-3 mb-5  rounded" style="background-color: white;">
-   {{#if updateStatus}}
+  <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
+     <h4 class="text-dark text-center fw-light">OFFER DETAILS</h4>
+   {{!-- {{#if updateStatus}}
     <p style="color: green;">{{updateStatus}}</p>
-   {{/if}}
+   {{/if}} --}}
   <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
   <thead>
     <tr>
@@ -28,15 +29,20 @@
       <td>{{this.offer.percent}}</td> 
       <td>{{this.offer.valid_from}}</td>
       <td>{{this.offer.valid_till}}</td>
-       <td>
-        {{#if this.offer.isEnabled}}
-        <a  class=" btn btn-danger text-white p-2 " href="/admin/offer-disable/{{this._id}}" >Disable</a>
+       <td>{{#if this.offer.isExpired}}
+        <p class="text-danger">EXPIRED</p>
         {{else}}
-         <a  class="btn btn-success"  href="/admin/offer-enable/{{this._id}}" >Enable</a>
+        {{#if this.offer.isEnabled}}
+        <a  class=" btn btn-success text-white p-2 " href="/admin/offer-disable/{{this._id}}" >Enabled</a>
+        {{else}}
+         <a  class="btn btn-danger"  href="/admin/offer-enable/{{this._id}}" >Disabled</a>
+         {{/if}}
          {{/if}}
       </td>
-      <td>
+      <td>{{#if this.offer.isExpired}}
+        {{else}}
          <a href="/admin/edit-offer/{{this._id}}" class="btn "><i class="fa-regular fa-lg fa-pen-to-square"></i></a>
+         {{/if}}
         <a  class=" btn  text-dark p-2 " onclick="confirmation('{{this._id}}')"><i class="fas fa-trash fa-lg"></i></a>
       </td>
     </tr>

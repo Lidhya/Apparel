@@ -27,7 +27,10 @@
                 <select name="categoryId" class="custom-select tm-select-accounts" id="category">
                   <option selected>Select category</option>
                   {{#each categories}}
+                  {{#if this.offer.isExpired}}
                   <option value="{{this._id}}">{{this.category}}</option>
+                  {{else}}
+                  {{/if}}
                   {{/each}}
                 </select>
               </div>

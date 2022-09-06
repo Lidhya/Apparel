@@ -23,7 +23,7 @@ module.exports = {
             db.get().collection(collection.USER_COLLECTION).findOneAndUpdate(query, { $set: { block: true } }).then((response) => {
                 console.log(response)
                 resolve(response)
-            }).catch((err) => {
+            }).catch((err)=>{
                 console.log(err)
             })
         })
@@ -97,6 +97,7 @@ module.exports = {
             const totalOrders = await db.get().collection(collection.ORDER_COLLECTION).find().toArray()
             const totalSales = await db.get().collection(collection.ORDER_COLLECTION).find({ "delivery_status": { $eq: "Delivered" }}).toArray()
             const categories=await db.get().collection(collection.CATEGORY_COLLECTION).find().toArray()
+
             const mostSoldProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
                 {
                     $match: {
@@ -160,8 +161,8 @@ module.exports = {
                 }
               }
         ]).toArray()
-        //------------------------------------most cancelled--------------------------------------------------------//
 
+        //------------------------------------most cancelled--------------------------------------------------------//
         const mostCancelledProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
             {
                 $match: {
@@ -195,6 +196,7 @@ module.exports = {
                 }
               }
         ]).toArray()
+
         //-------------------------------------daily orders-------------------------------------------------------//
             const dailyOrders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
                 {
@@ -242,7 +244,6 @@ module.exports = {
                 date1.push(dailyOrders[dx]._id.date)
                 total1.push(dailyOrders[dx].totalDaily)
             }
-            console.log(date1 + "\n" + total1)
 
             for (let obj in totalSales) {
                 let pros = totalSales[obj].products
@@ -257,7 +258,6 @@ module.exports = {
             for(let cat in categories){
                 let count=0
                 for(let obj in mostSoldProducts[0].top_selling_products){
-                    console.log(mostSoldProducts[0].top_selling_products[obj].categoryId+'       huuhuhu        '+categories[cat]._id);
                     if(mostSoldProducts[0].top_selling_products[obj].categoryId.equals(categories[cat]._id) ){
                         console.log('if ill keri');
                         count++
@@ -311,5 +311,166 @@ module.exports = {
             console.log(details)
             resolve(details)
         })
+    },
+
+    mostSold:()=>{
+        return new Promise(async(resolve,reject)=>{
+            const mostSoldProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                {
+                    $match: {
+                        "delivery_status": { $eq: "Delivered" }
+                    }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $group: {
+                      "_id": "$products.item",
+                      "name":{"$first":"$products.name"},
+                      "categoryId":{"$first":"$products.categoryId"},
+                      "sum": {
+                        "$sum": "$products.quantity"
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      sum: -1
+                    }
+                  },
+                  {
+                    "$group": {
+                      _id: null,
+                      top_selling_products : {
+                        $push: {"_id":"$_id","sum":"$sum", "name":"$name", "categoryId":"$categoryId"}
+                      }
+                    }
+                  }
+            ]).toArray()
+        })
+    },
+
+    mostCancelled:()=>{
+        return new Promise(async(resolve,reject)=>{
+            const mostCancelledProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                {
+                    $match: {
+                        "delivery_status": { $eq: "Cancelled" }
+                    }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $group: {
+                      "_id": "$products.item",
+                      "name":{"$first":"$products.name"},
+                      "categoryId":{"$first":"$products.categoryId"},
+                      "sum": {
+                        "$sum": "$products.quantity"
+                      }
+                    }
+                  },
+                  {
+                    "$sort": {
+                      sum: -1
+                    }
+                  },
+                  {
+                    "$group": {
+                      _id: null,
+                      most_cancelled_products : {
+                        $push: {"_id":"$_id","sum":"$sum", "name":"$name", "categoryId":"$categoryId"}
+                      }
+                    }
+                  }
+            ]).toArray()
+
+            if(mostCancelledProducts){
+                resolve(mostCancelledProducts)
+            }else{
+                reject()
+            }
+    
+        })
+    },
+
+    mostOrdered:()=>{
+        return new Promise(async(resolve,reject)=>{
+
+             //-----------------------------------most ordered---------------------------------------------------------//
+        const mostOrderedProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+            {
+                $unwind: '$products'
+            },
+            {
+                $group: {
+                  "_id": "$products.item",
+                  "name":{"$first":"$products.name"},
+                  "categoryId":{"$first":"$products.categoryId"},
+                  "sum": {
+                    "$sum": "$products.quantity"
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  sum: -1
+                }
+              },
+              {
+                "$group": {
+                  _id: null,
+                  most_ordered_products : {
+                    $push: {"_id":"$_id","sum":"$sum", "name":"$name", "categoryId":"$categoryId"}
+                  }
+                }
+              }
+        ]).toArray()
+
+        if(mostOrderedProducts){
+            resolve(mostOrderedProducts)
+        }else{
+            reject()
+        }
+
+        })
+    },
+
+    dailyOrder:()=>{
+        return new Promise(async(resolve, reject)=>{
+            //-------------------------------------daily orders-------------------------------------------------------//
+            const dailyOrders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                {
+                    $match: {
+                        delivery_status: 'Delivered'
+                    },
+                },
+                {
+
+                    $group: {
+                        _id: { date: '$date' },
+                        totalDaily: { $sum: "$total" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        totalDaily: 1
+                    }
+                },
+                {
+                    $sort: { _id: 1 }
+                }
+            ]).toArray();
+
+            if(dailyOrders){
+                resolve(dailyOrders)
+            }else{
+                reject()
+            }
+        })
     }
+
 }

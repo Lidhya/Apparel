@@ -6,7 +6,10 @@ const adminHelpers=require("../helpers/admin-helpers");
 const productHelpers = require('../helpers/product-helpers');
 const offerHelpers = require('../helpers/offer-helpers');
 const { response } = require('express');
-const path=require('path')
+const path=require('path'); 
+const { truncate } = require('fs/promises');
+
+
 
 
 const verifyLogin=(req,res,next)=>{
@@ -20,6 +23,10 @@ const verifyLogin=(req,res,next)=>{
 router.get('/',async function(req, res, next) {
 if(req.session.loggedIn && req.session.admin){               
   var admin=req.session.admin
+  // let mostCancelledProducts=await adminHelpers.mostCancelled()
+  // let mostOrderedProducts=await adminHelpers.mostOrdered()
+  // let mostSoldProducts=await adminHelpers.mostSold()
+  // let dailyOrders=await adminHelpers.dailyOrder()
   let details=await adminHelpers.getReport()
   res.setHeader('cache-control','no-store')
   res.render('admin/dashboard',{title: " | Admin",admin, details});
@@ -29,6 +36,10 @@ if(req.session.loggedIn && req.session.admin){
 });
 
 router.get('/get-report',verifyLogin, async (req,res)=>{
+  // let mostCancelledProducts=await adminHelpers.mostCancelled()
+  // let mostOrderedProducts=await adminHelpers.mostOrdered()
+  // let mostSoldProducts=await adminHelpers.mostSold()
+  // let dailyOrders=await adminHelpers.dailyOrder()
   let details=await adminHelpers.getReport()
   res.json(details)
 })
@@ -224,12 +235,12 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
   })
 
   router.get('/category-offers',verifyLogin, async(req,res)=>{
-    let categories= await  productHelpers.getCategories()
+    let categories= await  offerHelpers.getOffers()
     res.render('admin/category-offers',{title: " | Admin",admin:true, categories})
   })
 
   router.get('/add-offer',verifyLogin, async(req,res)=>{
-    let categories= await  productHelpers.getCategories()
+    let categories= await  offerHelpers.getOffers()
     res.render('admin/add-cate-offer',{title: " | Admin",admin:true, categories, "offerErr":req.session.offerErr})
     req.session.offerErr=false
   })
@@ -269,7 +280,54 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
 
   router.get('/delete-offer/:id',verifyLogin, async(req,res)=>{
     let categories= await  offerHelpers.deleteOffer(req.params.id)
-    res.render('admin/add-cate-offer',{title: " | Admin",admin:true, categories})
+    res.render('admin/add-cate-offer',{ title: " | Admin", admin:true, categories})
+  })
+
+  router.get('/coupons', verifyLogin, async(req,res)=>{
+    let coupons= await offerHelpers.getAllCoupons()
+    res.render('admin/coupons',{ title:" | Admin", admin:true, coupons})
+  })
+
+  router.get('/add-coupon', verifyLogin, async(req,res)=>{
+    res.render('admin/add-coupon',{ title:" | Admin", admin:true})
+  })
+
+  router.post('/add-coupon', verifyLogin, async(req,res)=>{
+    offerHelpers.createCoupon(req.body).then(()=>{
+      res.redirect('/admin/coupons')
+    })  
+  })
+
+  router.get('/edit-coupon/:id', verifyLogin, async(req,res)=>{
+    let couponId=req.params.id
+    let coupon= await offerHelpers.getCoupon(couponId)
+    res.render('admin/coupon-edit',{ title: " | Admin", admin:true, coupon})
+  })
+
+  router.post('/edit-coupon/:id', verifyLogin, async(req,res)=>{
+    let couponId=req.params.id
+    offerHelpers.editCoupon(req.body, couponId).then(()=>{
+      res.redirect('/admin/coupons')
+    })  
+  })
+
+  router.get('/coupon-enable/:id',verifyLogin, async(req,res)=>{
+    offerHelpers.enableCoupon(req.params.id).then((response)=>{
+      res.json({status:true})
+     })
+  })
+
+  router.get('/coupon-disable/:id',verifyLogin, async(req,res)=>{
+    offerHelpers.disableCoupon(req.params.id).then((response)=>{
+      res.json({status:true})
+     })
+  })
+
+  router.get('/delete-coupon/:id',verifyLogin, async(req,res)=>{
+    console.log('delete vann');
+    offerHelpers.deleteCoupon(req.params.id).then((response)=>{
+      res.json({status:true})
+     })
   })
 
 module.exports = router;

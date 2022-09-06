@@ -70,81 +70,13 @@
 	</div>
 </section>
 
-<section style="background-color: #eee;" class="mt-3">
-  <div class="text-center container py-3 rounded-5">
-    <h4 class="mt-4 mb-5 separator text-uppercase logo text-uppercase" style="color: #4a1942;"><strong>Related
-        items</strong></h4>
 
-    <div class="owl-carousel owl-theme">
-      {{#each products}}
-      {{#ifCond this.category ../productDetails.category}}
-      <div class="item">
-        <div class="mb-4">
-
-
-          <div class="card h-100 p-0" style="background-color: transparent;">
-            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
-              <img src="{{this.image_path.[0]}}" class="w-100" style="height: 25rem;" />
-              <a href="/product-details/{{this._id}}">
-                {{! <div class="mask">
-                  <div class="d-flex justify-content-start align-items-end h-100">
-                    <h5><span class="badge bg-primary ms-2">New</span></h5>
-                  </div>
-                </div> }}
-                <div class="hover-overlay">
-                  <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                </div>
-              </a>
-            </div>
-            <div class="card-body">
-              <a href="/product-details/{{this._id}}" class="text-start text-reset">
-                <div class="d-flex justify-content-between">
-                  <h5 class="card-title">{{this.name}}</h5>
-                  <a href="" class="text-dark "><i class="fa-regular fa-heart "></i></a>
-                </div>
-              </a>
-              {{!-- <a href="" class="text-start text-reset">
-                <p>category</p>
-              </a> --}}
-              {{#if this.discount_price}}
-              <h6 class="text-start"> ₹{{this.discount_price}}</h6>
-              {{else}}
-              <h6 class="text-start"> ₹{{this.actual_price}}</h6>
-              {{/if}}
-
-
-              {{!-- <a href="#" class="btn btn-outline-dark rounded-0 p-1">Add to Wishlist</a> --}}
-              {{!-- <a href="/add-to-cart/{{this._id}}"> --}}
-                <button onclick="addToCart('{{this._id}}')" class="cta">
-                  <span class="hover-underline-animation">Add to cart</span>
-                  <svg id="arrow-horizontal" xmlns="http://www.w3.org/2000/svg" width="30" height="10"
-                    viewBox="0 0 46 16">
-                    <path id="Path_10" data-name="Path 10"
-                      d="M8,0,6.545,1.455l5.506,5.506H-30V9.039H12.052L6.545,14.545,8,16l8-8Z"
-                      transform="translate(30)"></path>
-                  </svg>
-                </button>
-                {{!-- </a> --}}
-
-            </div>
-          </div>
-
-
-        </div>
-      </div>
-      {{/ifCond}}
-      {{/each}}
-    </div>
-
-  </div>
-</section>
 
 <script src="/javascripts/zoomsl.min.js"></script>
 <script>
 	$(document).ready(function(){
 
 		$('.sub').click(function(){
-			console.log('heii')
 			let image=$(this).attr('src');
 			$('.main').attr('src', image)
 		})

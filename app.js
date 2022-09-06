@@ -43,12 +43,12 @@ method.handlebars.registerHelper('ifCond', function(v1, v2, options) {
   return options.inverse(this);
 });
 
-method.handlebars.registerHelper('ifId', function(v1, v2, options) {
-  if(v1.equals(v2) ) { 
-    return options.fn(this);
-  }
-  return options.inverse(this);
-});
+// method.handlebars.registerHelper('ifId', function(v1, v2, options) {
+//   if(v1.equals(v2) ) { 
+//     return options.fn(this);
+//   }
+//   return options.inverse(this);
+// });
 
 method.handlebars.registerHelper('ifNot', function(v1, v2, options) {
   if(v1 != v2) {
