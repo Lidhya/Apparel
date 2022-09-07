@@ -11,10 +11,22 @@
             <h5 class="my-3 text-white">{{user.fname}} {{user.lname}}</h5>
             <p class="text-white mb-1">{{user.email}}</p>
             <p class="text-white  mb-4">+91 {{user.phone}}</p>
+            <div class="form-control d-flex justify-content-between border" style="background-color: transparent;">
+              <span class="fs-5 fw-bold text-white" id="refferalId">{{user.referralId}}</span> 
+              <button class="btn px-3 text-white" onclick="CopyToClipboard('refferalId');return false;">Copy</button></div>
+               <p class="text-white m-0 text-start">Share your refferal Id to win exciting offers</p>
           </div>
+          {{!-- {{user.refferal_code}} --}}
         </div>
-        <div class="card mb-4 mb-lg-0">
-          <div class="card-body p-0">
+         <div class="card mb-4 mb-lg-0">
+          <div class="card-body p-4 d-flex justify-content-between align-items-center">
+            <i class="fa-solid fa-wallet fa-xl"><span class="fs-6  logo"> Wallet</span> </i>
+            <span>Balance:<span class="fs-4 fw-bold">  ₹ {{user.wallet.balance}}/-</span></span>
+            </div>
+            </div>
+
+        {{!-- <div class="card mb-4 mb-lg-0">
+          <div class="card-body p-4">
             <ul class="list-group list-group-flush rounded-3">
               <li class="list-group-item d-flex justify-content-between align-items-center p-3">
              <img style="height: 30px; width: 30px;" src="/images/shopping-cart.png" alt="">
@@ -31,7 +43,7 @@
              
             </ul>
           </div>
-        </div>
+        </div> --}}
 <div class="p-2 my-2" style="background-color: white;">
   <ol class="list-group list-group-light list-group-numbered">
   <h5 class="pt-2 text-center color">Saved addresses</h5>
@@ -249,4 +261,16 @@
 
 })
   }
+
+  
+function CopyToClipboard(id)
+{
+var r = document.createRange();
+r.selectNode(document.getElementById(id));
+window.getSelection().removeAllRanges();
+window.getSelection().addRange(r);
+document.execCommand('copy');
+window.getSelection().removeAllRanges();
+}
+
 </script>

@@ -82,12 +82,12 @@ router.get('/product-details/:id', verifyLogin, async (req, res) => {
   productHelpers.getProductDetails(proId).then(async (productDetails) => {
     let category = await offerHelpers.getOffer(productDetails.categoryId)
     console.log(category.offer)
-    if (category.offer) {
-      if (category.offer.isEnabled) {
+   
+      if (category.offer?.isEnabled) {
         let offerPrice = parseInt((productDetails.actual_price / 100) * category.offer.percent)
         productDetails.discount_price = parseFloat(productDetails.actual_price - offerPrice)
       }
-    }
+    
     let cartCount = await userHelpers.getCartCount(req.session.user._id)
     res.setHeader('cache-control', 'no-store')
     res.render('user/product-details', { title: '| Product details', productDetails, user: req.session.user, cartCount, products, category });
@@ -197,7 +197,6 @@ router.get('/checkout', verifyLogin, async function (req, res, next) {
 });
 
 router.post('/place-order', verifyLogin, async function (req, res, next) {
-
   let product = await userHelpers.getCartProducts(req.session.user._id)
   var products = 0
   var total = 0
@@ -212,24 +211,24 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
   }
   userHelpers.placeOrder(req.body, products, total).then(async (orderId) => {
 
-    if (req.body['payment_method'] === 'COD') {
-      console.log('cod succsess')                                          //----------if cod
+    if (req.body['payment_method'] === 'COD') {                             //----------if cod
+      console.log('cod succsess')                                         
       res.json({ codSuccess: true })
 
-    } else if (req.body['payment_method'] === 'Razorpay') {               //-----------if razorpay
+    } else if (req.body['payment_method'] === 'Razorpay') {                 //-----------if razorpay
       userHelpers.generateRazorpay(orderId, total).then((order) => {
         res.json({ order })
       }).catch((err) => {
         res.json({ status: false })
       })
 
-    } else if (req.body['payment_method'] === 'Paypal') {
+    } else if (req.body['payment_method'] === 'Paypal') {                   //----------if paypal
       userHelpers.changePaymentStatus(orderId).then(() => {
-        console.log('payment successfull')
+        console.log('payal successfull')
         res.json({ paypal: true });
       })
 
-    } else {                                                              //--------------else case
+    } else {                                                                //-----------else case
 
       res.json({ status: false })
     }

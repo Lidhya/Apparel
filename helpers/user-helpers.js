@@ -6,6 +6,7 @@ const { response } = require('express')
 const { resolve, reject } = require('promise')
 const objectId = require('mongodb').ObjectId
 const moment = require('moment');
+const referralCode=require('referral-codes')
 const Razorpay = require('razorpay');
 
 
@@ -17,17 +18,49 @@ var instance = new Razorpay({
 module.exports = {
     doSignup: (userData) => {
         return new Promise(async (resolve, reject) => {
+            userData.referralId=referralCode.generate(8)[0];
+            userData.referred_count=0
+            userData.signUp_date=new Date()
+            userData.wallet={
+                balance:0,
+                last_added:new Date()
+            }
             let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ email: userData.email })
 
             if (userCheck) {
                 let err = 'Email address already exist'
                 reject(err)
             } else {
-                userData.password = await bcrypt.hash(userData.password, 10)
-                userData.block=false
-                db.get().collection(collection.USER_COLLECTION).insertOne(userData).then((data) => {
-                    resolve(data)
-                })
+                if(userData.referrerId){
+                    let referrerCheck = await db.get().collection(collection.USER_COLLECTION).findOne({referralId:userData.referrerId})
+                    let referralOffers= await db.get().collection(collection.REFERRAL_COLLECTION).find().toArray()
+                    let referrer_offer=referralOffers[0].referrer_offer
+                    let referee_offer=referralOffers[0].referee_offer
+                    if(referrerCheck){
+                        db.get().collection(collection.USER_COLLECTION).updateOne({_id:objectId(referrerCheck._id)},{
+                            $set:{"wallet.last_added":new Date()},
+                            $inc:{ 
+                                "referred_count":1,
+                                "wallet.balance":referrer_offer
+                         }
+                        })
+                        userData.wallet.balance=referee_offer
+                        userData.password = await bcrypt.hash(userData.password, 10)
+                        userData.block=false
+                        db.get().collection(collection.USER_COLLECTION).insertOne(userData).then((data) => {
+                            resolve(data)
+                        })
+                    }else{
+                        let err = 'Invalid referral code'
+                        reject(err)
+                    }
+                }else{
+                    userData.password = await bcrypt.hash(userData.password, 10)
+                    userData.block=false
+                    db.get().collection(collection.USER_COLLECTION).insertOne(userData).then((data) => {
+                        resolve(data)
+                    })
+                }
             }
 
         })
@@ -131,10 +164,6 @@ module.exports = {
 
     addToCart: async (proId, userId, priceData) => {
        var dPrice=parseFloat(priceData.dPrice)
-    //    await db.get().collection(collection.PRODUCT_COLLECTION).updateOne({ _id: objectId(proId) },
-    //     {
-    //         $set:{"offer_price":dPrice},
-    //     })
         let proData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
         console.log(proData.name)
         let proObj = {
@@ -184,12 +213,6 @@ module.exports = {
                     resolve()
                 })
             }
-        })
-    },
-
-    deleteCart:(userId)=>{
-        return new Promise((resolve,reject)=>{
-            
         })
     },
 
@@ -441,6 +464,7 @@ module.exports = {
             let date = new Date()
             console.log(order.payment_method );
             let fDate = moment(date).format('YYYY-MM-DD')
+            let time = moment(date).format('LTS');
             let status = order.payment_method === 'COD' ? 'Placed' : 'Pending'
             let orderObj = {
                 delivery_details: {
@@ -456,6 +480,8 @@ module.exports = {
                 products: products,
                 total: total,
                 date: fDate,
+                time:time,
+                ordered_date:new Date(),
                 status: status,
                 delivery_status:'Pending'
             }
@@ -478,11 +504,10 @@ module.exports = {
 
     getUserOrders: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: objectId(userId) }).sort({ date: -1 }).toArray()
-            resolve(orders,)
+            let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: objectId(userId) }).sort({ordered_date: -1 }).toArray()
+            resolve(orders)
         })
     },
-
 
     cancelOrder: (orderId) => {
         return new Promise((resolve, reject) => {
@@ -511,7 +536,6 @@ module.exports = {
                 let err = 'Title already exists'
                 reject(err)
             } else {
-
                 db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
                     $push: {
                         addresses: addressObj
@@ -569,10 +593,6 @@ module.exports = {
                 amount: total*100,
                 currency: "INR",
                 receipt: ""+orderId,
-                // notes: {
-                //     key1: "value3",
-                //     key2: "value2"
-                // }
             },(err, order)=>{
                 if(err){
                     console.log(err)
@@ -615,9 +635,7 @@ module.exports = {
             console.log(err)
             reject(err)
         })
-
     })
-
 }
 
 }

@@ -35,18 +35,18 @@ module.exports = {
         })
     },
 
-    addImagePath:(image_path,proId)=>{
-        return new Promise((resolve,reject)=>{
-            db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:objectId(proId)},
-            {
-                $set:{
-                    image_path:image_path
-                }
-            }).then((response)=>{
-                resolve()
-            }).catch((err)=>{
-                reject(err)
-            })
+    addImagePath: (image_path, proId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCT_COLLECTION).updateOne({ _id: objectId(proId) },
+                {
+                    $set: {
+                        image_path: image_path
+                    }
+                }).then((response) => {
+                    resolve()
+                }).catch((err) => {
+                    reject(err)
+                })
         })
     },
     getAllProducts: () => {
@@ -90,7 +90,7 @@ module.exports = {
 
     getCategories: () => {
         return new Promise((resolve, reject) => {
-            db.get().collection(collection.CATEGORY_COLLECTION).find().toArray().then((category)=>{
+            db.get().collection(collection.CATEGORY_COLLECTION).find().toArray().then((category) => {
                 resolve(category)
             })
         })
@@ -109,20 +109,20 @@ module.exports = {
 
     },
     deleteCategory: (catId) => {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             console.log(objectId(catId))
             let query = { _id: objectId(catId) };
-            let proCheck= await db.get().collection(collection.PRODUCT_COLLECTION).find({categoryId: objectId(catId)})
-            if(proCheck){
-                let err= 'Products exist in this category'
+            let proCheck = await db.get().collection(collection.PRODUCT_COLLECTION).find({ categoryId: objectId(catId) })
+            if (proCheck) {
+                let err = 'Products exist in this category'
                 reject(err)
-            }else{
+            } else {
                 db.get().collection(collection.CATEGORY_COLLECTION).deleteOne(query).then((response) => {
                     console.log(response)
                     resolve(response)
                 })
             }
-           
+
         })
     },
     deleteProduct: (proId) => {

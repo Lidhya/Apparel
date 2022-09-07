@@ -21,6 +21,7 @@ const verifyLogin=(req,res,next)=>{
 }
 /* GET users listing. */
 router.get('/',async function(req, res, next) {
+  try{
 if(req.session.loggedIn && req.session.admin){               
   var admin=req.session.admin
   // let mostCancelledProducts=await adminHelpers.mostCancelled()
@@ -33,15 +34,21 @@ if(req.session.loggedIn && req.session.admin){
 }else{
   res.redirect('/')
 }
+}catch(err){
+  err="No sufficient data available"
+  res.status('404').json(err)
+}
 });
 
 router.get('/get-report',verifyLogin, async (req,res)=>{
-  // let mostCancelledProducts=await adminHelpers.mostCancelled()
-  // let mostOrderedProducts=await adminHelpers.mostOrdered()
-  // let mostSoldProducts=await adminHelpers.mostSold()
-  // let dailyOrders=await adminHelpers.dailyOrder()
-  let details=await adminHelpers.getReport()
-  res.json(details)
+  try{
+    let details=await adminHelpers.getReport()
+    res.json(details)
+  }catch(err){
+    err="No sufficient data available"
+    res.status('404').json(err)
+  }
+  
 })
 
 router.get('/products',verifyLogin, (req, res, next)=> {
@@ -139,7 +146,6 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
               if(req.files?.Image1){
                 console.log('vann vann  img 1')
                let image1=req.files?.Image1
-              // var imgpath1='/product-images/'+ id+'-0.jpg'
                fs.unlinkSync('./public/product-images/'+ id+'-0.jpg')
                 image1.mv('./public/product-images/'+ id+'-0.jpg',(err)=>{
                   if(err){
@@ -151,7 +157,6 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
               if(req.files?.Image2){
                 console.log('vann vann  img2')
                 let image2=req.files?.Image2
-               // var imgpath2='/product-images/'+ id+'-1.jpg'
                 fs.unlinkSync('./public/product-images/'+ id+'-1.jpg')
                  image2.mv('./public/product-images/'+ id+'-1.jpg',(err)=>{
                    if(err){
@@ -171,12 +176,6 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
                    }
                    })
                   }
-             
-            // productHelper.addImagePath(image_path, id).then((response)=>{
-            //   res.redirect('/admin/products')
-            // }).catch((err)=>{
-            //   console.log(err);
-            // })
             res.redirect('/admin/products')
    })
   })
@@ -234,9 +233,19 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
      })
   })
 
+  /////////////////////////////////////////Offer management//////////////////////////////////////////////////
+
   router.get('/category-offers',verifyLogin, async(req,res)=>{
     let categories= await  offerHelpers.getOffers()
-    res.render('admin/category-offers',{title: " | Admin",admin:true, categories})
+    let referrals= await  offerHelpers.getReferrals()
+    res.render('admin/category-offers',{title: " | Admin", admin:true, categories, referrals})
+  })
+
+  router.post('/edit-referrals',verifyLogin,(req,res)=>{
+    offerHelpers.editReferrals(req.body).then((data)=>{
+      res.redirect('/admin/category-offers')
+      //res.status('200').json('success')
+    })
   })
 
   router.get('/add-offer',verifyLogin, async(req,res)=>{

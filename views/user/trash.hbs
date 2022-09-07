@@ -338,3 +338,126 @@ add address form
   </div>
 </section> --}}
 
+{{!-- ////////////////////report/////////////////////// --}}
+
+router.get("/stats", async (req, res) => {
+    const today = new Date();
+    const latYear = today.setFullYear(today.setFullYear() - 1);
+  
+    try {
+      const data = await  db.get().collection('order').aggregate([
+        {
+            $match:{status:'Delivered'}
+        },
+        {
+        
+          $project: {
+            month: { $month: "$Date" },
+            total:"$totalAmount"
+          },
+        },
+        {
+          $group: {
+            _id: "$month",
+            total: { $sum: "$total" },
+          },
+        },
+      ]).sort({ _id: -1 }).toArray();
+      res.status(200).json(data)
+      console.log(data);
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  });
+  
+  router.get("/stats2", async (req, res) => {
+    const today = new Date();
+    const latYear = today.setFullYear(today.setFullYear() - 1);
+  
+    try {
+      const data = await  db.get().collection('order').aggregate([
+        {
+            $match:{status:'Delivered'}
+        },
+        {
+        
+          $project: {
+            week: { $week: "$Date" },
+            total:"$totalAmount"
+          },
+        },
+        {
+          $group: {
+            _id: "$week",
+            total: { $sum: "$total" },
+          },
+        },
+      ]).sort({ _id: -1 }).toArray();
+      res.status(200).json(data)
+      console.log(data);
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  });
+  router.get("/stats3", async (req, res) => {
+    const today = new Date();
+    const latYear = today.setFullYear(today.setFullYear() - 1);
+  
+    try {
+      const data = await  db.get().collection('order').aggregate([
+        {
+            $match:{status:'Delivered'}
+        },
+        {
+        
+          $project: {
+            dayOfMonth: { $dayOfMonth: "$Date" },
+            total:"$totalAmount"
+          },
+        },
+        {
+          $group: {
+            _id: "$dayOfMonth",
+            total: { $sum: "$total" },
+          },
+        },
+      ]).sort({ _id: -1 }).toArray();
+      res.status(200).json(data)
+      console.log(data);
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  });
+  
+  router.get("/stats4", async (req, res) => {
+    const today = new Date();
+    const latYear = today.setFullYear(today.setFullYear() - 1);
+  
+    try {
+      const data = await  db.get().collection('order').aggregate([
+        {
+            $match:{status:'Delivered'}
+        },
+        {
+          $project: {
+            year: { $year: "$Date" },
+            total:"$totalAmount"
+          },
+        },
+        {
+          $group: {
+            _id: "$year",
+            total: { $sum: "$total" },
+          },
+        },
+      ]).sort({ _id: -1 }).toArray();
+      res.status(200).json(data)
+      console.log(data);
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  });

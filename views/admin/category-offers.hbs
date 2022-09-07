@@ -4,7 +4,7 @@
     <a href="/admin/add-offer" class="btn btn-success mt-4 ms-auto ms-2">Add new offer</a>
   </div>
   <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
-     <h4 class="text-dark text-center fw-light">OFFER DETAILS</h4>
+     <h4 class="text-dark text-center fw-light">CATEGORY OFFER DETAILS</h4>
    {{!-- {{#if updateStatus}}
     <p style="color: green;">{{updateStatus}}</p>
    {{/if}} --}}
@@ -51,9 +51,31 @@
   </tbody>
 </table>
 </div>
-</div>
 
+<div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
+     <h4 class="text-dark text-center fw-light">REFERRAL OFFER DETAILS</h4>
+     <form action="/admin/edit-referrals" method="post" id="referral-form">
+     <div class="d-flex justify-content-center align-items-center">
+     <div class="col-md-6 w-25 p-3 form-group">
+      <label for="referrer">Referrer offer amount₹</label>
+      <input type="text" class="form-control" name="referrer_offer" value="{{referrals.referrer_offer}}">
+     </div>
+     <div class="col-md-6 w-25 p-3 form-group">
+      <label for="referee">Referee offer amount₹</label>
+      <input type="text" class="form-control" name="referee_offer" value="{{referrals.referee_offer}}">
+     </div>
+     <input class="d-none" type="text" name="refId" value="{{referrals._id}}">
+     <button type="submit" class="btn mt-4">Edit</button>
+     </div>
+     </form>
+     <p class="text-center">(These offers will be added to the customer's wallet if referred)</p>
+     </div>
+    
+</div>
+ 
 </section>
+
+
 
 <script>
     $(document).ready(function() {
@@ -81,7 +103,17 @@
   if (result.isConfirmed) {   
     location.href = `/admin/delete-offer/${id}`    
   }
-
 })
-  }
+}
+
+ // $("#referral-form").submit((e) => {
+ //   $.ajax({
+ //     url: '/admin/edit-referrals',
+ //     method: 'post',
+ //     data: $("#referral-form").serialize(),
+ //     success: (response) => {
+ //     location.reload()
+ //     }
+ //   })
+ // })
 </script>

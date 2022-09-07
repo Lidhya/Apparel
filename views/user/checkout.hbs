@@ -127,7 +127,7 @@
                     <div class="mb-4 pb-2">
                       <div class="d-flex justify-content-between align-items-center text-white">
                         <h4>Total amount</h4>
-                        <h5 class="float-left">&#x20b9;{{total}}/-</h5>
+                        <h5 class="float-left">₹<span  id="total">{{total}}</span>/-</h5>
                       </div>
                       <hr>
                     </div>
@@ -136,6 +136,8 @@
                       <div class="mb-4 pb-2 border rounded">
                         <div class="text-white p-4">
                           <label class="mb-2 fw-bold" for="payment method">Select a payment method</label><br>
+                          <input type="radio" id="wallet" name="payment_method" value="wallet" class="">
+                          <label for="wallet">Wallet ₹<span id="wallet-balance">{{user.wallet.balance}}</span></label><span class="fw-light" id="wallet-status"></span><br>
                           <input type="radio" id="cod" name="payment_method" value="COD" required>
                           <label for="cod">Cash on delivery</label><br>
                           <input type="radio" id="razorpay" name="payment_method" value="Razorpay">
@@ -187,6 +189,15 @@
 <script src="/javascripts/paypal.js"></script>
 
 <script>
+   $(window).on('load',function(){
+    let walletBalance=parseInt( document.getElementById('wallet-balance').innerText)
+    let total=parseInt(document.getElementById('total').innerText)
+    if(walletBalance<total){
+      document.getElementById('wallet').classList.add('d-none')
+      document.getElementById('wallet-status').innerText=' (insufficient balance)'
+    }
+   })
+
   $('button.update-address-btn').click(function () {
     $('form.update-address-form').submit();
   });

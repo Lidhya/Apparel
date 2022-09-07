@@ -7,18 +7,18 @@
     all: unset;
   }
 </style>
+
 {{#if orders}}
 <section class="h-100 pt-3">
   <div class="container h-100 py-5">
     <div class="row d-flex justify-content-center  h-100">
       <h3 class="fw-normal mb-0 mt-5 pb-3 text-black text-uppercase">Orders</h3>
       <div class="col-12 mt-4">
-
         {{#each orders}}
         <div class="card rounded-5 mb-5">
           <div class="card-body px-0 pt-0">
             <div class="d-flex head flex-wrap align-items-center p-3 justify-content-around text-white rounded-top">
-              <p class="my-auto mx-auto">Order placed on {{this.date}}</p>
+              <p class="my-auto mx-auto">Order placed on {{this.date}}<br>at {{this.time}}</p>
               {{#ifCond this.delivery_status 'Cancelled'}}
               <p class="my-auto mx-auto">Order is Cancelled</p>
               {{else}}
@@ -27,7 +27,6 @@
               <p class="my-auto mx-auto">Total spend &#x20b9;{{this.total}}</p>
               <p class="my-auto mx-auto">Payment thorough {{this.payment_method}}</p>
               <p class="my-auto mx-auto">Order is {{this.delivery_status}}</p>
-
               {{#ifCond this.delivery_status 'Cancelled'}}
               <p class="my-auto mx-auto fw-bold">Order is cancelled</p>
               {{else}}
@@ -37,9 +36,7 @@
               <a class="btn btn-danger p-2" onclick="confirmation('{{this._id}}')">Cancel order</a>
               {{/ifCond}}
               {{/ifCond}}
-
             </div>
-
 
             {{!-- ------------ --}}
             <div class="row d-flex justify-content-around align-items-center ms-1">
@@ -63,12 +60,9 @@
             </div>
             {{!-- ----------- --}}
 
-           
           </div>
         </div>
         {{/each}}
-
-         
       </div>
     </div>
   </div>
@@ -80,7 +74,6 @@
   <div class="col-md-12 pt-5">
     <div class="card mb-4">
       <div class="card-body">
-
         <div class="d-flex flex-column justify-content-center align-items-center">
           <h3 class="fw-light text-uppercase">Your orders is empty</h3>
           <img style="width: 20rem; height: 20rem;" src="/images/Add to Cart-amico.png" alt="">
@@ -88,7 +81,6 @@
       </div>
     </div>
   </div>
-
 </div>
 {{/if}}
 
@@ -107,7 +99,6 @@
       if (result.isConfirmed) {
         location.href = `/cancel-order/${id}`
       }
-
     })
   }
 </script>
