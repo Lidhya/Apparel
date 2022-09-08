@@ -64,6 +64,7 @@ module.exports = {
             })
         })
     },
+    
     editOffer: (offerData) => {
         return new Promise((resolve, reject) => {
             let query = offerData.categoryId
@@ -122,6 +123,7 @@ module.exports = {
             })
         })
     },
+
      // --------------------------referral Management------------------------------- //
 
      getReferrals:()=>{

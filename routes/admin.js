@@ -5,7 +5,7 @@ const productHelper=require("../helpers/product-helpers")
 const adminHelpers=require("../helpers/admin-helpers");
 const productHelpers = require('../helpers/product-helpers');
 const offerHelpers = require('../helpers/offer-helpers');
-const { response } = require('express');
+const orderHelpers = require('../helpers/order-helpers');
 const path=require('path'); 
 const { truncate } = require('fs/promises');
 
@@ -24,10 +24,6 @@ router.get('/',async function(req, res, next) {
   try{
 if(req.session.loggedIn && req.session.admin){               
   var admin=req.session.admin
-  // let mostCancelledProducts=await adminHelpers.mostCancelled()
-  // let mostOrderedProducts=await adminHelpers.mostOrdered()
-  // let mostSoldProducts=await adminHelpers.mostSold()
-  // let dailyOrders=await adminHelpers.dailyOrder()
   let details=await adminHelpers.getReport()
   res.setHeader('cache-control','no-store')
   res.render('admin/dashboard',{title: " | Admin",admin, details});
@@ -212,7 +208,7 @@ router.get('/product-edit/:id',verifyLogin, async (req, res)=> {
 
   router.get('/cancel-order/:id',verifyLogin, (req,res)=>{
     let orderId=req.params.id
-     adminHelpers.cancelOrder(orderId).then((response)=>{
+    orderHelpers.cancelOrder(orderId).then((response)=>{
       res.redirect('/admin/all-orders')
      })
   })

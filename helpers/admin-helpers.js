@@ -49,18 +49,7 @@ module.exports = {
             resolve(orders)
         })
     },
-    cancelOrder: (orderId) => {
-        return new Promise((resolve, reject) => {
-            let query = { _id: objectId(orderId) };
-            db.get().collection(collection.ORDER_COLLECTION).findOneAndUpdate(query, { $set: { delivery_status: 'Cancelled' } }).then((response) => {
-                resolve(response)
-            }).catch((err) => {
-                console.log(err)
-                reject(err)
-            })
-        })
-    },
-
+    
     updateOrder: (orderId, updateData) => {
         return new Promise((resolve, reject) => {
             let query = { _id: objectId(orderId) };

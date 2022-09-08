@@ -8,7 +8,8 @@ const base = "https://api-m.sandbox.paypal.com";
 
 
 module.exports={  
-    createOrder:async()=> {
+    createOrder:async(total)=> {
+      total=Math.round(total*0.013)
         const accessToken = await generateAccessToken();
         const url = `${base}/v2/checkout/orders`;
         const response = await fetch(url, {
@@ -23,7 +24,7 @@ module.exports={
               {
                 amount: {
                   currency_code: "USD",
-                  value: "100.00",
+                  value: total,
                 },
               },
             ],

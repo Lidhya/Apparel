@@ -1,0 +1,78 @@
+<section class="h-100 pt-5">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-10">
+                <div class="col-md-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-normal mb-0 text-black text-uppercase">Wishlist </h3>
+                        {{!-- <div>
+                            <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!"
+                                    class="text-body">price <i class="fas fa-angle-down mt-1"></i></a></p>
+                        </div> --}}
+                    </div>
+                    {{#each products}}
+                    <div class="card rounded-3 mb-4">
+                        <div class="card-body p-4">
+                            <div class="row d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                    <img src="{{this.products.image_path.[0]}}" class="img-fluid rounded-3 shadow"
+                                        alt="Cotton T-shirt">
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-xl-3">
+                                    <a href="/product-details/{{this.products._id}}"
+                                        class="lead fw-normal mb-2 text-dark fw-bold">{{this.products.name}}</a><br>
+                                    <span class="text-muted">Size: <span class="fw-normal text-dark">M</span></span>
+                                    <span class="mb-0 px-3 fw-normal fs-5"> ₹{{this.price}}</span>
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                    <button class="btn btn-link px-2 py-2"
+                                        onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.price}}',-1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+
+                                    <span class="form-control py-2" style="width: 2rem;"
+                                        id="{{this.products._id}}">{{this.quantity}}</span>
+
+                                    <button class="btn btn-link px-2 py-2"
+                                        onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.name}}','{{this.price}}',1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+
+                                </div>
+                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                    {{#if this.subtotal}}
+                                    <span class="mb-0 fs-4 " id="{{this.products.name}}"> ₹{{this.subtotal}}</span>
+                                    {{else}}
+                                    <span class="mb-0 fs-4 " id="{{this.products.name}}">
+                                        ₹{{this.products.offer_price}}</span>
+                                    {{/if}}
+                                </div>
+
+                                <div class="col-md-1 col-lg-1 col-xl-1 ">
+                                    <a href="" class="text-dark pe-3 "><i class="fa-regular fa-heart fa-lg "></i></a>
+                                    <button onclick="removeFromCart('{{this._id}}','{{this.products._id}}')"
+                                        class="text-dark border-0 p-0" style="background-color: white;"><i
+                                            class="fas fa-trash fa-lg"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class="col-md-12">
+          <div class="card mb-4">
+            <div class="card-body">
+             
+              <div class="d-flex flex-column justify-content-center align-items-center">
+                <h3 class="fw-light text-uppercase">Your wishlist is empty</h3>
+                <img style="width: 20rem; height: 20rem;" src="/images/Love is in the air-bro.png" alt="EMPTY CART">
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+</section>

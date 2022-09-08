@@ -125,6 +125,16 @@ module.exports = {
         })
     },
 
+    getuserDetails:(userId)=>{
+        return new Promise(async (resolve, reject) => {
+            db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(userId) }).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    },
+
     updateProfile: (details, userId) => {
         return new Promise(async (resolve, reject) => {
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
@@ -162,14 +172,27 @@ module.exports = {
 
     },
 
-    addToCart: async (proId, userId, priceData) => {
-       var dPrice=parseFloat(priceData.dPrice)
+    getWishlist:()=>{
+        return new Promise((resolve,reject)=>{
+            resolve()
+        })
+    },
+
+    addToWishlist:()=>{
+        return new Promise((resolve,reject)=>{
+
+        })
+    },
+
+    addToCart: async (proId, userId, data) => {
+       var dPrice=parseFloat(data.dPrice)
         let proData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
         console.log(proData.name)
         let proObj = {
             item: objectId(proId),
             name: proData.name,
             price:dPrice,
+            size: data.size,
             quantity: 1,
             categoryId:proData.categoryId,
             subtotal:dPrice
@@ -229,6 +252,8 @@ module.exports = {
                     $project: {
                         item: '$products.item',
                         quantity: '$products.quantity',
+                        quantity: '$products.quantity',
+                        size: '$products.size',
                         subtotal: '$products.subtotal',
                         price: '$products.price',
                         name: '$products.name',
@@ -248,6 +273,7 @@ module.exports = {
                         item: 1,
                         quantity: 1,
                         subtotal: 1,
+                        size: 1,
                         price: 1,
                         name: 1,
                         categoryId:1,
@@ -256,22 +282,6 @@ module.exports = {
                         }
                     }
                 }
-                // {
-                //     $lookup:{
-                //         from:collection.PRODUCT_COLLECTION,
-                //         let:{proList:'$products'},
-                //         pipeline:[
-                //             {
-                //                 $match:{
-                //                     $expr:{
-                //                         $in:['$_id','$$proList']
-                //                     }
-                //                 }
-                //             }
-                //         ],
-                //         as:'cartItems'
-                //     }
-                // }
             ]).toArray()
             console.log(cartItems)
             resolve(cartItems)
@@ -357,23 +367,6 @@ module.exports = {
                         subtotal: '$products.subtotal'
                     }
                 },
-                // {
-                //     $lookup: {
-                //         from: collection.PRODUCT_COLLECTION,
-                //         localField: 'item',
-                //         foreignField: '_id',
-                //         as: 'products'
-                //     }
-                // },
-                // {
-                //     $project: {
-                //         item: 1,
-                //         quantity: 1,
-                //         products: {
-                //             $arrayElemAt: ['$products', 0]
-                //         }
-                //     }
-                // },
                  {
                     $group: {
                         _id: null,
@@ -459,13 +452,28 @@ module.exports = {
         })
     },
 
-    placeOrder: (order, products, total) => {
+    placeOrder: (order, products, total, userId) => {
         return new Promise(async (resolve, reject) => {
             let date = new Date()
             console.log(order.payment_method );
             let fDate = moment(date).format('YYYY-MM-DD')
             let time = moment(date).format('LTS');
             let status = order.payment_method === 'COD' ? 'Placed' : 'Pending'
+            if(order.payment_method === 'Wallet'){
+                db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(userId)}).then(async(userData)=>{
+                    if(userData.wallet.balance<total){
+                        let err='Insufficient balance'
+                        reject(err)
+                    }else{
+                      await  db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({_id:objectId(userId)},{
+                            $set:{"wallet.last_added":new Date()},
+                            $inc:{
+                                "wallet.balance":-total
+                            }
+                        })
+                    }
+                })
+            }
             let orderObj = {
                 delivery_details: {
                     title: order.title,
@@ -506,18 +514,6 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let orders = await db.get().collection(collection.ORDER_COLLECTION).find({ userId: objectId(userId) }).sort({ordered_date: -1 }).toArray()
             resolve(orders)
-        })
-    },
-
-    cancelOrder: (orderId) => {
-        return new Promise((resolve, reject) => {
-            let query = { _id: objectId(orderId) };
-            db.get().collection(collection.ORDER_COLLECTION).findOneAndUpdate(query, { $set: { delivery_status:'Cancelled'} }).then((response) => {
-                resolve(response)
-            }).catch((err) => {
-                console.log(err)
-                reject(err)
-            })
         })
     },
 

@@ -5,6 +5,7 @@ const productHelpers = require('../helpers/product-helpers');
 const router = express.Router();
 const userHelpers = require('../helpers/user-helpers');
 const offerHelpers = require('../helpers/offer-helpers');
+const orderHelpers = require('../helpers/order-helpers');
 const paypal = require('../helpers/paypal')
 
 const verifyLogin = (req, res, next) => {
@@ -176,6 +177,7 @@ router.post('/apply-coupon', verifyLogin, async (req, res) => {
 
 router.get('/checkout', verifyLogin, async function (req, res, next) {
   let total = await userHelpers.getTotalAmount(req.session.user._id)
+  let userDetails = await userHelpers.getuserDetails(req.session.user._id)
   if(req.session.couponAppiled){
     if(req.session.couponAppiled.minimum_purchase<=total){
       let amountOff=req.session.couponAppiled.amount_off
@@ -185,9 +187,11 @@ router.get('/checkout', verifyLogin, async function (req, res, next) {
     }
   }
   if (total) {
+    req.session.total=total
     res.render('user/checkout', {
       title: '| Checkout',
       total, user: req.session.user,
+      userDetails,
       'addressErr': req.session.addressErr,
       'orderAddress': req.session.orderAddress
     });
@@ -197,7 +201,8 @@ router.get('/checkout', verifyLogin, async function (req, res, next) {
 });
 
 router.post('/place-order', verifyLogin, async function (req, res, next) {
-  let product = await userHelpers.getCartProducts(req.session.user._id)
+  let userId=req.session.user._id
+  let product = await userHelpers.getCartProducts(userId)
   var products = 0
   var total = 0
   if (product.length > 0) {
@@ -206,10 +211,10 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
     if(req.session.couponAppiled){    
         let amountOff=req.session.couponAppiled.amount_off
         total=total-amountOff    
-        offerHelpers.addUsedCoupon(req.session.couponAppiled, req.session.user._id, total)
+        offerHelpers.addUsedCoupon(req.session.couponAppiled, userId, total)
     }
   }
-  userHelpers.placeOrder(req.body, products, total).then(async (orderId) => {
+  userHelpers.placeOrder(req.body, products, total, userId).then(async (orderId) => {
 
     if (req.body['payment_method'] === 'COD') {                             //----------if cod
       console.log('cod succsess')                                         
@@ -226,18 +231,30 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
       userHelpers.changePaymentStatus(orderId).then(() => {
         console.log('payal successfull')
         res.json({ paypal: true });
+      }).catch((err)=>{
+        res.json({ status: false })
       })
 
+    }else if (req.body['payment_method'] === 'Wallet') {                    //----------if Wallet  
+      userHelpers.changePaymentStatus(orderId).then(() => {
+        console.log('wallet successfull')
+        res.json({ walletSuccess: true })
+      }).catch((err)=>{
+        res.json({ status: false })
+      })                                         
+      
     } else {                                                                //-----------else case
 
       res.json({ status: false })
     }
+  }).catch((err)=>{
+    res.json({ status: false })
   })
 
 });
 
 router.post("/api/orders", verifyLogin, async (req, res) => {
-  const order = await paypal.createOrder();
+  const order = await paypal.createOrder(req.session.total);
   res.json(order);
 });
 
@@ -276,11 +293,15 @@ router.get('/orders', verifyLogin, async function (req, res, next) {
 });
 
 router.get('/account', verifyLogin, async function (req, res, next) {
-  cartCount = await userHelpers.getCartCount(req.session.user._id)
+  let cartCount = await userHelpers.getCartCount(req.session.user._id)
+  let userDetails = await userHelpers.getuserDetails(req.session.user._id)
+  let referrals= await  offerHelpers.getReferrals()
   res.render('user/account', {
     title: '| Account',
     user: req.session.user,
     cartCount,
+    userDetails,
+    referrals,
     'profileUpdateErr': req.session.profileUpdateErr,
     'pwd': req.session.pwdErr,
     'addressErr': req.session.addressErr
@@ -292,7 +313,7 @@ router.get('/account', verifyLogin, async function (req, res, next) {
 
 router.get('/cancel-order/:id', verifyLogin, (req, res) => {
   let orderId = req.params.id
-  userHelpers.cancelOrder(orderId).then((response) => {
+  orderHelpers.cancelOrder(orderId).then((response) => {
     res.redirect('/orders')
   })
 })
@@ -351,13 +372,15 @@ router.get('/delete-address/:id', verifyLogin, (req, res) => {
   })
 })
 
+router.get('/wishlist', verifyLogin, async(req, res) => {
+  let cartCount = await userHelpers.getCartCount(req.session.user._id)
+  let wishlist=await userHelpers.getWishlist(req.session.user._id)
+  res.render('user/wishlist', { title: '| Wishlist', user: req.session.user , cartCount, wishlist})
+})
+
 router.get('/logout', verifyLogin, (req, res) => {
   req.session.loggedIn = false
   req.session.destroy()
-  res.redirect('/')
-})
-
-router.get('/wishlist', verifyLogin, (req, res) => {
   res.redirect('/')
 })
 

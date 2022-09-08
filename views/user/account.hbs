@@ -14,14 +14,14 @@
             <div class="form-control d-flex justify-content-between border" style="background-color: transparent;">
               <span class="fs-5 fw-bold text-white" id="refferalId">{{user.referralId}}</span> 
               <button class="btn px-3 text-white" onclick="CopyToClipboard('refferalId');return false;">Copy</button></div>
-               <p class="text-white m-0 text-start">Share your refferal Id to win exciting offers</p>
+               <p class="text-white m-0 text-start">Share your refferal Id to win ₹{{referrals.referrer_offer}}/- wallet balance</p>
           </div>
           {{!-- {{user.refferal_code}} --}}
         </div>
          <div class="card mb-4 mb-lg-0">
           <div class="card-body p-4 d-flex justify-content-between align-items-center">
             <i class="fa-solid fa-wallet fa-xl"><span class="fs-6  logo"> Wallet</span> </i>
-            <span>Balance:<span class="fs-4 fw-bold">  ₹ {{user.wallet.balance}}/-</span></span>
+            <span>Balance:<span class="fs-4 fw-bold">  ₹ {{userDetails.wallet.balance}}/-</span></span>
             </div>
             </div>
 
@@ -48,8 +48,8 @@
   <ol class="list-group list-group-light list-group-numbered">
   <h5 class="pt-2 text-center color">Saved addresses</h5>
     <hr>
-    {{#if user.addresses}}
-    {{#each user.addresses}}
+    {{#if userDetails.addresses}}
+    {{#each userDetails.addresses}}
   <li class="list-group-item d-flex justify-content-between align-items-start">
     <div class="ms-2 me-auto">
       <div class="fw-bold ">{{this.title}}</div>

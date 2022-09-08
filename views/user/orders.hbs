@@ -13,6 +13,7 @@
   <div class="container h-100 py-5">
     <div class="row d-flex justify-content-center  h-100">
       <h3 class="fw-normal mb-0 mt-5 pb-3 text-black text-uppercase">Orders</h3>
+      <p class="fw-light">(Refunds are only initiated if order is placed)</p>
       <div class="col-12 mt-4">
         {{#each orders}}
         <div class="card rounded-5 mb-5">
@@ -25,10 +26,10 @@
               <p class="my-auto mx-auto">Order is {{this.status}} </p>
               {{/ifCond}}
               <p class="my-auto mx-auto">Total spend &#x20b9;{{this.total}}</p>
-              <p class="my-auto mx-auto">Payment thorough {{this.payment_method}}</p>
-              <p class="my-auto mx-auto">Order is {{this.delivery_status}}</p>
+              <p class="my-auto mx-auto">Payment through {{this.payment_method}}</p>
+              <p class="my-auto mx-auto">Delivery is {{this.delivery_status}}</p>
               {{#ifCond this.delivery_status 'Cancelled'}}
-              <p class="my-auto mx-auto fw-bold">Order is cancelled</p>
+              <p class="my-auto mx-auto fw-bold">Order is cancelled <br><span class="fw-light fs-6">(Check wallet for refunds)</span></p>
               {{else}}
               {{#ifCond this.delivery_status 'Delivered'}}
                <p class="my-auto mx-auto fw-bold">DELIVERED</p>
