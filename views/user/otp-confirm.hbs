@@ -1,5 +1,4 @@
-
-<section class="pt-5" >
+<section class="pt-5">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col col-xl-10">
@@ -12,15 +11,15 @@
             <div class="col-md-6 col-lg-7 d-flex align-items-center">
               <div class="card-body p-4 p-lg-5 text-black">
 
-             <form action="/otp/verifyOTP" method="post" id="form5">
-              <div class="d-flex align-items-center mb-3 pb-1">
+                <form action="/otp/verifyOTP" method="post" id="form5">
+                  <div class="d-flex align-items-center mb-3 pb-1">
                     <span class="h1 fw-bold mb-0 logo">Apparel</span>
                   </div>
 
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Log into your account using OTP</h5>
                   {{#if error}}
-    <div class="alert alert-danger">{{error}}</div>
-{{/if}}
+                  <div class="alert alert-danger">{{error}}</div>
+                  {{/if}}
 
                   <div class="form-outline mb-4">
                     <input type="number" id="form2Example17" name="otp" class="form-control form-control-lg" />
@@ -29,11 +28,11 @@
                   <p>(OTP will expire in 5 minutes)</p>
                   <input type="text" name="hash" value="{{hash}}" class="d-none">
                   <input type="tel" name="phone" value="{{phone}}" class="d-none">
-            
-            <div class="pt-1 mb-4">
-                    <button class="btn btn-dark btn-lg btn-block"  type="submit">Verify</button>
+
+                  <div class="pt-1 mb-4">
+                    <button class="btn btn-dark btn-lg btn-block" type="submit">Verify</button>
                   </div>
-            </form>
+                </form>
 
               </div>
             </div>

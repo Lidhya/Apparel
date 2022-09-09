@@ -2,54 +2,54 @@
 require('dotenv').config()
 //const fetch=require('node-fetch')
 const fetch = (...args) =>
-import('node-fetch').then(({ default: fetch }) => fetch(...args));
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const { CLIENT_ID, APP_SECRET } = process.env;
 const base = "https://api-m.sandbox.paypal.com";
 
 
-module.exports={  
-    createOrder:async(total)=> {
-      total=Math.round(total*0.013)
-        const accessToken = await generateAccessToken();
-        const url = `${base}/v2/checkout/orders`;
-        const response = await fetch(url, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            intent: "CAPTURE",
-            purchase_units: [
-              {
-                amount: {
-                  currency_code: "USD",
-                  value: total,
-                },
-              },
-            ],
-          }),
-        });
-        const data = await response.json();
-        console.log(data);
-        return data;
+module.exports = {
+  createOrder: async (total) => {
+    total = Math.round(total * 0.013)
+    const accessToken = await generateAccessToken();
+    const url = `${base}/v2/checkout/orders`;
+    const response = await fetch(url, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
-      
-    capturePayment:async(orderId)=> {
-        const accessToken = await generateAccessToken();
-        const url = `${base}/v2/checkout/orders/${orderId}/capture`;
-        const response = await fetch(url, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+      body: JSON.stringify({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            amount: {
+              currency_code: "USD",
+              value: total,
+            },
           },
-        });
-        const data = await response.json();
-        console.log(data);
-        return data;
-      }
-      
+        ],
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+    return data;
+  },
+
+  capturePayment: async (orderId) => {
+    const accessToken = await generateAccessToken();
+    const url = `${base}/v2/checkout/orders/${orderId}/capture`;
+    const response = await fetch(url, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+    return data;
+  }
+
 }
 
 

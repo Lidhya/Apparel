@@ -1,6 +1,5 @@
 <link rel="stylesheet" href="/stylesheets/product-details.css" />
 <section class="py-4">
-
 	<div class="container">
 		<div class="card">
 			<div class="container-fliud">
@@ -10,14 +9,16 @@
 
 							<div class="main-image ps-4">
 								<img class="img-fluid rounded-4 main" id="image-zoom"
-									src="{{productDetails.image_path.[0]}}"
-									style="height: 32rem; width: 27rem;">   
+									src="{{productDetails.image_path.[0]}}" style="height: 32rem; width: 27rem;">
 							</div>
 
 							<div class="sub-images mt-2 ms-3 ">
-								<img class="m-2 sub" src="{{productDetails.image_path.[0]}}" style="height: 5rem; width: 5rem;" alt="product image">
-								<img class="m-2 sub" src="{{productDetails.image_path.[1]}}" style="height: 5rem; width: 5rem;" alt="product image">
-								<img class="m-2 sub" src="{{productDetails.image_path.[2]}}" style="height: 5rem; width: 5rem;" alt="product image">
+								<img class="m-2 sub" src="{{productDetails.image_path.[0]}}"
+									style="height: 5rem; width: 5rem;" alt="product image">
+								<img class="m-2 sub" src="{{productDetails.image_path.[1]}}"
+									style="height: 5rem; width: 5rem;" alt="product image">
+								<img class="m-2 sub" src="{{productDetails.image_path.[2]}}"
+									style="height: 5rem; width: 5rem;" alt="product image">
 							</div>
 
 						</div>
@@ -34,23 +35,24 @@
 								<span class="fa fa-star checked"></span>
 							</div>
 							<span class="review-no">Category: {{productDetails.category}}</span>
-							 <p class="pt-1">Material: {{productDetails.material_type}}</p>
+							<p class="pt-1">Material: {{productDetails.material_type}}</p>
 						</div>
 						<p class="product-description">{{productDetails.description}}</p>
-						<p class="fw-bold">Price: 
-							<del class="text-danger fs-5 fw-light">₹{{productDetails.actual_price}}</del>  
+						<p class="fw-bold">Price:
+							<del class="text-danger fs-5 fw-light">₹{{productDetails.actual_price}}</del>
 							{{#if category.offer.isEnabled}}
-							<p class="text-success"><span class="fs-4">₹{{productDetails.discount_price}}  </span>{{category.offer.percent}}% OFF</p>
-							{{else}}
-							<span class="text-success fs-4">₹{{productDetails.discount_price}}</span>
-							{{/if}}
-							</p>
-							 {{#if productDetails.stock}}
-            <p class="card-text py-1 text-success">In stock</p>
-            {{else}}
-            <p class="card-text py-1 text-danger">Out of stock</p>
-            {{/if}}
-						{{#if productDetails.sizes.[1]}}	
+						<p class="text-success"><span class="fs-4">₹{{productDetails.discount_price}}
+							</span>{{category.offer.percent}}% OFF</p>
+						{{else}}
+						<span class="text-success fs-4">₹{{productDetails.discount_price}}</span>
+						{{/if}}
+						</p>
+						{{#if productDetails.stock}}
+						<p class="card-text py-1 text-success">In stock</p>
+						{{else}}
+						<p class="card-text py-1 text-danger">Out of stock</p>
+						{{/if}}
+						{{#if productDetails.sizes.[1]}}
 						<select name="sizes" id="sizes">
 							<option value='0'>Size</option>
 							{{#each productDetails.sizes}}
@@ -58,12 +60,15 @@
 							{{/each}}
 						</select>
 						{{else}}
-							<p>Available size: <span id="single-size">{{productDetails.sizes}}</span></p>
-							{{/if}}
+						<p>Available size: <span id="single-size">{{productDetails.sizes}}</span></p>
+						{{/if}}
 						<span class="text-danger" style="display: none;" id="size-select">Select a size</span>
-						
-						<div class="action mt-5">
-							<button class=" btn btn-dark" onclick="addToCart('{{productDetails._id}}','{{productDetails.stock}}','{{productDetails.discount_price}}')" id="{{productDetails._id}}" type="button">add to cart</button>
+
+						<div class="action mt-3">
+							<div class=" btn bg-light text-success p-2 mb-2" style="visibility: hidden;" id="success-btn"><i class="fa-solid fa-cart-shopping"></i> Added to cart</div><br>
+							<button class=" btn btn-dark"
+								onclick="addToCart('{{productDetails._id}}','{{productDetails.stock}}','{{productDetails.discount_price}}')"
+								id="{{productDetails._id}}" type="button">add to cart</button>
 							<button class="btn btn-outline-dark" type="button"><span
 									class="fa fa-heart"></span></button>
 						</div>
@@ -73,27 +78,20 @@
 		</div>
 	</div>
 </section>
-
-
-
 <script src="/javascripts/zoomsl.min.js"></script>
 <script>
-	$(document).ready(function(){
-
-		$('.sub').click(function(){
-			let image=$(this).attr('src');
+	$(document).ready(function () {
+		$('.sub').click(function () {
+			let image = $(this).attr('src');
 			$('.main').attr('src', image)
 		})
 
 		$(function () {
-		$("#image-zoom").imagezoomsl({
-			zoomrange: [4, 4]
+			$("#image-zoom").imagezoomsl({
+				zoomrange: [4, 4]
+			});
 		});
-	});
-	
+
 	})
-
-
-	
 
 </script>

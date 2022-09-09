@@ -6,6 +6,8 @@ const moment = require('moment');
 const objectId = require('mongodb').ObjectId
 
 module.exports = {
+    // --------------------------category offer Management------------------------------- //
+
     getOffers: () => {
         return new Promise((resolve, reject) => {
             let date = new Date()
@@ -64,7 +66,7 @@ module.exports = {
             })
         })
     },
-    
+
     editOffer: (offerData) => {
         return new Promise((resolve, reject) => {
             let query = offerData.categoryId
@@ -123,33 +125,39 @@ module.exports = {
             })
         })
     },
+    // --------------------------category offer Management------------------------------- //
 
-     // --------------------------referral Management------------------------------- //
+    // --------------------------referral Management------------------------------- //
 
-     getReferrals:()=>{
-        return new Promise((resolve,reject)=>{
-            db.get().collection(collection.REFERRAL_COLLECTION).find().toArray().then((data)=>{
+    getReferrals: () => {
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.REFERRAL_COLLECTION).find().toArray().then((data) => {
                 resolve(data[0])
-            }).catch((err)=>{
+            }).catch((err) => {
                 reject(err)
             })
         })
-     },
+    },
 
-     editReferrals:(referralData)=>{
-        return new Promise((resolve,reject)=>{
-            referralData.referrer_offer=parseInt(referralData.referrer_offer)
-            referralData.referee_offer=parseInt(referralData.referee_offer)
-            db.get().collection(collection.REFERRAL_COLLECTION).updateOne({_id:objectId(referralData.refId)},{$set:{
-                "referrer_offer":referralData.referrer_offer,
-                "referee_offer":referralData.referee_offer
-            }}).then((data)=>{
+    editReferrals: (referralData) => {
+        return new Promise((resolve, reject) => {
+            referralData.referrer_offer = parseInt(referralData.referrer_offer)
+            referralData.referee_offer = parseInt(referralData.referee_offer)
+            db.get().collection(collection.REFERRAL_COLLECTION).updateOne({ _id: objectId(referralData.refId) }, {
+                $set: {
+                    "referrer_offer": referralData.referrer_offer,
+                    "referee_offer": referralData.referee_offer
+                }
+            }).then((data) => {
                 resolve(data)
-            }).catch((err)=>{
+            }).catch((err) => {
                 reject(err)
             })
         })
-     },
+    },
+    // --------------------------referral Management------------------------------- //
+
+
     // --------------------------Coupon Management------------------------------- //
 
     createCoupon: (couponData) => {
@@ -354,4 +362,5 @@ module.exports = {
             res.status(500)
         }
     }
+    // --------------------------Coupon Management------------------------------- //
 }

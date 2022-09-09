@@ -6,6 +6,8 @@
    {{#if updateStatus}}
     <p style="color: green;">{{updateStatus}}</p>
    {{/if}}
+   
+   
   <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
   <thead>
     <tr>
@@ -15,7 +17,7 @@
       <th scope="col">Customer details</th>
       <th scope="col">Delivery Address</th>
       <th scope="col">Payment method</th>
-      <th scope="col">&#x20b9; Total</th>
+      <th scope="col">₹ Total</th>
       <th scope="col">Order status</th>
       <th scope="col">Delivery status</th>
       <th scope="col">Options</th>
@@ -25,13 +27,22 @@
       {{#each orders}}
     <tr>
       <td></td>
-      <td><ul class="ps-0 mb-1" style="list-style: none;">
-        {{#each this.products}}
-           <li><img style="height: 50px; width: 50px;" class="py-1 rounded-5" src="/product-images/{{item}}-0.jpg"alt="product image"> 
-           <span>{{name}}-</span>
-           <span>Qty: {{quantity}}</span></li>
-        {{/each}}
-        </ul>
+      <td>
+ {{#each this.products}}
+        <p>
+  <a  data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    {{name}}
+  </a>
+</p>
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+    <img style="height: 50px; width: 50px;" class="py-1 rounded-5" src="/product-images/{{item}}-0.jpg"alt="product image"> 
+   quantity: {{quantity}}
+   size: {{size}}
+  </div>
+</div>
+  {{/each}}
+       
       </td>
       <td>{{this.date}}</td> 
       <td>ID: {{this.userId}} <br> {{this.delivery_details.name}} <br>+91{{this.delivery_details.phone}}</td>

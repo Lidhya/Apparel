@@ -2,7 +2,8 @@
   <div class="d-flex flex-row align-items-center justify-content-center pt-5">
     <div class="bannerText-section1">
       <h1 class="bText1">Trendy is the last stage before tacky</h1>
-      <h5 class="text-wrap d-none d-sm-block pt-4">"What you wear is how you present yourself to the world, especially today, when human contacts are so quick. Fashion is instant language."<strong> —Miuccia Prada</strong>
+      <h5 class="text-wrap d-none d-sm-block pt-4">"What you wear is how you present yourself to the world, especially
+        today, when human contacts are so quick. Fashion is instant language."<strong> —Miuccia Prada</strong>
       </h5>
     </div>
     <div class="d-flex flex-row hover-zoom">
@@ -22,28 +23,23 @@
       {{#if this.offer.isEnabled}}
       <span class="badge bg-primary ms-2">{{this.offer.percent}}% OFF</span>
       {{/if}}
-      </h4>
-      
-
-
+    </h4>
     <div class="owl-carousel owl-theme">
       {{#each ../products}}
       {{#ifCond this.category ../this.category}}
       <div class="item">
         <div class="mb-4">
-
-
           <div class="card h-100" style="background-color: transparent;">
             <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
               <img src="{{this.image_path.[0]}}" class="w-100" style="height: 25rem;" />
               <a href="/product-details/{{this._id}}">
-              {{#if ../this.offer.isEnabled}}
-                 <div class="mask">
+                {{#if ../this.offer.isEnabled}}
+                <div class="mask">
                   <div class="d-flex justify-content-start align-items-end h-100">
                     <h5><span class="badge bg-primary ms-2">{{../this.offer.percent}}% Off</span></h5>
                   </div>
-                </div> 
-                 {{/if}}
+                </div>
+                {{/if}}
                 <div class="hover-overlay">
                   <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </div>
@@ -60,34 +56,19 @@
                 <p>category</p>
               </a> --}}
               {{#if ../this.offer.isEnabled}}
-              <h6 class="text-start"><del> ₹{{this.actual_price}}</del> <span class="text-success">{{../this.offer.percent}}% off</span></h6>
+              <h6 class="text-start"><del> ₹{{this.actual_price}}</del> <span
+                  class="text-success">{{../this.offer.percent}}% off</span></h6>
               {{else}}
-              <h6 class="text-start"><span class="text-danger"><del> ₹{{this.actual_price}}</del></span> ₹{{this.discount_price}}</h6>
+              <h6 class="text-start"><span class="text-danger"><del> ₹{{this.actual_price}}</del></span>
+                ₹{{this.discount_price}}</h6>
               {{/if}}
-
-              {{!-- <a href="#" class="btn btn-outline-dark rounded-0 p-1">Add to Wishlist</a> --}}
-              {{!-- <a href="/add-to-cart/{{this._id}}"> --}}
-                {{!-- <button onclick="addToCart('{{this._id}}',{{this.stock}})" class="cta">
-                  <span class="hover-underline-animation">Add to cart</span>
-                  <svg id="arrow-horizontal" xmlns="http://www.w3.org/2000/svg" width="30" height="10"
-                    viewBox="0 0 46 16">
-                    <path id="Path_10" data-name="Path 10"
-                      d="M8,0,6.545,1.455l5.506,5.506H-30V9.039H12.052L6.545,14.545,8,16l8-8Z"
-                      transform="translate(30)"></path>
-                  </svg>
-                </button> --}}
-                {{!-- </a> --}}
-
             </div>
           </div>
-
-
         </div>
       </div>
       {{/ifCond}}
       {{/each}}
     </div>
-
   </div>
 </section>
 {{/each}}

@@ -30,6 +30,7 @@
     "promise": "^8.1.0",
     "razorpay": "^2.8.3",
     "referral-codes": "^2.0.3",
+    "sweetalert": "^2.1.2",
     "twilio": "^3.80.1"
   }
 }

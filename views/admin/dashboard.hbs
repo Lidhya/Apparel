@@ -103,27 +103,27 @@
 
       {{!-- ------product Purchase Report--------- --}}
       <section class="row mb-4  justify-content-center">
-         <div class="card-header text-center py-3">
-            <h5 class="mb-0 text-center">
-              <strong>Products Purchase Report</strong>
-            </h5>
-          </div>
+        <div class="card-header text-center py-3">
+          <h5 class="mb-0 text-center">
+            <strong>Products Purchase Report</strong>
+          </h5>
+        </div>
 
 
-<!-- Section: pie chart -->
+        <!-- Section: pie chart -->
         <section class="mb-4 col-md-6 m-2">
           <div class="card ">
             <div class="card-header py-3">
               <h5 class="mb-0 text-center"><strong>Category wise sales</strong></h5>
             </div>
             <div class="card-body chart-container" style="position: relative; ">
-              <canvas class="my-4" id="category-sale" ></canvas>
+              <canvas class="my-4" id="category-sale"></canvas>
             </div>
           </div>
         </section>
         <!-- Section: pie chart -->
 
-{{!-- ---------------Products Most Sold------------------- --}}
+        {{!-- ---------------Products Most Sold------------------- --}}
         <div class="card col-md-5 m-2">
           <div class="card-header text-center py-3">
             <h5 class="mb-0 text-center">
@@ -157,9 +157,9 @@
             </div>
           </div>
         </div>
-          {{!-- ---------------Products Most Sold------------------- --}}
+        {{!-- ---------------Products Most Sold------------------- --}}
 
-          {{!-- ---------------Products Most Ordered------------------- --}}
+        {{!-- ---------------Products Most Ordered------------------- --}}
         <div class="card col-md-5 m-2">
           <div class="card-header text-center py-3">
             <h5 class="mb-0 text-center">
@@ -191,10 +191,10 @@
             </div>
           </div>
         </div>
-          {{!-- ---------------Products Most Ordered------------------- --}}
+        {{!-- ---------------Products Most Ordered------------------- --}}
 
-          
-          {{!-- ---------------Products Most Cancelled------------------- --}}
+
+        {{!-- ---------------Products Most Cancelled------------------- --}}
 
         <div class="card col-md-6 m-2">
           <div class="card-header text-center py-3">
@@ -217,7 +217,7 @@
                   <tr>
                     <td>
                       <img height="40px" width="40px" src="/product-images/{{this._id}}-0.jpg" alt="most sold">
-                       <span>{{this.name}}</span>
+                      <span>{{this.name}}</span>
                     </td>
                     <td>{{this.sum}}</td>
                   </tr>
@@ -229,8 +229,8 @@
         </div>
         <hr>
       </section>
-          {{!-- ---------------Products Most Cancelled------------------- --}}
-    {{!-- ------product Purchase Report--------- --}}
+      {{!-- ---------------Products Most Cancelled------------------- --}}
+      {{!-- ------product Purchase Report--------- --}}
 
 
       <!--Section: Sales report-->
@@ -252,6 +252,7 @@
                     <th scope="col">COD</th>
                     <th scope="col">Razorpay</th>
                     <th scope="col">Paypal</th>
+                    <th scope="col">Wallet</th>
                     <th scope="col">Avg. Revenue</th>
 
                     <th scope="col">Total Orders</th>
@@ -265,6 +266,7 @@
                     <td>{{details.dailyCodCount}}</td>
                     <td>{{details.dailyRazorCount}}</td>
                     <td>{{details.dailyPaypalCount}}</td>
+                    <td>{{details.dailyWalletCount}}</td>
                     <td>{{details.dailyAvgRevenue}}</td>
 
                     <td>{{details.dailySalesCount}}</td>
@@ -278,7 +280,7 @@
                     </td>
                     <td>
                       <span class="text-dark">
-                        <span>{{details.revenue}}</span>
+                        <span>{{details.weeklyOrders.[0].totalWeekly}}</span>
                       </span>
                     </td>
                     <td>
@@ -294,6 +296,11 @@
                     <td>
                       <span class="text-dark">
                         <span>{{details.paypalCount}}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="text-dark">
+                        <span>{{details.walletCount}}</span>
                       </span>
                     </td>
                     <td>
@@ -319,7 +326,7 @@
                     </td>
                     <td>
                       <span class="text-dark">
-                        <span>{{details.revenue}}</span>
+                        <span>{{details.yearlyOrders.[0].totalYearly}}</span>
                       </span>
                     </td>
                     <td>
@@ -335,6 +342,11 @@
                     <td>
                       <span class="text-dark">
                         <span>{{details.paypalCount}}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="text-dark">
+                        <span>{{details.walletCount}}</span>
                       </span>
                     </td>
                     <td>
@@ -406,14 +418,15 @@
         details.total1.forEach(function (x) { revenueData.push(x) })
         convertedDates = Orderdate.map(date => new Date(date).setHours(0, 0, 0, 0));
         console.log(Orderdate)
-        for(let i in details.catSale){
-        catName.push(details.catSale[i].cat_name)
-        catCount.push(details.catSale[i].cat_count)
+        for (let i in details.catSale) {
+          catName.push(details.catSale[i].cat_name)
+          catCount.push(details.catSale[i].cat_count)
         }
       }
     })
 
     setTimeout(() => {
+      //-------------bar chart------------------//
       myChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -450,17 +463,19 @@
         },
       });
 
+//---------------payment method doughnut chart------------------//
       new Chart(ct, {
         type: 'doughnut',
         data: {
           labels: [
             "COD",
             "Razorpay",
-            "Paypal"
+            "Paypal",
+            "Wallet"
           ],
           datasets: [{
-            backgroundColor: ["#ff5d73", "#fbb13c", "#32e875"],
-            data: [{{ details.codCount }}, {{ details.razorCount }}, {{ details.paypalCount }}]
+            backgroundColor: ["#ff5d73", "#fbb13c", "#32e875", "#219ebc"],
+            data: [{{ details.codCount }}, {{ details.razorCount }}, {{ details.paypalCount }}, {{ details.walletCount }}]
                 }]
             },
     options: {
@@ -470,28 +485,28 @@
   }
         });
 
-new Chart(document.getElementById("category-sale"), {
+//------------- category Pie chart------------------//
+
+  new Chart(document.getElementById("category-sale"), {
     type: 'pie',
     data: {
       labels: catName,
       datasets: [{
         label: "Category wise sale",
-        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
+        backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f"],
         data: catCount
       }]
     },
     options: {
-      maintainAspectRatio:false,
+      maintainAspectRatio: false,
       title: {
         display: true,
       }
     }
-});
+  });
 }, 300)
 
 })
-
-
 
   function filterDate() {
     // (new Date('2021-11-01 00:00:00 G4T+9800')
@@ -517,7 +532,5 @@ new Chart(document.getElementById("category-sale"), {
     myChart.data.datasets[0].data = revenueData
     myChart.update()
   }
-
-
 
 </script>

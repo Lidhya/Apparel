@@ -1,40 +1,40 @@
 <div class="py-5">
-    <div class=" container-fluid">
+  <div class=" container-fluid">
     <div class=" row justify-content-center m-5">
-  <div class=" bg-light m-5 p-4 col-md-6 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,-5px -5px 14px #ededed;">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
+      <div class=" bg-light m-5 p-4 col-md-6 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,-5px -5px 14px #ededed;">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
 
 
-          <div class="">
-            <h2 class="tm-block-title d-inline-block logo">Add new offer</h2>
+            <div class="">
+              <h2 class="tm-block-title d-inline-block logo">Add new offer</h2>
+            </div>
+            {{#if updateStatus}}
+            <p style="color: green;">{{updateStatus}}!</p>
+            {{/if}}
           </div>
-          {{#if updateStatus}}
-          <p style="color: green;">{{updateStatus}}!</p>
-          {{/if}}
-        </div>
-        <form action="/admin/add-offer" method="post" id="offer-form" enctype="application/x-www-form-urlencoded">
-          <div class="row pb-3">
-            <div class=" ">
+          <form action="/admin/add-offer" method="post" id="offer-form" enctype="application/x-www-form-urlencoded">
+            <div class="row pb-3">
+              <div class=" ">
 
-              <div class="form-group mb-3 py-2">
-                <label for="name">Offer percent
-                </label>
-                <input name="percent" type="number" class="form-control validate" />
-              </div>
-              <div class="form-group mb-3 py-2">
-                <label for="category">Category</label>
-                <select name="categoryId" class="custom-select tm-select-accounts" id="category">
-                  <option selected>Select category</option>
-                  {{#each categories}}
-                  {{#if this.offer.isExpired}}
-                  <option value="{{this._id}}">{{this.category}}</option>
-                  {{else}}
-                  {{/if}}
-                  {{/each}}
-                </select>
-              </div>
-             
+                <div class="form-group mb-3 py-2">
+                  <label for="name">Offer percent
+                  </label>
+                  <input name="percent" type="number" class="form-control validate" />
+                </div>
+                <div class="form-group mb-3 py-2">
+                  <label for="category">Category</label>
+                  <select name="categoryId" class="custom-select tm-select-accounts" id="category">
+                    <option selected>Select category</option>
+                    {{#each categories}}
+                    {{#if this.offer.isExpired}}
+                    <option value="{{this._id}}">{{this.category}}</option>
+                    {{else}}
+                    {{/if}}
+                    {{/each}}
+                  </select>
+                </div>
+
                 <div class="form-group mb-3 py-2">
                   <label for="from">Valid from
                   </label>
@@ -45,15 +45,15 @@
                   </label>
                   <input name="valid_till" type="date" class="form-control validate" />
                 </div>
-            
 
+
+              </div>
+              <div class="col-12 py-2">
+                <button type="submit" class="btn btn-dark text-uppercase">Add offer</button>
+              </div>
             </div>
-            <div class="col-12 py-2">
-              <button type="submit" class="btn btn-dark text-uppercase">Add offer</button>
-            </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
