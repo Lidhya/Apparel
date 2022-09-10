@@ -1,15 +1,14 @@
 const db = require('../config/connection')
 const collection = require('../config/collection')
-const bcrypt = require('bcrypt')
 const Promise = require('promise')
-const { resolve, reject } = require('promise')
 const moment = require('moment');
 const objectId = require('mongodb').ObjectId
 
 
 module.exports = {
-
-  // --------------------------user Management------------------------------- //
+  /* -------------------------------------------------------------------------- */
+  /*                               user Management                              */
+  /* -------------------------------------------------------------------------- */
 
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {
@@ -43,9 +42,10 @@ module.exports = {
       })
     })
   },
-   // --------------------------user Management------------------------------- //
 
-    // --------------------------Dashboard Management------------------------------- //
+  /* -------------------------------------------------------------------------- */
+  /*                            Dashboard Management                            */
+  /* -------------------------------------------------------------------------- */
 
   getReport: () => {
     return new Promise(async (resolve, reject) => {
@@ -88,7 +88,9 @@ module.exports = {
         }
       ]).toArray()
 
-      //-----------------------------------most ordered---------------------------------------------------------//
+      /* -------------------------------------------------------------------------- */
+      /*                                most ordered                                */
+      /* -------------------------------------------------------------------------- */
       const mostOrderedProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
         {
           $unwind: '$products'
@@ -118,7 +120,9 @@ module.exports = {
         }
       ]).toArray()
 
-      //------------------------------------most cancelled--------------------------------------------------------//
+      /* -------------------------------------------------------------------------- */
+      /*                               most cancelled                               */
+      /* -------------------------------------------------------------------------- */
       const mostCancelledProducts = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
         {
           $match: {
@@ -153,7 +157,9 @@ module.exports = {
         }
       ]).toArray()
 
-      //-------------------------------------daily orders-------------------------------------------------------//
+      /* -------------------------------------------------------------------------- */
+      /*                                daily orders                                */
+      /* -------------------------------------------------------------------------- */
       const dailyOrders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
         {
           $match: {
@@ -178,7 +184,9 @@ module.exports = {
         }
       ]).toArray();
 
-      //-------------------------------------weekly orders-------------------------------------------------------//
+      /* -------------------------------------------------------------------------- */
+      /*                                weekly orders                               */
+      /* -------------------------------------------------------------------------- */
       const weeklyOrders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
         {
           $match: {
@@ -201,9 +209,10 @@ module.exports = {
           $sort: { _id: 1 }
         }
       ]).toArray();
-      console.log(weeklyOrders);
 
-      //-------------------------------------yearly orders-------------------------------------------------------//
+      /* -------------------------------------------------------------------------- */
+      /*                                yearly orders                               */
+      /* -------------------------------------------------------------------------- */
       const yearlyOrders = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
         {
           $match: {
@@ -226,7 +235,10 @@ module.exports = {
           $sort: { _id: 1 }
         }
       ]).toArray();
-      console.log(yearlyOrders);
+
+      /* -------------------------------------------------------------------------- */
+      /*                                Calculations                                */
+      /* -------------------------------------------------------------------------- */
 
       let revenue = 0
       let codCount = 0
@@ -234,6 +246,7 @@ module.exports = {
       let paypalCount = 0
       let walletCount = 0
       let productsCount = 0
+      let avgRevenue=0
       let revenueData = []
       let date = []
       let date1 = []
@@ -265,20 +278,20 @@ module.exports = {
       const catSale = []
       for (let cat in categories) {
         let count = 0
-        for (let obj in mostSoldProducts[0].top_selling_products) {
-          if (mostSoldProducts[0].top_selling_products[obj].categoryId.equals(categories[cat]._id)) {
+        for (let obj in mostSoldProducts[0]?.top_selling_products) {
+          if (mostSoldProducts[0]?.top_selling_products[obj].categoryId.equals(categories[cat]._id)) {
             count++
           } else {
             continue
           }
         }
+
         let catObj = {
           cat_name: categories[cat].category,
           cat_count: count
         }
         catSale.push(catObj)
       }
-      console.log(catSale);
 
       let nowDate = new Date()
       let fDate = moment(nowDate).format('YYYY-MM-DD')
@@ -290,41 +303,32 @@ module.exports = {
           totalSales[x].payment_method === 'COD' ? dailyCodCount++ : (totalSales[x].payment_method === 'Razorpay' ? dailyRazorCount++ : (totalSales[x].payment_method === 'Wallet' ? dailyWalletCount++ : dailyPaypalCount++))
         }
       }
+      
       dailySaleCount = parseInt(dailyCodCount + dailyRazorCount + dailyPaypalCount + dailyWalletCount)
-      dailyAvgRevenue = parseFloat(dailySale / dailySaleCount)
-      if(isNaN(dailyAvgRevenue)){
-        dailyAvgRevenue=0
-      }
+      dailyAvgRevenue =Math.round( parseFloat(dailySale / dailySaleCount))
+      avgRevenue=Math.round(parseFloat( revenue / totalSales.length))
+      isNaN(dailyAvgRevenue)? dailyAvgRevenue=0:dailyAvgRevenue
+      isNaN(avgRevenue)? avgRevenue=0:avgRevenue
 
       let details = {
         revenue,
-        codCount,
-        catSale,
-        razorCount,
-        paypalCount,
-        walletCount,
-        productsCount,
-        date,
-        date1, total1,
-        mostSoldProducts: mostSoldProducts[0].top_selling_products.slice(0, 5),
-        mostOrderedProducts: mostOrderedProducts[0].most_ordered_products.slice(0, 5),
-        mostCancelledProducts: mostCancelledProducts[0].most_cancelled_products.slice(0, 5),
-        dailySale, dailyProductsCount, dailyCodCount, dailyRazorCount, dailyPaypalCount, dailyWalletCount,
-        dailyAvgRevenue,
+        catSale, codCount,
+        razorCount, paypalCount, walletCount,
+        productsCount, date, date1, total1,
+        mostSoldProducts: mostSoldProducts[0]?.top_selling_products.slice(0, 5),
+        mostOrderedProducts: mostOrderedProducts[0]?.most_ordered_products.slice(0, 5),
+        mostCancelledProducts: mostCancelledProducts[0]?.most_cancelled_products.slice(0, 5),
+        dailySale, dailyProductsCount, dailyCodCount, dailyRazorCount, dailyPaypalCount, dailyWalletCount, dailyAvgRevenue,
         dailySalesCount: dailySaleCount,
         revenueData,
         weeklyOrders, yearlyOrders,
-        avgRevenue: revenue / totalSales.length,
+        avgRevenue, 
         salesCount: totalSales.length,
         OrderCount: totalOrders.length,
         totalUsers: users.length
       }
-
-      console.log(details)
       resolve(details)
     })
   }
-
-  // --------------------------Dashboard Management------------------------------- //
 
 }

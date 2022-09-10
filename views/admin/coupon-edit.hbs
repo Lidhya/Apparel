@@ -4,16 +4,14 @@
       <div class=" bg-light m-5 p-4 col-md-6 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,-5px -5px 14px #ededed;">
         <div class="row justify-content-center">
           <div class="col-md-6">
-
-
             <div class="">
               <h2 class="tm-block-title d-inline-block logo">Edit coupon</h2>
             </div>
-            {{!-- {{#if updateStatus}}
-            <p style="color: green;">{{updateStatus}}!</p>
-            {{/if}} --}}
           </div>
-          <form action="/admin/edit-coupon/{{coupon._id}}" method="post" id="offer-form">
+          <form action="/admin/edit-coupon/{{coupon._id}}" method="post" id="coupon-form">
+          {{#if couponErr}}
+            <p class="alert alert-danger">{{couponErr}}</p>
+            {{/if}}
             <div class="row pb-3">
 
               <div class="form-group mb-3 py-2">

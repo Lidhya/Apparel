@@ -115,6 +115,28 @@ jQuery('#form1').validate({
       form.submit();
     }
   })
+
+  jQuery('#form4').validate({
+    rules: {
+      phone: {
+        required: true,
+        minlength: 10,
+        maxlength: 10
+      }
+
+    },
+    messages: {
+
+      phone: {
+        required: "Phone number is required",
+        minlength: "Should contain 10 numbers",
+        maxlength: "Should contain only 10 numbers"
+      }
+    },
+    submitHandler: function (form) {
+      form.submit();
+    }
+  })
   
   jQuery('#form-edit').validate({
     rules:{
@@ -212,6 +234,20 @@ jQuery('#form-address-edit').validate({
     }
   })
 
+  jQuery('#referral-form').validate({
+    rules:{
+      referrer_offer:{
+        required:true,
+      },
+      referee_offer:{
+        required:true
+      }
+    },
+    submitHandler:function(form){
+      form.submit();
+    }
+  })
+
   jQuery('#coupon-apply').validate({
     rules: {
         coupon_code: {
@@ -225,3 +261,83 @@ jQuery('#form-address-edit').validate({
   
     }
   }); 
+
+  jQuery('#add-category').validate({
+    rules: {
+      category: {
+            required: true,
+        },
+    },
+    messages:{
+      category: {
+            required: 'Enter a category name',
+        },
+  
+    }
+  }); 
+
+  jQuery('#deliver-form').validate({
+    rules: {
+      order_address: {
+            required: true,
+        },
+    },
+    messages:{
+      order_address: {
+            required: 'select an address to continue',
+        },
+  
+    }
+  }); 
+
+  jQuery('#offer-form').validate({
+    rules:{
+      percent:{
+        required:true
+      },
+      categoryId:{
+        required:true
+      },
+      valid_from:'required',
+      valid_till:'required'
+    },
+    submitHandler:function(form){
+      form.submit();
+    }
+  })
+
+  jQuery('#offer-edit-form').validate({
+    rules:{
+      percent:{
+        required:true
+      },
+      valid_from:'required',
+      valid_till:'required'
+    },
+    submitHandler:function(form){
+      form.submit();
+    }
+  })
+
+  jQuery('#coupon-form').validate({
+    rules:{
+      coupon_code:{
+        required:true,
+        minlength:5,
+        normalizer: function(value) {
+     return $.trim(value);
+    }
+      },
+      amount_off:{
+        required:true
+      },
+      minimum_purchase:{
+        required:true
+      },
+      valid_from:'required',
+      valid_till:'required'
+    },
+    submitHandler:function(form){
+      form.submit();
+    }
+  })

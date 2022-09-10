@@ -4,16 +4,14 @@
       <div class=" bg-light m-5 p-4 col-md-6 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,-5px -5px 14px #ededed;">
         <div class="row justify-content-center">
           <div class="col-md-6">
-
-
             <div class="">
               <h2 class="tm-block-title d-inline-block logo">Add new coupon</h2>
             </div>
-            {{!-- {{#if updateStatus}}
-            <p style="color: green;">{{updateStatus}}!</p>
-            {{/if}} --}}
           </div>
-          <form action="/admin/add-coupon" method="post" id="offer-form">
+          <form action="/admin/add-coupon" method="post" id="coupon-form">
+          {{#if couponErr}}
+            <p class="alert alert-danger">{{couponErr}}</p>
+            {{/if}}
             <div class="row pb-3">
 
               <div class="form-group mb-3 py-2">
@@ -23,7 +21,7 @@
               </div>
 
               <div class="form-group mb-3 py-2">
-                <label for="name">Amount off 
+                <label for="name">Amount off
                 </label>
                 <input name="amount_off" type="number" class="form-control validate" />
               </div>
@@ -45,12 +43,6 @@
                 </label>
                 <input name="valid_till" type="date" class="form-control validate" required />
               </div>
-
-              {{!-- <div class="form-group mb-3 py-2">
-                <label for="to">Redeem by
-                </label>
-                <input name="redeem_by" type="text" class="form-control validate" />
-              </div> --}}
 
               <div class="col-12 py-2">
                 <button type="submit" class="btn btn-dark text-uppercase">Add Coupon</button>

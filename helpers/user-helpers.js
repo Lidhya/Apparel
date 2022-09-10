@@ -1,23 +1,19 @@
+require('dotenv').config()
 const db = require('../config/connection')
 const collection = require('../config/collection')
 const bcrypt = require('bcrypt')
 const Promise = require('promise')
-const { response } = require('express')
-const { resolve, reject } = require('promise')
 const objectId = require('mongodb').ObjectId
-const moment = require('moment');
 const referralCode = require('referral-codes')
-const Razorpay = require('razorpay');
-
-
-var instance = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_SECRET_KEY,
-});
 
 module.exports = {
 
-    // --------------------------User Authentication------------------------------- //
+    /* -------------------------------------------------------------------------- */
+    /*                             User Authentication                            */
+    /* -------------------------------------------------------------------------- */
+
+    /* ------------------------------- User signup ------------------------------ */
+
     doSignup: (userData) => {
         return new Promise(async (resolve, reject) => {
             userData.referralId = referralCode.generate(8)[0];
@@ -67,9 +63,19 @@ module.exports = {
 
         })
     },
-    doLogin: (userData) => {
+
+   /* ----------------------------- User and admin login ----------------------------- */
+
+    doLogin: (userData) => {       
         return new Promise(async (resolve, reject) => {
-            let admin = await db.get().collection(collection.ADMIN_COLLECTION).findOne({ email: userData.email })
+           // let admin = await db.get().collection(collection.ADMIN_COLLECTION).findOne({ email: userData.email })   <------if stored in database
+           let admin=false
+           if(process.env.ADMIN_EMAIL==userData.email){
+                admin={
+                email:process.env.ADMIN_EMAIL,
+                password:process.env.ADMIN_PWD
+               }
+           }
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: userData.email })
             let response = {}
             if (!admin && user.block === true) {
@@ -90,8 +96,8 @@ module.exports = {
                         }
                     })
                 } else if (admin) {
-                    bcrypt.compare(userData.password, admin.password).then((status) => {
-                        if (status) {
+                   // bcrypt.compare(userData.password, admin.password).then((status) => { -----  })    <------if stored in database
+                        if (admin.password==userData.password) {
                             console.log('login success')
                             response.admin = admin
                             response.status = true
@@ -101,7 +107,6 @@ module.exports = {
                             var err = 'Incorrect password'
                             reject(err)
                         }
-                    })
 
                 } else {
                     var err = 'Invalid email or password'
@@ -110,6 +115,8 @@ module.exports = {
             }
         })
     },
+
+    /* -------------------------------- OTP login ------------------------------- */
 
     otpLogin: (phone) => {
         return new Promise(async (resolve, reject) => {
@@ -127,9 +134,11 @@ module.exports = {
         })
     },
 
-     // --------------------------User Authentication------------------------------- //
+     /* -------------------------------------------------------------------------- */
+     /*                           User Account Management                          */
+     /* -------------------------------------------------------------------------- */
 
-     // --------------------------User Account Management------------------------------- //
+     /* --------------------------- Logged user details -------------------------- */
 
     getuserDetails: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -140,6 +149,8 @@ module.exports = {
             })
         })
     },
+
+    /* --------------------------- User details update -------------------------- */
 
     updateProfile: (details, userId) => {
         return new Promise(async (resolve, reject) => {
@@ -178,6 +189,8 @@ module.exports = {
 
     },
 
+    /* --------------------------- User address update -------------------------- */
+
     updateAddress: (addressData, userId) => {
         return new Promise(async (resolve, reject) => {
             let addressObj = {
@@ -209,6 +222,8 @@ module.exports = {
         })
     },
 
+    /* -------------------------- User password update -------------------------- */
+
     updatePassword: (pwdData, userId) => {
         return new Promise(async (resolve, reject) => {
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
@@ -230,6 +245,8 @@ module.exports = {
         })
     },
 
+    /* --------------------------- User address delete -------------------------- */
+
     deleteAddress: async (title, userId) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
@@ -241,38 +258,25 @@ module.exports = {
                 resolve(user)
             })
         })
-    },
-    // --------------------------User Account Management------------------------------- //
+    },   
 
-    // --------------------------User Wishlist------------------------------- //
+   /* -------------------------------------------------------------------------- */
+   /*                                  User Cart                                 */
+   /* -------------------------------------------------------------------------- */
 
-    getWishlist: () => {
-        return new Promise((resolve, reject) => {
-            resolve()
-        })
-    },
-
-    addToWishlist: () => {
-        return new Promise((resolve, reject) => {
-
-        })
-    },
-    // --------------------------User Wishlist------------------------------- //
-
-    // --------------------------User Cart------------------------------- //
-
+   /* --------------------------- Add product to cart -------------------------- */
     addToCart: async (proId, userId, data) => {
-        var dPrice = parseFloat(data.dPrice)
+        var dPrice = parseFloat(data.dPrice)    // data.dPrice is the discount price which is calculated in product_details router
         let proData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
         console.log(proData.name)
         let proObj = {
             item: objectId(proId),
             name: proData.name,
-            price: dPrice,
+            price: dPrice,     // to store the discount price of the particular product
             size: data.size,
             quantity: 1,
             categoryId: proData.categoryId,
-            subtotal: dPrice
+            subtotal: dPrice   // to store the price of the product according to quantity 
         }
         return new Promise(async (resolve, reject) => {
             let userCart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
@@ -315,6 +319,8 @@ module.exports = {
             }
         })
     },
+
+    /* -------------------------- Cart added product details -------------------------- */
 
     getCartProducts: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -366,6 +372,8 @@ module.exports = {
 
     },
 
+    /* ------------------------- Number of Items in cart ------------------------ */
+
     getCartCount: (userId) => {
         return new Promise(async (resolve, reject) => {
             let count = 0
@@ -376,6 +384,8 @@ module.exports = {
             resolve(count)
         })
     },
+
+    /* ------------------ Change quantity of a particular product ----------------- */
 
     changeProductQuantity: (details) => {
         count = parseInt(details.count)
@@ -396,7 +406,6 @@ module.exports = {
                             $pull: { products: { item: objectId(details.proId) } }
                         }
                     ).then((response) => {
-                        //    console.log(response)
                         resolve({ removeProduct: true })
                     })
             } else {
@@ -413,6 +422,8 @@ module.exports = {
         })
     },
 
+    /* ------------------------ Remove product from cart ------------------------ */
+
     removeFromCart: (ids) => {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.CART_COLLECTION)
@@ -427,6 +438,8 @@ module.exports = {
                 })
         })
     },
+
+    /* ---------------- Offer added total of all products(x quantity) in cart --------------- */
 
     getTotalAmount: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -471,6 +484,8 @@ module.exports = {
             }
         })
     },
+
+    /* ---------------- Actual price total of all products(x quantity) in cart --------------- */
 
     getSubTotalAmount: (userId) => {
         return new Promise(async (resolve, reject) => {
@@ -522,12 +537,13 @@ module.exports = {
         })
     },
 
+    /* ---------------------- List of products inside cart ---------------------- */
+
     getCartProductList: (userId) => {
         return new Promise(async (resolve, reject) => {
             let cart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
             resolve(cart.products)
         })
     }
-    // --------------------------User Cart------------------------------- //
 
 }

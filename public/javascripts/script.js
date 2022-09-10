@@ -104,6 +104,17 @@ function addToCart(proId, stock, dPrice){
     })
   }
 
+  function cancelCoupon(){
+    $.ajax({
+      url: '/cancel-coupon',
+      method: 'get',
+      success: (response) => {
+        location.reload()
+      }
+    })
+  }
+
+
   function CopyToClipboard(id)
 {
 var r = document.createRange();

@@ -24,7 +24,7 @@ $( document ).ready(function() {
          }
          else if (response.order) {
            razorpayPayment(response.order)
- 
+
          } else if (response.paypal) {
            console.log('successssss')
            location.href = '/order-success'
@@ -73,8 +73,15 @@ $( document ).ready(function() {
      var rzp1 = new Razorpay(options);
      rzp1.open();
      rzp1.on('payment.failed', function (response) {
-       alert('something went wrong')
-       location.href = "/cart";
+        Swal.fire({
+             title: 'Something went wrong!',
+             text: "Please try again",
+             icon: 'warning',
+             confirmButtonColor: '#3085d6',
+             confirmButtonText: 'OK!'
+           }).then(() => {
+             location.href = '/cart'
+           })
      })
  
    }

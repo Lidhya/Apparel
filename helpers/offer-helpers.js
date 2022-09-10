@@ -1,12 +1,13 @@
 const db = require('../config/connection')
 const collection = require('../config/collection')
 const Promise = require('promise')
-const { resolve, reject } = require('promise')
 const moment = require('moment');
 const objectId = require('mongodb').ObjectId
 
 module.exports = {
-    // --------------------------category offer Management------------------------------- //
+    /* -------------------------------------------------------------------------- */
+    /*                          category offer Management                         */
+    /* -------------------------------------------------------------------------- */
 
     getOffers: () => {
         return new Promise((resolve, reject) => {
@@ -32,6 +33,14 @@ module.exports = {
             })
         })
 
+    },
+
+    getNonOfferCat:()=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.CATEGORY_COLLECTION).find({"offer.isExpired":{$ne:false} }).toArray().then((category) => {
+                resolve(category)
+            })
+        })
     },
 
     addOffer: (offerData) => {
@@ -125,9 +134,11 @@ module.exports = {
             })
         })
     },
-    // --------------------------category offer Management------------------------------- //
+  
 
-    // --------------------------referral Management------------------------------- //
+    /* -------------------------------------------------------------------------- */
+    /*                             referral Management                            */
+    /* -------------------------------------------------------------------------- */
 
     getReferrals: () => {
         return new Promise((resolve, reject) => {
@@ -155,25 +166,34 @@ module.exports = {
             })
         })
     },
-    // --------------------------referral Management------------------------------- //
+    
 
-
-    // --------------------------Coupon Management------------------------------- //
+    /* -------------------------------------------------------------------------- */
+    /*                              Coupon Management                             */
+    /* -------------------------------------------------------------------------- */
 
     createCoupon: (couponData) => {
         return new Promise(async (resolve, reject) => {
+         
             try {
-                couponData.status = true
-                couponData.isExpired = false
-                couponData.amount_off = parseFloat(couponData.amount_off)
-                couponData.minimum_purchase = parseFloat(couponData.minimum_purchase)
-                couponData.inserted_date = new Date()
-
-                db.get().collection(collection.COUPON_COLLECTION).insertOne(couponData).then(() => {
-                    resolve()
-                }).catch((err) => {
+                let couponCheck=await db.get().collection(collection.COUPON_COLLECTION).findOne({"coupon_code":couponData.coupon_code})
+                console.log(couponData.coupon_code+' '+couponCheck);
+                if(couponCheck){
+                    let err='Coupon code already exist'
                     reject(err)
-                })
+                }else{
+                    couponData.status = true
+                    couponData.isExpired = false
+                    couponData.amount_off = parseFloat(couponData.amount_off)
+                    couponData.minimum_purchase = parseFloat(couponData.minimum_purchase)
+                    couponData.inserted_date = new Date()
+    
+                    db.get().collection(collection.COUPON_COLLECTION).insertOne(couponData).then(() => {
+                        resolve()
+                    }).catch((err) => {
+                        reject(err)
+                    })
+                }
 
             } catch (err) {
                 err = "something went wrong"
@@ -186,6 +206,11 @@ module.exports = {
     editCoupon: (couponData, couponId) => {
         try {
             return new Promise(async (resolve, reject) => {
+                let couponCheck=await db.get().collection(collection.COUPON_COLLECTION).findOne({_id: { $ne: objectId(couponId) }, "coupon_code":couponData.coupon_code})
+                if(couponCheck){
+                    let err='Coupon code already exist'
+                    reject(err)
+                }else{
                 couponData.amount_off = parseFloat(couponData.amount_off)
                 couponData.minimum_purchase = parseFloat(couponData.minimum_purchase)
                 db.get().collection(collection.COUPON_COLLECTION).findOneAndUpdate({ _id: objectId(couponId) },
@@ -204,9 +229,9 @@ module.exports = {
                         err = "something went wrong"
                         reject(err)
                     })
+                }
             })
-        }
-        catch (err) {
+        } catch (err) {
             res.status('404').json(err)
         }
     },
@@ -362,5 +387,5 @@ module.exports = {
             res.status(500)
         }
     }
-    // --------------------------Coupon Management------------------------------- //
+    
 }

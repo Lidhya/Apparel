@@ -6,12 +6,10 @@
 				<div class="row">
 					<div class=" col-md-6">
 						<div class="image-container">
-
 							<div class="main-image ps-4">
 								<img class="img-fluid rounded-4 main" id="image-zoom"
 									src="{{productDetails.image_path.[0]}}" style="height: 32rem; width: 27rem;">
 							</div>
-
 							<div class="sub-images mt-2 ms-3 ">
 								<img class="m-2 sub" src="{{productDetails.image_path.[0]}}"
 									style="height: 5rem; width: 5rem;" alt="product image">
@@ -20,20 +18,11 @@
 								<img class="m-2 sub" src="{{productDetails.image_path.[2]}}"
 									style="height: 5rem; width: 5rem;" alt="product image">
 							</div>
-
 						</div>
-
 					</div>
 					<div class="details col-md-6 ">
 						<h3 class="product-title  py-3">{{productDetails.name}}</h3>
-						<div class="rating">
-							{{!-- <div class="stars py-2">
-								<span class="fa fa-star checked"></span>
-								<span class="fa fa-star checked"></span>
-								<span class="fa fa-star checked"></span>
-								<span class="fa fa-star checked"></span>
-								<span class="fa fa-star checked"></span>
-							</div> --}}
+						<div class="rating">					
 							<span class="review-no">Category: {{productDetails.category}}</span>
 							<p class="pt-1">Material: {{productDetails.material_type}}</p>
 						</div>

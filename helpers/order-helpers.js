@@ -1,11 +1,14 @@
 const db = require('../config/connection')
 const collection = require('../config/collection')
-const bcrypt = require('bcrypt')
 const Promise = require('promise')
 const objectId = require('mongodb').ObjectId
 const moment = require('moment');
 const Razorpay = require('razorpay');
 
+var instance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET_KEY,
+});
 
 module.exports = {
 
@@ -101,7 +104,6 @@ module.exports = {
             let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
             hmac.update(data['payment[razorpay_order_id]'] + '|' + data['payment[razorpay_payment_id]']);
             hmac = hmac.digest('hex')
-            console.log(hmac + '\n' + data['payment[razorpay_signature]']);
             if (hmac == data['payment[razorpay_signature]']) {
                 resolve()
             } else {

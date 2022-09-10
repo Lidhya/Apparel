@@ -7,7 +7,6 @@ const productHelpers = require('../helpers/product-helpers');
 const offerHelpers = require('../helpers/offer-helpers');
 const orderHelpers = require('../helpers/order-helpers');
 const path = require('path');
-const { truncate } = require('fs/promises');
 
 
 
@@ -36,6 +35,7 @@ router.get('/', async function (req, res, next) {
   }
 });
 
+/* ----------------------- Dashboard data through ajax ---------------------- */
 router.get('/get-report', verifyLogin, async (req, res) => {
   try {
     let details = await adminHelpers.getReport()
@@ -47,6 +47,7 @@ router.get('/get-report', verifyLogin, async (req, res) => {
 
 })
 
+/* ----------------------------- Product management ---------------------------- */
 router.get('/products', verifyLogin, (req, res, next) => {
   try{
     res.setHeader('cache-control', 'no-store')
@@ -58,54 +59,6 @@ router.get('/products', verifyLogin, (req, res, next) => {
   }
  
 });
-
-router.get('/users', verifyLogin, (req, res, next) => {
-  try{
-  adminHelpers.getAllUsers().then((usersData) => {
-    res.setHeader('cache-control', 'no-store')
-    res.render("admin/users", { title: " | Admin", usersData, admin: true, "updateStatus": req.session.updateStatus })
-    req.session.updateStatus = false
-  })
-}catch(err){
-  res.status('404').json(err)
-}
-});
-
-router.get('/categories', verifyLogin, async (req, res, next) => {
-  try{
-  let categories = await productHelpers.getCategories()
-  res.setHeader('cache-control', 'no-store')
-  res.render('admin/categories', { admin: true, categories, "catErr": req.session.catErr });
-  req.session.catErr = false
-}catch(err){
-  res.status('404').json(err)
-}
-})
-
-router.post('/add-category', (req, res) => {
-  try{
-  productHelper.addCategory(req.body).then((data) => {
-    res.redirect('/admin/categories')
-  })
-}catch(err){
-  res.status('404').json(err)
-}
-})
-
-router.get('/delete-category/:id', verifyLogin, (req, res) => {
-  try{
-  let catId = req.params.id
-  console.log(catId)
-  productHelpers.deleteCategory(catId).then((response) => {
-    res.redirect('/admin/categories')
-  }).catch((err) => {
-    req.session.catErr = err
-    res.redirect('/admin/categories')
-  })
-}catch(err){
-  res.status('404').json(err)
-}
-})
 
 router.get('/add-product', verifyLogin, async (req, res, next) => {
   try{
@@ -228,6 +181,19 @@ router.get('/delete-products/:id', verifyLogin, (req, res) => {
 }
 })
 
+/* ----------------------------- User management ---------------------------- */
+router.get('/users', verifyLogin, (req, res, next) => {
+  try{
+  adminHelpers.getAllUsers().then((usersData) => {
+    res.setHeader('cache-control', 'no-store')
+    res.render("admin/users", { title: " | Admin", usersData, admin: true, "updateStatus": req.session.updateStatus })
+    req.session.updateStatus = false
+  })
+}catch(err){
+  res.status('404').json(err)
+}
+});
+
 router.get('/user-block/:id', verifyLogin, (req, res) => {
   try{
   let userId = req.params.id;
@@ -249,6 +215,45 @@ router.get('/user-unblock/:id', verifyLogin, (req, res) => {
   res.status('404').json(err)
 }
 })
+
+/* ----------------------------- Category management ---------------------------- */
+router.get('/categories', verifyLogin, async (req, res, next) => {
+  try{
+  let categories = await productHelpers.getCategories()
+  res.setHeader('cache-control', 'no-store')
+  res.render('admin/categories', { admin: true, categories, "catErr": req.session.catErr });
+  req.session.catErr = false
+}catch(err){
+  res.status('404').json(err)
+}
+})
+
+router.post('/add-category', (req, res) => {
+  try{
+  productHelper.addCategory(req.body).then((data) => {
+    res.redirect('/admin/categories')
+  })
+}catch(err){
+  res.status('404').json(err)
+}
+})
+
+router.get('/delete-category/:id', verifyLogin, (req, res) => {
+  try{
+  let catId = req.params.id
+  console.log(catId)
+  productHelpers.deleteCategory(catId).then((response) => {
+    res.redirect('/admin/categories')
+  }).catch((err) => {
+    req.session.catErr = err
+    res.redirect('/admin/categories')
+  })
+}catch(err){
+  res.status('404').json(err)
+}
+})
+
+/* ----------------------------- Order management ---------------------------- */
 
 router.get('/all-orders', verifyLogin, async (req, res) => {
   try{
@@ -282,6 +287,7 @@ router.post('/update-order/:id', verifyLogin, (req, res) => {
 }
 })
 
+/* ------------------------- Update delivery status ------------------------- */
 router.post('/update-status/:id', verifyLogin, (req, res) => {
   try{
   let orderId = req.params.id
@@ -294,7 +300,7 @@ router.post('/update-status/:id', verifyLogin, (req, res) => {
 }
 })
 
-/////////////////////////////////////////Offer management//////////////////////////////////////////////////
+/* ----------------------------- Category & referral offer management ---------------------------- */
 
 router.get('/category-offers', verifyLogin, async (req, res) => {
   try{
@@ -306,11 +312,10 @@ router.get('/category-offers', verifyLogin, async (req, res) => {
 }
 })
 
-router.post('/edit-referrals', verifyLogin, (req, res) => {
+router.post('/edit-referrals', verifyLogin, (req, res) => { 
   try{
   offerHelpers.editReferrals(req.body).then((data) => {
     res.redirect('/admin/category-offers')
-    //res.status('200').json('success')
   })
 }catch(err){
   res.status('404').json(err)
@@ -319,7 +324,7 @@ router.post('/edit-referrals', verifyLogin, (req, res) => {
 
 router.get('/add-offer', verifyLogin, async (req, res) => {
   try{
-  let categories = await offerHelpers.getOffers()
+  let categories = await offerHelpers.getNonOfferCat() //get categories with no existing offers
   res.render('admin/add-cate-offer', { title: " | Admin", admin: true, categories, "offerErr": req.session.offerErr })
   req.session.offerErr = false
 }catch(err){
@@ -389,6 +394,7 @@ router.get('/delete-offer/:id', verifyLogin, async (req, res) => {
   }
 })
 
+/* ---------------------------- Coupon management --------------------------- */
 router.get('/coupons', verifyLogin, async (req, res) => {
   try{
   let coupons = await offerHelpers.getAllCoupons()
@@ -400,7 +406,8 @@ router.get('/coupons', verifyLogin, async (req, res) => {
 
 router.get('/add-coupon', verifyLogin, async (req, res) => {
   try{
-  res.render('admin/add-coupon', { title: " | Admin", admin: true })
+  res.render('admin/add-coupon', { title: " | Admin", admin: true,  "couponErr":req.session.adminCouponErr })
+  req.session.adminCouponErr=false
    }catch(err){
     res.status('404').json(err)
   }
@@ -410,8 +417,12 @@ router.post('/add-coupon', verifyLogin, async (req, res) => {
   try{
   offerHelpers.createCoupon(req.body).then(() => {
     res.redirect('/admin/coupons')
+  }).catch((err)=>{
+    req.session.adminCouponErr=err
+    res.redirect('/admin/add-coupon')
   })
-   }catch(err){
+   
+}catch(err){
     res.status('404').json(err)
   }
 })
@@ -420,7 +431,8 @@ router.get('/edit-coupon/:id', verifyLogin, async (req, res) => {
   try{
   let couponId = req.params.id
   let coupon = await offerHelpers.getCoupon(couponId)
-  res.render('admin/coupon-edit', { title: " | Admin", admin: true, coupon })
+  res.render('admin/coupon-edit', { title: " | Admin", admin: true, coupon, "couponErr":req.session.adminCouponErr })
+  req.session.adminCouponErr=false
    }catch(err){
     res.status('404').json(err)
   }
@@ -431,6 +443,9 @@ router.post('/edit-coupon/:id', verifyLogin, async (req, res) => {
   let couponId = req.params.id
   offerHelpers.editCoupon(req.body, couponId).then(() => {
     res.redirect('/admin/coupons')
+  }).catch((err)=>{
+    req.session.adminCouponErr=err
+    res.redirect(`/admin/edit-coupon/${couponId}`)
   })
    }catch(err){
     res.status('404').json(err)

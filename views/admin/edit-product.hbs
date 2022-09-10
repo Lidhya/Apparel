@@ -89,14 +89,10 @@
                     <input id="discount_price" name="discount_price" type="number" class="form-control validate"
                       value={{productDetails.discount_price}} />
                   </div>
-
-
-
                   </div>
-
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
 
+                <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
                    <img src="{{productDetails.image_path.[0]}}" id="imgView1" alt="" style="height:100px">
                   <input type="file" id="id_image1" name="Image1" accept="image/*"  onchange="viewImage1(event)"
                     style="width:100%;"><br>
@@ -129,8 +125,7 @@
                     <button type="button" class="btn btn-outline-info ms-3" id="crop-btn3" style=" margin-top: 10px; display: none;
                       width:  50% ; margin: 20rem 0rem 0rem 0rem;">Crop</button>
                   </div>
-               
-
+              
                 </div>
                 <div class="col-12">
                   <button type="submit" class="btn btn-dark text-uppercase">Edit Product Now</button>
@@ -146,7 +141,7 @@
 </div>
 
 <script>
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ /* --------------------------------- image 1 -------------------------------- */
   const imagebox1 = document.getElementById('image-box1')
   const crop_btn1 = document.getElementById('crop-btn1')
   const input1 = document.getElementById('id_image1')
@@ -217,7 +212,8 @@
       })
     })
   })
-  // ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /* --------------------------------- image 2 -------------------------------- */
 
   const imagebox2 = document.getElementById('image-box2')
   const crop_btn2 = document.getElementById('crop-btn2')
@@ -289,7 +285,8 @@
       })
     })
   })
-  // ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /* --------------------------------- image 3 -------------------------------- */
   const imagebox3 = document.getElementById('image-box3')
   const crop_btn3 = document.getElementById('crop-btn3')
   const input3 = document.getElementById('id_image3')

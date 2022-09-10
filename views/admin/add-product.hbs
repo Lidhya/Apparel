@@ -6,7 +6,6 @@
 <div class="py-5">
   <div class="container bg-light mt-5 py-2 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,
              -5px -5px 14px #ededed;">
-
     <div class="container tm-mt-big tm-mb-big pt-3 ">
       <div class="row">
         <div class="col-xl-9 col-lg-10 col-md-6 col-sm-12 mx-auto">
@@ -19,11 +18,10 @@
               <p style="color: green;">{{updateStatus}}!</p>
               {{/if}}
             </div>
-               <form action="/admin/add-product" method="post"  id="form3"
-                  enctype="multipart/form-data">
-            <div class="row pb-3">
-              <div class="col-xl-6 col-lg-6 col-md-12 " >
-               
+            <form action="/admin/add-product" method="post" id="form3" enctype="multipart/form-data">
+              <div class="row pb-3">
+                <div class="col-xl-6 col-lg-6 col-md-12 ">
+
                   <div class="form-group mb-3">
                     <label for="name">Product Name
                     </label>
@@ -71,50 +69,30 @@
                       </label>
                       <input id="material-type" name="material_type" type="text" class="form-control validate" />
                     </div>
-                     <div class="form-group mb-3 ">
-                  <label for="price">₹ Actual price
-                  </label>
-                  <input id="price" name="actual_price" type="number" class="form-control validate" />
-                </div>
+                    <div class="form-group mb-3 ">
+                      <label for="price">₹ Actual price
+                      </label>
+                      <input id="price" name="actual_price" type="number" class="form-control validate" />
+                    </div>
 
-                <div class="form-group mb-3 ">
-                  <label for="discount_price">₹ Discount price
-                  </label>
-                  <input id="discount_price" name="discount_price" type="number" class="form-control validate" />
-                </div>
-
-                  
-
+                    <div class="form-group mb-3 ">
+                      <label for="discount_price">₹ Discount price
+                      </label>
+                      <input id="discount_price" name="discount_price" type="number" class="form-control validate" />
+                    </div>
                   </div>
+                </div>
 
-              </div>
-              <div class=" col-xl-6 col-lg-6 col-md-6 mb-4 d-">
-               
-                {{!-- <div class="custom-file mb-3">
-                  <input id="image" name="image" type="file" value="Upload image" />
-                </div> --}}
+                <div class=" col-xl-6 col-lg-6 col-md-6 mb-4 d-">
 
-                {{!-- <img src="" id="imgView1" alt="" style="height:100px">
-                <input type="file" id="id_image1" name="image" accept="image/*" onchange="viewImage1(event)"
-                  style="width:100%;"><br>
-                <div class="vald-info" id="info"></div>
-                <h5 class="error_form text-danger" id="image1_error_message"></h5>
-                <div style="display:flex">
-                  <div id="image-box1" class="image-container" style="height: 300px; width:20%"></div>
-                  <button type="button" class="btn btn-outline-info" id="crop-btn1" style=" margin-top: 10px; display: none;
-                      width:  50% ; margin: 20rem 0rem 0rem 0rem;">Crop</button>
-                </div> --}}
-
-                {{!-- <div class="mb-3  col-md-3 mt-4 d-flex justify-content-start" > --}}
                   <!------ firstDiv ------>
-                 
                   <img src="" id="imgView1" alt="" style="height:100px">
                   <input type="file" id="id_image1" name="Image1" accept="image/*" onchange="viewImage1(event)"
                     style="width:100%;"><br>
                   <div class="vald-info" id="info"></div>
                   <h5 class="error_form text-danger" id="image1_error_message"></h5>
                   <div style="display:flex">
-                    <div id="image-box1" class="image-container" ></div>
+                    <div id="image-box1" class="image-container"></div>
                     <button type="button" class="btn btn-outline-info  ms-3" id="crop-btn1" style=" margin-top: 10px; display: none;
                       width:  50% ; margin: 20rem 0rem 0rem 0rem;">Crop</button>
                   </div>
@@ -125,7 +103,7 @@
                   <div class="vald-info" id="info"></div>
                   <h5 class="error_form text-danger" id="image2_error_message"></h5>
                   <div style="display:flex">
-                    <div id="image-box2" class="image-container" ></div>
+                    <div id="image-box2" class="image-container"></div>
                     <button type="button" class="btn btn-outline-info ms-3" id="crop-btn2" style=" margin-top: 10px; display: none;
                       width:  50% ; margin: 20rem 0rem 0rem 0rem;">Crop</button>
                   </div>
@@ -136,29 +114,26 @@
                   <div class="vald-info" id="info"></div>
                   <h5 class="error_form text-danger" id="image3_error_message"></h5>
                   <div style="display:flex">
-                    <div id="image-box3" class="image-container" ></div>
+                    <div id="image-box3" class="image-container"></div>
                     <button type="button" class="btn btn-outline-info ms-3" id="crop-btn3" style=" margin-top: 10px; display: none;
                       width:  50% ; margin: 20rem 0rem 0rem 0rem;">Crop</button>
                   </div>
-                {{!-- </div> --}}
-
-
 
               </div>
-  <div class="col-12">
-                      <button type="submit" class="btn btn-dark text-uppercase">Add Product Now</button>
-                    </div>
-            </div>
-              </form>
+              <div class="col-12">
+                <button type="submit" class="btn btn-dark text-uppercase">Add Product Now</button>
+              </div>
           </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+</div>
 
 <script>
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /* --------------------------------- image 1 -------------------------------- */
   const imagebox1 = document.getElementById('image-box1')
   const crop_btn1 = document.getElementById('crop-btn1')
   const input1 = document.getElementById('id_image1')
@@ -229,7 +204,8 @@
       })
     })
   })
-  // ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /* --------------------------------- image 2 -------------------------------- */
 
   const imagebox2 = document.getElementById('image-box2')
   const crop_btn2 = document.getElementById('crop-btn2')
@@ -301,7 +277,8 @@
       })
     })
   })
-  // ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /* --------------------------------- image 3 -------------------------------- */
   const imagebox3 = document.getElementById('image-box3')
   const crop_btn3 = document.getElementById('crop-btn3')
   const input3 = document.getElementById('id_image3')

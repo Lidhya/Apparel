@@ -5,9 +5,6 @@
   </div>
   <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
      <h4 class="text-dark text-center fw-light">CATEGORY OFFER DETAILS</h4>
-   {{!-- {{#if updateStatus}}
-    <p style="color: green;">{{updateStatus}}</p>
-   {{/if}} --}}
   <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
   <thead>
     <tr>
@@ -69,13 +66,9 @@
      </div>
      </form>
      <p class="text-center">(These offers will be added to the customer's wallet if referred)</p>
-     </div>
-    
+     </div>   
 </div>
- 
 </section>
-
-
 
 <script>
     $(document).ready(function() {
@@ -106,14 +99,4 @@
 })
 }
 
- // $("#referral-form").submit((e) => {
- //   $.ajax({
- //     url: '/admin/edit-referrals',
- //     method: 'post',
- //     data: $("#referral-form").serialize(),
- //     success: (response) => {
- //     location.reload()
- //     }
- //   })
- // })
 </script>
