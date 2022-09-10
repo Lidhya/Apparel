@@ -49,12 +49,9 @@
               <a href="/product-details/{{this._id}}" class="text-start text-reset">
                 <div class="d-flex justify-content-between">
                   <h5 class="card-title">{{this.name}}</h5>
-                  <a href="" class="text-dark "><i class="fa-regular fa-heart "></i></a>
+                  {{!-- <a href="" class="text-dark "><i class="fa-regular fa-heart "></i></a> --}}
                 </div>
               </a>
-              {{!-- <a href="" class="text-start text-reset">
-                <p>category</p>
-              </a> --}}
               {{#if ../this.offer.isEnabled}}
               <h6 class="text-start"><del> ₹{{this.actual_price}}</del> <span
                   class="text-success">{{../this.offer.percent}}% off</span></h6>

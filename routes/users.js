@@ -349,8 +349,9 @@ router.get('/order-success', verifyLogin, async function (req, res, next) {
 
 router.get('/orders', verifyLogin, async function (req, res, next) {
   try{
+  let cartCount = await userHelpers.getCartCount(req.session.user._id)
   let orders = await orderHelpers.getUserOrders(req.session.user._id)
-  res.render('user/orders', { title: '| Orders', user: req.session.user, orders })
+  res.render('user/orders', { title: '| Orders', user: req.session.user, orders, cartCount })
    }catch(err){
     res.status('404').json(err)
   }
