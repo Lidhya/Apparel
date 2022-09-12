@@ -1,3 +1,4 @@
+require('dotenv').config()
 const db = require('../config/connection')
 const collection = require('../config/collection')
 const Promise = require('promise')

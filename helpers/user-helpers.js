@@ -477,7 +477,9 @@ module.exports = {
 
                 db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) }).then((totalAmount) => {
 
-                    resolve(totalAmount.total_amount)
+                    resolve(totalAmount?.total_amount)
+                }).catch((err)=>{
+                    reject(err)
                 })
             } else {
                 resolve(0)
