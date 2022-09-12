@@ -77,12 +77,18 @@
         </div>
         <div class="card mb-4 d-none" id="coupons">
           <ul class="list-group">
+            {{#if coupons}}
             {{#each coupons}}
             <li class="list-group-item d-flex justify-content-between text-success">
               Upto ₹{{this.amount_off}}/- off on purchases above {{this.minimum_purchase}}
              <span> <span class="flex-end text-dark fw-bold" id="{{this.coupon_code}}">{{this.coupon_code}}</span><button onclick="CopyToClipboard('{{this.coupon_code}}');return false;" class="btn px-2 ms-2"><i class="fa-regular fa-copy fa-lg"></i></button></span>
             </li>      
             {{/each}}
+            {{else}}
+            <li class="list-group-item text-center">
+             <span>Currently there is no available coupon</span>
+            </li>  
+            {{/if}}
           </ul>
         </div>
         <div class="card mb-4 p-2">

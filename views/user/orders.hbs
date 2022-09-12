@@ -19,23 +19,16 @@
         <div class="card rounded-5 mb-5">
           <div class="card-body px-0 pt-0">
             <div class="d-flex head flex-wrap align-items-center p-3 justify-content-around text-white rounded-top">
-              <p class="my-auto mx-auto">Order placed on {{this.date}}<br>at {{this.time}}</p>
+              <p class="my-auto mx-auto border rounded p-2 col-12 col-md-2">Ordered on: {{this.date}} <br>at {{this.time}}</p>
+              <p class="my-auto mx-auto col-12 col-md-2">Order {{this.status}}</p>
+              <p class="my-auto mx-auto col-12 col-md-2">Total amount &#x20b9;{{this.total}}</p>
+              <p class="my-auto mx-auto col-12 col-md-2">Payment through {{this.payment_method}}</p>
+              <p class="my-auto mx-auto col-12 col-md-2">Status {{this.delivery_status}}</p>
               {{#ifCond this.delivery_status 'Cancelled'}}
-              <p class="my-auto mx-auto">Order is Cancelled</p>
               {{else}}
-              <p class="my-auto mx-auto">Order is {{this.status}} </p>
-              {{/ifCond}}
-              <p class="my-auto mx-auto">Total spend &#x20b9;{{this.total}}</p>
-              <p class="my-auto mx-auto">Payment through {{this.payment_method}}</p>
-              <p class="my-auto mx-auto">Delivery is {{this.delivery_status}}</p>
-              {{#ifCond this.delivery_status 'Cancelled'}}
-              <p class="my-auto mx-auto fw-bold">Order is cancelled <br><span class="fw-light fs-6">(Check wallet for refunds)</span></p>
-              {{else}}
-              {{#ifCond this.delivery_status 'Delivered'}}
-               <p class="my-auto mx-auto fw-bold">DELIVERED</p>
-              {{else}}
-              <a class="btn btn-danger p-2" onclick="confirmation('{{this._id}}')">Cancel order</a>
-              {{/ifCond}}
+              {{#ifNot this.delivery_status 'Delivered'}}
+              <a class="btn p-2 col-12 col-md-1 text-danger border" onclick="confirmation('{{this._id}}')">Cancel order</a>
+              {{/ifNot}}
               {{/ifCond}}
             </div>
             <div class="row d-flex justify-content-around align-items-center ms-1">

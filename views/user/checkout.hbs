@@ -1,7 +1,9 @@
 <head>
   <script
     src="https://www.paypal.com/sdk/js?client-id=AZ7HWqCqHO1XNjFH8ogly6t3fTKVcu1N969VigFyhS7Nf5PIxe3CxYGzdpSrPIofgpyzN-SBXjymLfR9&currency=USD"></script>
-
+<script src="/javascripts/paypal.js"></script>
+<script src="/javascripts/script.js"></script>
+<script src="/javascripts/checkout.js"></script>
 </head>
 <section class="h-100 h-custom pt-5">
   <div class="container py-5 h-100 pt-5">
@@ -131,6 +133,9 @@
                     </div>
 
                     <div class="row">
+                      {{#unless orderAddress}}
+                      <p class="alert alert-danger">Choose an address to continue!</p>
+                      {{/unless}}
                       <div class="mb-4 pb-2 border rounded">
                         <div class="text-white p-4">
                           <label class="mb-2 fw-bold" for="payment method">Select a payment method</label><br>
@@ -144,7 +149,9 @@
                           <label for="razorpay">Razorpay</label><br>
                           <input type="radio" name="payment_method" onclick="displayPaypal()" value="Paypal">
                           <label for="paypal">Paypal</label><br>
+                          {{#if orderAddress}}
                           <div id="paypal-button-container" class="d-none mt-3"></div>
+                          {{/if}}
 
                         </div>
 
@@ -163,8 +170,10 @@
                     </div>
 
                     <a href="/cart" class="btn btn-dark border btn-lg" data-mdb-ripple-color="dark">Go back</a>
+                    {{#if orderAddress}}
                     <button type="submit" id="checkout-btn" class="btn btn-light btn-lg d-none"
                       data-mdb-ripple-color="dark">Checkout</button>
+                      {{/if}}
                  
                   </form>
                 </div>
@@ -176,7 +185,5 @@
     </div>
   </div>
 </section>
-<script src="/javascripts/paypal.js"></script>
-<script src="/javascripts/script.js"></script>
-<script src="/javascripts/checkout.js"></script>
+
 

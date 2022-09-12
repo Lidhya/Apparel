@@ -293,7 +293,8 @@ jQuery('#form-address-edit').validate({
   jQuery('#offer-form').validate({
     rules:{
       percent:{
-        required:true
+        required:true,
+        maxlength:2
       },
       categoryId:{
         required:true
@@ -301,6 +302,11 @@ jQuery('#form-address-edit').validate({
       valid_from:'required',
       valid_till:'required'
     },
+    messages:{
+      percent: {
+        maxlength: 'Can only select % below 100',
+        }
+      },
     submitHandler:function(form){
       form.submit();
     }
