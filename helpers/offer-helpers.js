@@ -151,19 +151,35 @@ module.exports = {
     },
 
     editReferrals: (referralData) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             referralData.referrer_offer = parseInt(referralData.referrer_offer)
             referralData.referee_offer = parseInt(referralData.referee_offer)
-            db.get().collection(collection.REFERRAL_COLLECTION).updateOne({ _id: objectId(referralData.refId) }, {
-                $set: {
-                    "referrer_offer": referralData.referrer_offer,
-                    "referee_offer": referralData.referee_offer
-                }
-            }).then((data) => {
-                resolve(data)
-            }).catch((err) => {
-                reject(err)
-            })
+            let refData={
+                "referrer_offer":referralData.referrer_offer,
+                "referee_offer":referralData.referee_offer
+            }
+            let refferalCheck= await db.get().collection(collection.REFERRAL_COLLECTION).findOne()
+            console.log(refferalCheck)
+            if(refferalCheck){
+                
+                db.get().collection(collection.REFERRAL_COLLECTION).updateOne({ _id: objectId(refferalCheck._id) }, {
+                    $set: {
+                        "referrer_offer": referralData.referrer_offer,
+                        "referee_offer": referralData.referee_offer
+                    }
+                }).then((data) => {
+                    resolve(data)
+                }).catch((err) => {
+                    reject(err)
+                })
+            }else{
+                db.get().collection(collection.REFERRAL_COLLECTION).insertOne(refData).then((data)=>{
+                    resolve()
+                }).catch((err) => {
+                    reject(err)
+                })
+            }
+            
         })
     },
     
