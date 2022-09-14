@@ -123,7 +123,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.get().collection(collection.CATEGORY_COLLECTION).find().toArray().then((category) => {
                 resolve(category)
-            })
+            }).catch((err)=>{ reject(err) })
         })
     },
 

@@ -369,7 +369,6 @@ module.exports = {
             console.log(cartItems)
             resolve(cartItems)
         })
-
     },
 
     /* ------------------------- Number of Items in cart ------------------------ */

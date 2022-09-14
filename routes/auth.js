@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const smsKey = process.env.SMS_SECRET_KEY;
 const twilioNum = process.env.TWILIO_PHONE_NUMBER;
 
+/* ------------------------- Verify login middleware ------------------------ */
 const verifyLogin = (req, res, next) => {
 	if (req.session.loggedIn) {
 		res.redirect('/')
@@ -19,17 +20,19 @@ const verifyLogin = (req, res, next) => {
 	}
 }
 
-router.get('/', verifyLogin, (req, res) => {
+/* ---------------------------- Get phone number ---------------------------- */
+router.get('/', verifyLogin, (req, res, next) => {
 	try {
 		res.setHeader('cache-control', 'no-store')
 		res.render('user/otp-login', { "authErr": req.session.authErr })
 		req.session.authErr = false
 	} catch (err) {
-		res.status('404').json(err)
+		next(err)
 	}
 })
 
-router.post('/sendOTP', verifyLogin, (req, res) => {
+/* ----------------------------- create message ----------------------------- */
+router.post('/sendOTP', verifyLogin, (req, res, next) => {
 	try {
 		res.setHeader('cache-control', 'no-store')
 		userHelpers.otpLogin(req.body.phone).then((response) => {
@@ -65,11 +68,12 @@ router.post('/sendOTP', verifyLogin, (req, res) => {
 			res.redirect('/otp')
 		})
 	} catch (err) {
-		res.status('404').json(err)
+		next(err)
 	}
 });
 
-router.post('/verifyOTP', verifyLogin, (req, res) => {
+/* ------------------------------- verify otp ------------------------------- */
+router.post('/verifyOTP', verifyLogin, (req, res, next) => {
 	try {
 		res.setHeader('cache-control', 'no-store')
 		const phone = req.body.phone
@@ -100,7 +104,7 @@ router.post('/verifyOTP', verifyLogin, (req, res) => {
 			return res.redirect('/otp')
 		}
 	} catch (err) {
-		res.status('404').json(err)
+		next(err)
 	}
 });
 

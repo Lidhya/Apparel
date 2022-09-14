@@ -11,8 +11,6 @@ const authRouter = require('./routes/auth')
 const hbs = require('express-handlebars')
 const app = express();
 const fileUpload = require('express-fileupload')
-const objectId = require('mongodb').ObjectId
-
 
 const db = require('./config/connection')
 const session = require('express-session')
@@ -32,6 +30,7 @@ app.use(express.static("images"));
 app.use(session({ secret: "key", resave: false, saveUninitialized: true }))
 app.use(fileUpload())
 
+// hbs create
 const method = hbs.create({});
 
 // register new function
@@ -42,6 +41,7 @@ method.handlebars.registerHelper('ifCond', function (v1, v2, options) {
   return options.inverse(this);
 });
 
+// register new function
 method.handlebars.registerHelper('ifNot', function (v1, v2, options) {
   if (v1 != v2) {
     return options.fn(this);
@@ -49,14 +49,17 @@ method.handlebars.registerHelper('ifNot', function (v1, v2, options) {
   return options.inverse(this);
 });
 
+// database connection
 db.connect((err) => {
   if (err) console.log('connection error' + err)
   else console.log('Database connected')
 })
 
+// routes
 app.use('/', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/otp', authRouter)
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -82,7 +85,6 @@ app.use(function (err, req, res, next) {
   } else {
     res.render('error');
   }
-
 });
 
 module.exports = app;

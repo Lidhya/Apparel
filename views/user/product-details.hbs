@@ -41,7 +41,8 @@
 						{{else}}
 						<p class="card-text py-1 text-danger">Out of stock</p>
 						{{/if}}
-						{{#if productDetails.sizes.[1]}}
+
+						{{#if isMultipleSize}}
 						<select name="sizes" id="sizes">
 							<option value='0'>Size</option>
 							{{#each productDetails.sizes}}

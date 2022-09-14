@@ -2,6 +2,8 @@ const db = require('../config/connection')
 const collection = require('../config/collection')
 const Promise = require('promise')
 const moment = require('moment');
+const { HighriskSpecialPrefixInstance } = require('twilio/lib/rest/voice/v1/dialingPermissions/country/highriskSpecialPrefix');
+const { reject } = require('promise');
 const objectId = require('mongodb').ObjectId
 
 
@@ -12,8 +14,12 @@ module.exports = {
 
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {
-      let users = await db.get().collection(collection.USER_COLLECTION).find().toArray()
-      resolve(users)
+        try{
+      let users= await db.get().collection(collection.USER_COLLECTION).find().toArray()
+       resolve(users)
+    }catch(err){
+     reject(err)
+    }
     })
   },
 
@@ -25,7 +31,7 @@ module.exports = {
         console.log(response)
         resolve(response)
       }).catch((err) => {
-        console.log(err)
+        reject(err)
       })
     })
   },
@@ -38,7 +44,7 @@ module.exports = {
         console.log(response)
         resolve(response)
       }).catch((err) => {
-        console.log(err)
+       reject(err)
       })
     })
   },
@@ -49,6 +55,7 @@ module.exports = {
 
   getReport: () => {
     return new Promise(async (resolve, reject) => {
+      try{
       const users = await db.get().collection(collection.USER_COLLECTION).find({ block: { $ne: true } }).toArray()
       const totalOrders = await db.get().collection(collection.ORDER_COLLECTION).find().toArray()
       const totalSales = await db.get().collection(collection.ORDER_COLLECTION).find({ "delivery_status": { $eq: "Delivered" } }).toArray()
@@ -328,7 +335,11 @@ module.exports = {
         totalUsers: users.length
       }
       resolve(details)
+    }catch(err){
+      reject(err)
+    }
     })
+
   }
 
 }

@@ -1,4 +1,3 @@
-const { response } = require('express');
 const express = require('express');
 const productHelpers = require('../helpers/product-helpers');
 const router = express.Router();
@@ -7,6 +6,7 @@ const offerHelpers = require('../helpers/offer-helpers');
 const orderHelpers = require('../helpers/order-helpers');
 const paypal = require('../helpers/paypal')
 
+/* ------------------------- Verify login middleware ------------------------ */
 const verifyLogin = (req, res, next) => {
   if (req.session.loggedIn) {
     next()
@@ -23,6 +23,7 @@ router.get('/', async function (req, res, next) {
   let cartCount = null
   if (req.session.loggedIn) {
     if (req.session.user) {
+      console.log(`this is req ${req}`);
       var user = req.session.user
       cartCount = await userHelpers.getCartCount(req.session.user._id)
       res.render('index', { user, index: true, products, categories, cartCount });
@@ -33,7 +34,7 @@ router.get('/', async function (req, res, next) {
     res.render('index', { products, index: true, categories, cartCount });
   }
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
@@ -47,11 +48,11 @@ router.get('/login', function (req, res, next) {
     req.session.loginErr = false
   }
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", (req, res, next) => {
   try{
   userHelpers.doLogin(req.body).then((response) => {
     req.session.loggedIn = true
@@ -64,7 +65,7 @@ router.post("/login", (req, res) => {
     res.redirect('/login')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
@@ -78,11 +79,11 @@ router.get('/signup', function (req, res, next) {
     req.session.signupErr = false
   }
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
-router.post("/signup", (req, res) => {
+router.post("/signup", (req, res, next) => {
   try{
   userHelpers.doSignup(req.body).then((response) => {
     console.log(response)
@@ -92,12 +93,12 @@ router.post("/signup", (req, res) => {
     res.redirect('/signup')
   })
    }catch(error){
-    res.status('404').json(error)
+    next(err)
   }
 })
 
 /* ------------------------- Single product details ------------------------- */
-router.get('/product-details/:id', verifyLogin, async (req, res) => {
+router.get('/product-details/:id', verifyLogin, async (req, res, next) => {
   try{
   let proId = req.params.id;
   let products = await productHelpers.getAllProducts()
@@ -108,13 +109,15 @@ router.get('/product-details/:id', verifyLogin, async (req, res) => {
       let offerPrice = parseInt((productDetails.actual_price / 100) * category.offer.percent)
       productDetails.discount_price = parseFloat(productDetails.actual_price - offerPrice)
     }
+    let arr=productDetails.sizes
+   let isMultipleSize= Array.isArray(arr)
 
     let cartCount = await userHelpers.getCartCount(req.session.user._id)
     res.setHeader('cache-control', 'no-store')
-    res.render('user/product-details', { title: '| Product details', productDetails, user: req.session.user, cartCount, products, category });
+    res.render('user/product-details', { title: '| Product details', productDetails, user: req.session.user, cartCount, products, category, isMultipleSize });
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
@@ -148,12 +151,12 @@ router.get('/cart', verifyLogin, async function (req, res, next) {
     res.render('user/cart', { title: ' | Cart', categories, user: req.session.user, products, total, actual_total, coupons, couponAppiled, "couponErr": req.session.couponErr });
     req.session.couponErr = false
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
 /* --------------------------- Add product to cart -------------------------- */
-router.post('/add-to-cart/:id', verifyLogin, (req, res) => {
+router.post('/add-to-cart/:id', verifyLogin, (req, res, next) => {
   try{
   console.log('api call')
   console.log(req.body)
@@ -161,12 +164,12 @@ router.post('/add-to-cart/:id', verifyLogin, (req, res) => {
     res.status(200).json({ status: true });
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* ------------------------- Change product quantity ------------------------ */
-router.post('/change-product-quantity', verifyLogin, (req, res) => {
+router.post('/change-product-quantity', verifyLogin, (req, res, next) => {
   try{
     userHelpers.changeProductQuantity(req.body).then(async (response) => {
       response.total = await userHelpers.getTotalAmount(req.session.user._id)
@@ -183,23 +186,23 @@ router.post('/change-product-quantity', verifyLogin, (req, res) => {
       res.json(response)
     })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* ------------------------ Remove product from cart ------------------------ */
-router.post('/remove-from-cart', verifyLogin, (req, res) => {
+router.post('/remove-from-cart', verifyLogin, (req, res, next) => {
   try{
   userHelpers.removeFromCart(req.body).then((response) => {
     res.json(response)
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* ------------------------------ Apply coupon ------------------------------ */
-router.post('/apply-coupon', verifyLogin, async (req, res) => {
+router.post('/apply-coupon', verifyLogin, async (req, res, next) => {
   try{
   console.log(req.body.coupon_code);
   offerHelpers.applyCoupon(req.body.coupon_code, req.session.user._id).then((appliedCoupon) => {
@@ -211,17 +214,17 @@ router.post('/apply-coupon', verifyLogin, async (req, res) => {
     res.redirect('/cart')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* ------------------------------ cancel coupon ----------------------------- */
-router.get('/cancel-coupon', verifyLogin, async (req, res) => {
+router.get('/cancel-coupon', verifyLogin, async (req, res, next) => {
   try{
     req.session.couponAppiled = false
     res.status('200').json('success')
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
@@ -250,13 +253,13 @@ router.get('/checkout', verifyLogin, async function (req, res, next) {
     req.session.addressErr = false
   }
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 
 });
 
 /* ----------------------- Update address in checkout ----------------------- */
-router.post('/update-address-checkout', verifyLogin, (req, res) => {
+router.post('/update-address-checkout', verifyLogin, (req, res, next) => {
   try{
   console.log(req.body)
   userHelpers.updateAddress(req.body, req.session.user._id).then((user) => {
@@ -267,18 +270,18 @@ router.post('/update-address-checkout', verifyLogin, (req, res) => {
     res.redirect('/checkout')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* ----------------------------- Deliver address ---------------------------- */
-router.post('/deliver-here', verifyLogin, (req, res) => {
+router.post('/deliver-here', verifyLogin, (req, res, next) => {
   try{
   let title = req.body.order_address
   req.session.orderAddress = title
   res.redirect('/checkout')
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
@@ -335,34 +338,34 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
   })
 
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 
 });
 
 /* --------------------------- Paypal order create -------------------------- */
-router.post("/api/orders", verifyLogin, async (req, res) => {
+router.post("/api/orders", verifyLogin, async (req, res, next) => {
   try{
   const order = await paypal.createOrder(req.session.total);
   res.json(order);
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
 /* ------------------------- Paypal payment capture ------------------------- */
-router.post("/api/orders/:orderId/capture", verifyLogin, async (req, res) => {
+router.post("/api/orders/:orderId/capture", verifyLogin, async (req, res, next) => {
   try{
   const { orderId } = req.params;
   const captureData = await paypal.capturePayment(orderId);
   res.json(captureData);
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
 /* -------------------------- Payment verification -------------------------- */
-router.post('/verify-payment', verifyLogin, (req, res) => {
+router.post('/verify-payment', verifyLogin, (req, res, next) => {
   try{
   console.log(req.body)
   orderHelpers.verifyPayment(req.body).then((response) => {
@@ -375,7 +378,7 @@ router.post('/verify-payment', verifyLogin, (req, res) => {
     res.json({ status: false, errMsg: '' })
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
@@ -384,7 +387,7 @@ router.get('/order-success', verifyLogin, async function (req, res, next) {
   try{
   res.render('user/order-success', { title: '| Success', user: req.session.user })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
@@ -395,19 +398,19 @@ router.get('/orders', verifyLogin, async function (req, res, next) {
   let orders = await orderHelpers.getUserOrders(req.session.user._id)
   res.render('user/orders', { title: '| Orders', user: req.session.user, orders, cartCount })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
 /* ---------------------------- User cancel order --------------------------- */
-router.get('/cancel-order/:id', verifyLogin, (req, res) => {
+router.get('/cancel-order/:id', verifyLogin, (req, res, next) => {
   try{
   let orderId = req.params.id
   orderHelpers.cancelOrder(orderId).then((response) => {
     res.redirect('/orders')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
@@ -431,12 +434,12 @@ router.get('/account', verifyLogin, async function (req, res, next) {
   req.session.pwdErr = false
   req.session.addressErr = false
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 });
 
 /* --------------------------- User profile update -------------------------- */
-router.post('/update-profile', verifyLogin, (req, res) => {
+router.post('/update-profile', verifyLogin, (req, res, next) => {
   try{
   let userId = req.session.user._id
   userHelpers.updateProfile(req.body, userId).then((user) => {
@@ -449,12 +452,12 @@ router.post('/update-profile', verifyLogin, (req, res) => {
     res.redirect('/account')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* --------------------------- User address update -------------------------- */
-router.post('/update-address', verifyLogin, (req, res) => {
+router.post('/update-address', verifyLogin, (req, res, next) => {
   try{
   console.log(req.body)
   userHelpers.updateAddress(req.body, req.session.user._id).then((user) => {
@@ -465,12 +468,12 @@ router.post('/update-address', verifyLogin, (req, res) => {
     res.redirect('/account')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* -------------------------- Update user password -------------------------- */
-router.post('/update-password', verifyLogin, (req, res) => {
+router.post('/update-password', verifyLogin, (req, res, next) => {
   try{
   console.log(req.body)
   userHelpers.updatePassword(req.body, req.session.user._id).then((response) => {
@@ -480,12 +483,12 @@ router.post('/update-password', verifyLogin, (req, res) => {
     res.redirect('/account')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* -------------------------- Delete user address -------------------------- */
-router.get('/delete-address/:id', verifyLogin, (req, res) => {
+router.get('/delete-address/:id', verifyLogin, (req, res, next) => {
   try{
   let title = req.params.id
   let userId = req.session.user._id
@@ -494,29 +497,29 @@ router.get('/delete-address/:id', verifyLogin, (req, res) => {
     res.redirect('/account')
   })
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
 /* ------------------------------ User wishlist ----------------------------- */
-// router.get('/wishlist', verifyLogin, async (req, res) => {
+// router.get('/wishlist', verifyLogin, async (req, res, next) => {
 //   try{
 //   let cartCount = await userHelpers.getCartCount(req.session.user._id)
 //   let wishlist = await userHelpers.getWishlist(req.session.user._id)
 //   res.render('user/wishlist', { title: '| Wishlist', user: req.session.user, cartCount, wishlist })
 //    }catch(err){
-//     res.status('404').json(err)
+//    next(err)
 //   }
 // })
 
 /* --------------------------------- logout --------------------------------- */
-router.get('/logout', verifyLogin, (req, res) => {
+router.get('/logout', verifyLogin, (req, res, next) => {
   try{
   req.session.loggedIn = false
   req.session.destroy()
   res.redirect('/')
    }catch(err){
-    res.status('404').json(err)
+   next(err)
   }
 })
 
