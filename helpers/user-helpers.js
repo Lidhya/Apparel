@@ -16,6 +16,7 @@ module.exports = {
 
     doSignup: (userData) => {
         return new Promise(async (resolve, reject) => {
+            try{
             userData.referralId = referralCode.generate(8)[0];
             userData.referred_count = 0
             userData.signUp_date = new Date()
@@ -24,16 +25,14 @@ module.exports = {
                 last_added: new Date()
             }
             let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ email: userData.email })
-
             if (userCheck) {
                 let err = 'Email address already exist'
                 reject(err)
             } else {
                 if (userData.referrerId) {
                     let referrerCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ referralId: userData.referrerId })
-                    let referralOffers = await db.get().collection(collection.REFERRAL_COLLECTION).find().toArray()
-                    let referrer_offer = referralOffers[0].referrer_offer
-                    let referee_offer = referralOffers[0].referee_offer
+                    let referralOffers = await db.get().collection(collection.REFERRAL_COLLECTION).findOne()
+                    const {referrer_offer, referee_offer}=referralOffers
                     if (referrerCheck) {
                         db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(referrerCheck._id) }, {
                             $set: { "wallet.last_added": new Date() },
@@ -57,70 +56,74 @@ module.exports = {
                     userData.block = false
                     db.get().collection(collection.USER_COLLECTION).insertOne(userData).then((data) => {
                         resolve(data)
-                    })
+                    }).catch((err)=>{reject(err)})
                 }
             }
+        }catch(err){
+            err='something went wrong'
+            reject(err)
+        }
 
         })
     },
 
    /* ----------------------------- User and admin login ----------------------------- */
-
     doLogin: (userData) => {       
         return new Promise(async (resolve, reject) => {
+            try{
+            const {email, password}=userData
            // let admin = await db.get().collection(collection.ADMIN_COLLECTION).findOne({ email: userData.email })   <------if stored in database
            let admin=false
-           if(process.env.ADMIN_EMAIL==userData.email){
+           if(process.env.ADMIN_EMAIL==email){
                 admin={
                 email:process.env.ADMIN_EMAIL,
                 password:process.env.ADMIN_PWD
                }
            }
-            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: userData.email })
+            let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: email })
             let response = {}
             if (!admin && user.block === true) {
                 let err = "Your account is blocked"
                 reject(err)
             } else {
                 if (user) {
-                    bcrypt.compare(userData.password, user.password).then((status) => {
+                    bcrypt.compare(password, user.password).then((status) => {
                         if (status) {
-                            console.log('login success')
                             response.user = user
                             response.status = true
                             resolve(response)
 
                         } else {
-                            var err = 'Incorrect password'
+                            let err = 'Incorrect password'
                             reject(err)
                         }
                     })
                 } else if (admin) {
                    // bcrypt.compare(userData.password, admin.password).then((status) => { -----  })    <------if stored in database
-                        if (admin.password==userData.password) {
-                            console.log('login success')
+                        if (admin.password==password) {
                             response.admin = admin
                             response.status = true
                             resolve(response)
-
                         } else {
-                            var err = 'Incorrect password'
+                            let err = 'Incorrect password'
                             reject(err)
                         }
-
                 } else {
-                    var err = 'Invalid email or password'
+                    let err = 'Invalid email or password'
                     reject(err)
                 }
             }
+        }catch(err){
+            err='something went wrong'
+            reject(err)
+        }
         })
     },
 
     /* -------------------------------- OTP login ------------------------------- */
-
     otpLogin: (phone) => {
         return new Promise(async (resolve, reject) => {
-            console.log(phone)
+            try{
             let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ phone: phone })
             let response = {}
             if (userCheck) {
@@ -130,6 +133,10 @@ module.exports = {
             } else {
                 reject('The number is not registered')
             }
+        }catch(err){
+            err='something went wrong'
+            reject(err)
+        }
 
         })
     },
@@ -142,11 +149,15 @@ module.exports = {
 
     getuserDetails: (userId) => {
         return new Promise(async (resolve, reject) => {
+            try{
             db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) }).then((data) => {
                 resolve(data)
             }).catch((err) => {
                 reject(err)
             })
+        } catch (err) {
+            reject(err)
+        }
         })
     },
 
@@ -154,24 +165,24 @@ module.exports = {
 
     updateProfile: (details, userId) => {
         return new Promise(async (resolve, reject) => {
+            try{
+                const {fname, lname, email, password, phone}=details
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
-            let emailCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: { $ne: objectId(userId) }, email: details.email })
-            bcrypt.compare(details.password, user.password).then((status) => {
+            let emailCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: { $ne: objectId(userId) }, email: email })
+            bcrypt.compare(password, user.password).then((status) => {
                 if (status) {
-                    console.log(emailCheck)
                     if (emailCheck) {
                         let err = 'Email already registered by someone else'
                         reject(err)
                     } else {
                         db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({ _id: objectId(userId) }, {
                             $set: {
-                                fname: details.fname,
-                                lname: details.lname,
-                                email: details.email,
-                                phone: details.phone
+                                fname: fname,
+                                lname: lname,
+                                email: email,
+                                phone: phone
                             }
                         }).then(async (status) => {
-                            console.log(status.value)
                             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
                             resolve(user)
                         }).catch(() => {
@@ -183,8 +194,15 @@ module.exports = {
                     let err = 'Incorrect password'
                     reject(err)
                 }
+            }).catch((err)=>{
+                err='something went wrong'
+                reject(err)
             })
 
+        } catch (err) {
+            err='something went wrong'
+            reject(err)
+        }
         })
 
     },
@@ -193,15 +211,16 @@ module.exports = {
 
     updateAddress: (addressData, userId) => {
         return new Promise(async (resolve, reject) => {
+            try{
+                const {title, address, city, pincode, phone}=addressData
             let addressObj = {
-                title: addressData.title,
-                address: addressData.address,
-                city: addressData.city,
-                pincode: addressData.pincode,
-                phone: addressData.phone
+                title: title,
+                address: address,
+                city: city,
+                pincode: pincode,
+                phone: phone
             }
-            let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId), addresses: { $elemMatch: { title: addressData.title } } })
-            console.log(userCheck)
+            let userCheck = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId), addresses: { $elemMatch: { title: title } } })
             if (userCheck) {
                 let err = 'Title already exists'
                 reject(err)
@@ -214,10 +233,14 @@ module.exports = {
                     let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
                     resolve(user)
                 }).catch((err) => {
-                    reject()
+                    err='something went wrong'
+                    reject(err)
                 })
             }
-
+        } catch (err) {
+            err='something went wrong'
+            reject(err)
+        }
 
         })
     },
@@ -226,22 +249,34 @@ module.exports = {
 
     updatePassword: (pwdData, userId) => {
         return new Promise(async (resolve, reject) => {
+            try{
+                let {password, new_password}=pwdData
             let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
-            bcrypt.compare(pwdData.password, user.password).then(async (status) => {
+            bcrypt.compare(password, user.password).then(async (status) => {
                 if (status) {
-                    pwdData.new_password = await bcrypt.hash(pwdData.new_password, 10)
+                    new_password = await bcrypt.hash(new_password, 10)
                     db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
                         $set: {
-                            password: pwdData.new_password
+                            password: new_password
                         }
                     }).then((data) => {
                         resolve(data)
+                    }).catch((err)=>{
+                         err = 'Cannot update try again'
+                        reject(err)
                     })
                 } else {
-                    let err = 'Incorrect password'
+                    err = 'Incorrect password'
                     reject(err)
                 }
+            }).catch((err)=>{
+                err='something went wrong'
+                    reject(err)
             })
+        } catch (err) {
+            err='something went wrong'
+            reject(err)
+        }
         })
     },
 
@@ -249,6 +284,7 @@ module.exports = {
 
     deleteAddress: async (title, userId) => {
         return new Promise((resolve, reject) => {
+            try{
             db.get().collection(collection.USER_COLLECTION).updateOne({ _id: objectId(userId) }, {
                 $pull: {
                     addresses: { title: title }
@@ -256,7 +292,12 @@ module.exports = {
             }).then(async (response) => {
                 let user = await db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) })
                 resolve(user)
+            }).catch((err)=>{
+                reject(err)
             })
+        } catch (err) {
+            reject(err)
+        }
         })
     },   
 
@@ -265,10 +306,11 @@ module.exports = {
    /* -------------------------------------------------------------------------- */
 
    /* --------------------------- Add product to cart -------------------------- */
-    addToCart: async (proId, userId, data) => {
-        var dPrice = parseFloat(data.dPrice)    // data.dPrice is the discount price which is calculated in product_details router
+   addToCart: async (proId, userId, data) => {
+        return new Promise(async (resolve, reject) => {
+            try{
+        let dPrice = parseFloat(data.dPrice)    // data.dPrice is the discount price which is calculated in product_details router
         let proData = await db.get().collection(collection.PRODUCT_COLLECTION).findOne({ _id: objectId(proId) })
-        console.log(proData.name)
         let proObj = {
             item: objectId(proId),
             name: proData.name,
@@ -278,14 +320,10 @@ module.exports = {
             categoryId: proData.categoryId,
             subtotal: dPrice   // to store the price of the product according to quantity 
         }
-        return new Promise(async (resolve, reject) => {
             let userCart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
-
             if (userCart) {
-
                 let proExist = userCart.products.findIndex(product => product.item == proId)
                 if (proExist != -1) {
-
                     db.get().collection(collection.CART_COLLECTION)
                         .updateOne({ user: objectId(userId), 'products.item': objectId(proId) },
                             {
@@ -293,7 +331,7 @@ module.exports = {
                             }
                         ).then((data) => {
                             resolve()
-                        })
+                        }).catch((err)=>{reject(err)})
                 } else {
                     db.get().collection(collection.CART_COLLECTION).updateOne({ user: objectId(userId) },
                         {
@@ -303,10 +341,8 @@ module.exports = {
                         }
                     ).then((response) => {
                         resolve(response)
-                    })
-
+                    }).catch((err)=>{reject(err)})
                 }
-
             } else {
                 let cartObj = {
                     user: objectId(userId),
@@ -315,8 +351,11 @@ module.exports = {
                 }
                 db.get().collection(collection.CART_COLLECTION).insertOne(cartObj).then((response) => {
                     resolve()
-                })
+                }).catch((err)=>{reject(err)})
             }
+        } catch (err) {
+            reject(err)
+        }
         })
     },
 

@@ -54,7 +54,6 @@ router.post('/sendOTP', verifyLogin, (req, res, next) => {
 				})
 				.then((messages) => console.log(messages))
 				.catch((err) => {
-					console.error(err)
 					err = 'something went wrong try again'
 					req.session.authErr = err
 					res.redirect('/otp')

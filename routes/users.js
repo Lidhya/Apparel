@@ -60,7 +60,6 @@ router.post("/login", (req, res, next) => {
     req.session.admin = response.admin
     res.redirect('/')
   }).catch((err) => {
-    console.log(err)
     req.session.loginErr = err
     res.redirect('/login')
   })
@@ -86,7 +85,6 @@ router.get('/signup', function (req, res, next) {
 router.post("/signup", (req, res, next) => {
   try{
   userHelpers.doSignup(req.body).then((response) => {
-    console.log(response)
       res.redirect('/login')
   }).catch((err) => {
     req.session.signupErr = err
@@ -134,7 +132,6 @@ router.get('/cart', verifyLogin, async function (req, res, next) {
     if (products.length > 0) {
       total = await userHelpers.getTotalAmount(req.session.user._id)
       actual_total = await userHelpers.getSubTotalAmount(req.session.user._id)
-      console.log(total);
       if (req.session.couponAppiled) {
         if (req.session.couponAppiled.minimum_purchase <= total) {
           let amountOff = req.session.couponAppiled.amount_off
@@ -158,11 +155,9 @@ router.get('/cart', verifyLogin, async function (req, res, next) {
 /* --------------------------- Add product to cart -------------------------- */
 router.post('/add-to-cart/:id', verifyLogin, (req, res, next) => {
   try{
-  console.log('api call')
-  console.log(req.body)
   userHelpers.addToCart(req.params.id, req.session.user._id, req.body).then(() => {
     res.status(200).json({ status: true });
-  })
+  }).catch((err)=>{next(err)})
    }catch(err){
    next(err)
   }
@@ -231,8 +226,9 @@ router.get('/cancel-coupon', verifyLogin, async (req, res, next) => {
 /* ----------------------------- Go to checkout ----------------------------- */
 router.get('/checkout', verifyLogin, async function (req, res, next) {
   try{
-  let total = await userHelpers.getTotalAmount(req.session.user._id)
-  let userDetails = await userHelpers.getuserDetails(req.session.user._id)
+    let userId=req.session.user._id
+  let total = await userHelpers.getTotalAmount(userId)
+  let userDetails = await userHelpers.getuserDetails(userId)
   if (req.session.couponAppiled) {
     if (req.session.couponAppiled.minimum_purchase <= total) {
       let amountOff = req.session.couponAppiled.amount_off
@@ -293,8 +289,8 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
   var products = 0
   var total = 0
   if (product.length > 0) {
-    products = await userHelpers.getCartProductList(req.session.user._id)
-    total = await userHelpers.getTotalAmount(req.session.user._id)
+    products = await userHelpers.getCartProductList(userId)
+    total = await userHelpers.getTotalAmount(userId)
     if (req.session.couponAppiled) {
       let amountOff = req.session.couponAppiled.amount_off
       total = total - amountOff
@@ -346,8 +342,9 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
 /* --------------------------- Paypal order create -------------------------- */
 router.post("/api/orders", verifyLogin, async (req, res, next) => {
   try{
-  const order = await paypal.createOrder(req.session.total);
-  res.json(order);
+  paypal.createOrder(req.session.total).then((order)=>{
+    res.json(order);
+  }).catch((err)=>{next(err)})
    }catch(err){
    next(err)
   }
@@ -370,11 +367,9 @@ router.post('/verify-payment', verifyLogin, (req, res, next) => {
   console.log(req.body)
   orderHelpers.verifyPayment(req.body).then((response) => {
     orderHelpers.changePaymentStatus(req.body['order[receipt]']).then(() => {
-      console.log('payment successfull')
       res.json({ status: true })
-    })
+    }).catch((err)=>{res.json({ status: false, errMsg: '' })})
   }).catch((err) => {
-    console.log(err)
     res.json({ status: false, errMsg: '' })
   })
    }catch(err){
@@ -408,7 +403,7 @@ router.get('/cancel-order/:id', verifyLogin, (req, res, next) => {
   let orderId = req.params.id
   orderHelpers.cancelOrder(orderId).then((response) => {
     res.redirect('/orders')
-  })
+  }).catch((err)=>{next(err)})
    }catch(err){
    next(err)
   }
@@ -417,8 +412,9 @@ router.get('/cancel-order/:id', verifyLogin, (req, res, next) => {
 /* ------------------------------ user account ------------------------------ */
 router.get('/account', verifyLogin, async function (req, res, next) {
   try{
-  let cartCount = await userHelpers.getCartCount(req.session.user._id)
-  let userDetails = await userHelpers.getuserDetails(req.session.user._id)
+    let userId=req.session.user._id
+  let cartCount = await userHelpers.getCartCount(userId)
+  let userDetails = await userHelpers.getuserDetails(userId)
   let referrals = await offerHelpers.getReferrals()
   res.render('user/account', {
     title: '| Account',
@@ -444,11 +440,9 @@ router.post('/update-profile', verifyLogin, (req, res, next) => {
   let userId = req.session.user._id
   userHelpers.updateProfile(req.body, userId).then((user) => {
     req.session.user = user
-    console.log('success')
     res.redirect('/account')
   }).catch((err) => {
     req.session.profileUpdateErr = err
-    console.log(req.session.profileUpdateErr)
     res.redirect('/account')
   })
    }catch(err){
@@ -475,7 +469,6 @@ router.post('/update-address', verifyLogin, (req, res, next) => {
 /* -------------------------- Update user password -------------------------- */
 router.post('/update-password', verifyLogin, (req, res, next) => {
   try{
-  console.log(req.body)
   userHelpers.updatePassword(req.body, req.session.user._id).then((response) => {
     res.redirect('/account')
   }).catch((err) => {
@@ -495,7 +488,7 @@ router.get('/delete-address/:id', verifyLogin, (req, res, next) => {
   userHelpers.deleteAddress(title, userId).then((user) => {
     req.session.user = user
     res.redirect('/account')
-  })
+  }).catch((err)=>{next(err)})
    }catch(err){
    next(err)
   }
