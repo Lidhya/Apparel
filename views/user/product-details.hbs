@@ -22,7 +22,7 @@
 					</div>
 					<div class="details col-md-6 ">
 						<h3 class="product-title  py-3">{{productDetails.name}}</h3>
-						<div class="rating">					
+						<div class="rating">
 							<span class="review-no">Category: {{productDetails.category}}</span>
 							<p class="pt-1">Material: {{productDetails.material_type}}</p>
 						</div>
@@ -55,7 +55,8 @@
 						<span class="text-danger" style="display: none;" id="size-select">Select a size</span>
 
 						<div class="action mt-3">
-							<div class=" btn bg-light text-success p-2 mb-2" style="visibility: hidden;" id="success-btn"><i class="fa-solid fa-cart-shopping"></i> Added to cart</div><br>
+							<div class=" btn bg-light text-success p-2 mb-2" style="visibility: hidden;"
+								id="success-btn"><i class="fa-solid fa-cart-shopping"></i> Added to cart</div><br>
 							<button class=" btn btn-dark"
 								onclick="addToCart('{{productDetails._id}}','{{productDetails.stock}}','{{productDetails.discount_price}}')"
 								id="{{productDetails._id}}" type="button">add to cart</button>

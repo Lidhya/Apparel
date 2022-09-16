@@ -251,7 +251,7 @@ module.exports = {
                     db.get().collection(collection.COUPON_COLLECTION).insertOne(couponData).then(() => {
                         resolve()
                     }).catch((err) => {
-                         err = 'something went wrong'
+                        err = 'something went wrong'
                         reject(err)
                     })
                 }
@@ -285,7 +285,7 @@ module.exports = {
                         }).then(() => {
                             resolve()
                         }).catch((err) => {
-                             err = "something went wrong"
+                            err = "something went wrong"
                             reject(err)
                         })
                 }

@@ -6,8 +6,6 @@ const adminHelpers = require("../helpers/admin-helpers");
 const productHelpers = require('../helpers/product-helpers');
 const offerHelpers = require('../helpers/offer-helpers');
 const orderHelpers = require('../helpers/order-helpers');
-const path = require('path');
-const { unblockUser } = require('../helpers/admin-helpers');
 
 /* ------------------------- Verify login middleware ------------------------ */
 const verifyLogin = (req, res, next) => {
@@ -108,10 +106,9 @@ router.get('/product-edit/:id', verifyLogin, async (req, res, next) => {
   let categories = await productHelpers.getCategories()
   let proId = req.params.id;
   productHelper.getProductDetails(proId).then((productDetails) => {
-    console.log(productDetails);
     res.render('admin/edit-product', { title: " | Admin", productDetails, categories, admin: true, "proErr": req.session.proErr });
     req.session.proErr = false;
-  });
+  }).catch((err) => { next(err) })
 }catch(err){
  next(err)
 }
@@ -123,35 +120,31 @@ router.post('/edit-product/:id', verifyLogin, (req, res, next) => {
   productHelpers.updateProduct(req.params.id, req.body).then((response) => {
     let id = req.params.id
     if (req.files?.Image1) {
-      console.log('vann vann  img 1')
       let image1 = req.files?.Image1
       fs.unlinkSync('./public/product-images/' + id + '-0.jpg')
       image1.mv('./public/product-images/' + id + '-0.jpg', (err) => {
         if (err) {
-          console.log(err);
+          next(err)
         }
       })
     }
 
     if (req.files?.Image2) {
-      console.log('vann vann  img2')
       let image2 = req.files?.Image2
       fs.unlinkSync('./public/product-images/' + id + '-1.jpg')
       image2.mv('./public/product-images/' + id + '-1.jpg', (err) => {
         if (err) {
-          console.log(err);
+          next(err)
         }
       })
     }
 
     if (req.files?.Image3) {
-      console.log('vann vann  img3')
       let image3 = req.files?.Image3
-      var imgpath3 = '/product-images/' + id + '-2.jpg'
       fs.unlinkSync('./public/product-images/' + id + '-2.jpg')
       image3.mv('./public/product-images/' + id + '-2.jpg', (err) => {
         if (err) {
-          console.log(err);
+          next(err)
         }
       })
     }
@@ -247,7 +240,6 @@ router.post('/add-category', (req, res, next) => {
 router.get('/delete-category/:id', verifyLogin, (req, res, next) => {
   try{
   let catId = req.params.id
-  console.log(catId)
   productHelpers.deleteCategory(catId).then((response) => {
     res.redirect('/admin/categories')
   }).catch((err) => {
@@ -286,10 +278,9 @@ router.get('/cancel-order/:id', verifyLogin, (req, res, next) => {
 router.post('/update-order/:id', verifyLogin, (req, res, next) => {
   try{
   let orderId = req.params.id
-  console.log(req.body)
   orderHelpers.updateOrder(orderId, req.body).then((response) => {
     res.redirect('/admin/all-orders')
-  })
+  }).catch((err)=>{next(err)})
 }catch(err){
  next(err)
 }
@@ -299,10 +290,9 @@ router.post('/update-order/:id', verifyLogin, (req, res, next) => {
 router.post('/update-status/:id', verifyLogin, (req, res, next) => {
   try{
   let orderId = req.params.id
-  console.log(req.body)
   orderHelpers.updateStatus(orderId, req.body).then((response) => {
     res.redirect('/admin/all-orders')
-  })
+  }).catch((err)=>{next(err)})
 }catch(err){
  next(err)
 }
@@ -444,7 +434,6 @@ router.post('/add-coupon', verifyLogin, async (req, res, next) => {
     req.session.adminCouponErr=err
     res.redirect('/admin/add-coupon')
   })
-   
 }catch(err){
    next(err)
   }
@@ -502,10 +491,9 @@ router.get('/coupon-disable/:id', verifyLogin, async (req, res, next) => {
 /* ------------------------------delete a coupon ------------------------------ */
 router.get('/delete-coupon/:id', verifyLogin, async (req, res, next) => {
   try{
-  console.log('delete vann');
   offerHelpers.deleteCoupon(req.params.id).then((response) => {
     res.json({ status: true })
-  })
+  }).catch((err)=>{next(err)})
    }catch(err){
    next(err)
   }

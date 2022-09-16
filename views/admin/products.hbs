@@ -1,92 +1,89 @@
 <section class="pt-5">
-<div class="container">
-  <div class="d-flex">
-    <a href="/admin/add-product" class="btn btn-success mt-4 ms-auto ms-2">Add Product</a>
-  </div>
-  <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
-     <h4 class="text-dark text-center fw-light">PRODUCT DETAILS</h4>
-   {{#if updateStatus}}
-    <p style="color: green;">{{updateStatus}}</p>
-   {{/if}}
-  <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
-  <thead>
-    <tr>
-      <th scope="col">SL No.</th>
-      <th scope="col">Product name</th>
-      <th scope="col">category</th>
-      <th scope="col">Description</th>
-      <th scope="col">Material type</th>
-      <th scope="col">Image</th>
-      <th scope="col">&#x20b9; Price</th>
-      <th scope="col">&#x20b9; Discount price</th>
-      <th scope="col">Sizes</th>
-      <th scope="col">Stock</th>
-      <th scope="col">Options</th>
-    </tr>
-  </thead>
-  <tbody>
-      {{#each products}}
-    <tr>
-      <td></td>
-      <td>{{this.name}}</td>
-      <td>{{this.category}}</td>
-      <td>{{this.description}}</td>
-      <td>{{this.material_type}}</td>
-      <td><img style="height: 50px; width: 50px;" src="{{this.image_path.[0]}}" alt="product image"></td>
-      <td>&#x20b9;{{this.actual_price}}</td>
-      <td>&#x20b9;{{this.discount_price}}</td>
-      <td>{{this.sizes}}</td>
-      {{#if this.stock}}
-      <td class="text-success">{{this.stock}}</td>
-      {{else}}
-        <td class="text-danger">Out of stock</td>
+  <div class="container">
+    <div class="d-flex">
+      <a href="/admin/add-product" class="btn btn-success mt-4 ms-auto ms-2">Add Product</a>
+    </div>
+    <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
+      <h4 class="text-dark text-center fw-light">PRODUCT DETAILS</h4>
+      {{#if updateStatus}}
+      <p style="color: green;">{{updateStatus}}</p>
       {{/if}}
-      <td>
-         <a href="/admin/product-edit/{{this._id}}" class="btn btn-warning"><i class="fa-regular fa-lg fa-pen-to-square"></i></a>
-        <a  class=" btn btn-danger text-white p-2 " onclick="confirmation('{{this._id}}')"><i class="fas fa-trash fa-lg"></i></a>
-      </td>
-    </tr>
-     {{/each}}
-  </tbody>
-</table>
-</div>
-</div>
+      <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
+        <thead>
+          <tr>
+            <th scope="col">SL No.</th>
+            <th scope="col">Product name</th>
+            <th scope="col">category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Material type</th>
+            <th scope="col">Image</th>
+            <th scope="col">&#x20b9; Price</th>
+            <th scope="col">&#x20b9; Discount price</th>
+            <th scope="col">Sizes</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each products}}
+          <tr>
+            <td></td>
+            <td>{{this.name}}</td>
+            <td>{{this.category}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.material_type}}</td>
+            <td><img style="height: 50px; width: 50px;" src="{{this.image_path.[0]}}" alt="product image"></td>
+            <td>&#x20b9;{{this.actual_price}}</td>
+            <td>&#x20b9;{{this.discount_price}}</td>
+            <td>{{this.sizes}}</td>
+            {{#if this.stock}}
+            <td class="text-success">{{this.stock}}</td>
+            {{else}}
+            <td class="text-danger">Out of stock</td>
+            {{/if}}
+            <td>
+              <a href="/admin/product-edit/{{this._id}}" class="btn btn-warning"><i
+                  class="fa-regular fa-lg fa-pen-to-square"></i></a>
+              <a class=" btn btn-danger text-white p-2 " onclick="confirmation('{{this._id}}')"><i
+                  class="fas fa-trash fa-lg"></i></a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </section>
-<script> 
- $(document).ready(function() {
-    var table = $('#table1').DataTable( {
-        rowReorder: {
-            selector: 'td:nth-child(2)'
-        },
-        responsive: true,
-         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-        $('td:eq(0)', nRow).html(iDisplayIndexFull +1);
-    }
-    } );
-} );
+<script>
+  $(document).ready(function () {
+    var table = $('#table1').DataTable({
+      rowReorder: {
+        selector: 'td:nth-child(2)'
+      },
+      responsive: true,
+      "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+        $('td:eq(0)', nRow).html(iDisplayIndexFull + 1);
+      }
+    });
+  });
 </script>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  function confirmation(id){
+  function confirmation(id) {
     Swal.fire({
-  title: 'Are you sure?',
-  text: "You won't be able to revert this!",
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Yes, delete it!'
-}).then((result) => {
-  if (result.isConfirmed) {   
-    location.href = `/admin/delete-products/${id}`    
-  }
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        location.href = `/admin/delete-products/${id}`
+      }
 
-})
+    })
   }
 </script>
-
-
-
-
-

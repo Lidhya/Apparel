@@ -49,13 +49,14 @@
               <a href="/product-details/{{this._id}}" class="text-start text-reset">
                 <div class="d-flex justify-content-between">
                   <h5 class="card-title">{{this.name}}</h5>
-                  {{!-- <a href="" class="text-dark "><i class="fa-regular fa-heart "></i></a> --}}
+                  {{!-- <button onclick="addToWishlist('{{this._id}}')" class="text-dark "><i
+                      class="fa-regular fa-heart "></i></button> --}}
                 </div>
                 {{#if this.stock}}
-						<p class="card-text text-success">In stock</p>
-						{{else}}
-						<p class="card-text text-danger">Out of stock</p>
-						{{/if}}
+                <p class="card-text text-success">In stock</p>
+                {{else}}
+                <p class="card-text text-danger">Out of stock</p>
+                {{/if}}
               </a>
               {{#if ../this.offer.isEnabled}}
               <h6 class="text-start"><del> ₹{{this.actual_price}}</del> <span

@@ -1,9 +1,9 @@
 <head>
   <script
     src="https://www.paypal.com/sdk/js?client-id=AZ7HWqCqHO1XNjFH8ogly6t3fTKVcu1N969VigFyhS7Nf5PIxe3CxYGzdpSrPIofgpyzN-SBXjymLfR9&currency=USD"></script>
-<script src="/javascripts/paypal.js"></script>
-<script src="/javascripts/script.js"></script>
-<script src="/javascripts/checkout.js"></script>
+  <script src="/javascripts/paypal.js"></script>
+  <script src="/javascripts/script.js"></script>
+  <script src="/javascripts/checkout.js"></script>
 </head>
 <section class="h-100 h-custom pt-5">
   <div class="container py-5 h-100 pt-5">
@@ -139,13 +139,16 @@
                       <div class="mb-4 pb-2 border rounded">
                         <div class="text-white p-4">
                           <label class="mb-2 fw-bold" for="payment method">Select a payment method</label><br>
-                          <input type="radio" id="wallet" name="payment_method" onclick="displaycheckout()" value="Wallet">
+                          <input type="radio" id="wallet" name="payment_method" onclick="displaycheckout()"
+                            value="Wallet">
                           <label for="wallet">Wallet ₹<span
                               id="wallet-balance">{{userDetails.wallet.balance}}</span></label><span class="fw-light"
                             id="wallet-status"></span><br>
-                          <input type="radio" id="cod" name="payment_method" onclick="displaycheckout()" value="COD" required>
+                          <input type="radio" id="cod" name="payment_method" onclick="displaycheckout()" value="COD"
+                            required>
                           <label for="cod">Cash on delivery</label><br>
-                          <input type="radio" id="razorpay" name="payment_method" onclick="displaycheckout()" value="Razorpay">
+                          <input type="radio" id="razorpay" name="payment_method" onclick="displaycheckout()"
+                            value="Razorpay">
                           <label for="razorpay">Razorpay</label><br>
                           <input type="radio" name="payment_method" onclick="displayPaypal()" value="Paypal">
                           <label for="paypal">Paypal</label><br>
@@ -173,8 +176,8 @@
                     {{#if orderAddress}}
                     <button type="submit" id="checkout-btn" class="btn btn-light btn-lg d-none"
                       data-mdb-ripple-color="dark">Checkout</button>
-                      {{/if}}
-                 
+                    {{/if}}
+
                   </form>
                 </div>
               </div>
@@ -185,5 +188,3 @@
     </div>
   </div>
 </section>
-
-

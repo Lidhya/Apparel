@@ -409,7 +409,7 @@
   var catName = []
   var catCount = []
   var myChart;
-  $(document).ready( function () {
+  $(document).ready(function () {
     $.ajax({
       url: '/admin/get-report',
       method: 'get',
@@ -423,7 +423,7 @@
           catCount.push(details.catSale[i].cat_count)
         }
       }
-    }).then(()=> {
+    }).then(() => {
       //-------------bar chart------------------//
       myChart = new Chart(ctx, {
         type: "bar",
@@ -461,7 +461,7 @@
         },
       });
 
-//---------------payment method doughnut chart------------------//
+      //---------------payment method doughnut chart------------------//
       new Chart(ct, {
         type: 'doughnut',
         data: {
@@ -483,7 +483,7 @@
   }
         });
 
-//------------- category Pie chart------------------//
+  //------------- category Pie chart------------------//
 
   new Chart(document.getElementById("category-sale"), {
     type: 'pie',
@@ -506,7 +506,7 @@
 
 })
 
-/* ------------------------------- Date filter ------------------------------ */
+  /* ------------------------------- Date filter ------------------------------ */
   function filterDate() {
     // (new Date('2021-11-01 00:00:00 G4T+9800')
     const from1 = new Date(document.getElementById('from').value);

@@ -1,48 +1,52 @@
 <div class="py-5">
-    <div class=" container-fluid">
+  <div class=" container-fluid">
     <div class=" row justify-content-center m-5">
-  <div class=" bg-light m-5 p-4 col-md-6 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,-5px -5px 14px #ededed;">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="">
-            <h2 class="tm-block-title d-inline-block logo">Edit offer</h2>
+      <div class=" bg-light m-5 p-4 col-md-6 rounded" style="box-shadow:  5px 5px 14px #d3d3d3,-5px -5px 14px #ededed;">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="">
+              <h2 class="tm-block-title d-inline-block logo">Edit offer</h2>
+            </div>
+            {{#if updateStatus}}
+            <p style="color: green;">{{updateStatus}}!</p>
+            {{/if}}
           </div>
-          {{#if updateStatus}}
-          <p style="color: green;">{{updateStatus}}!</p>
-          {{/if}}
-        </div>
-        <form action="/admin/edit-offer" method="post" id="offer-edit-form" enctype="application/x-www-form-urlencoded">
-          <div class="row pb-3">
-            <div class=" ">
+          <form action="/admin/edit-offer" method="post" id="offer-edit-form"
+            enctype="application/x-www-form-urlencoded">
+            <div class="row pb-3">
+              <div class=" ">
 
-              <div class="form-group mb-3 py-2">
-                <label for="name">Offer percent
-                </label>
-                <input name="percent" type="number" value="{{offerDetails.offer.percent}}" class="form-control validate" />
-              </div>
-              <div class="form-group mb-3">
-                <label for="category">Category:</label><span class="text-success">  {{offerDetails.category}}</span>
-                <input class="d-none" type="text" name="categoryId" value="{{offerDetails._id}}">
-                <p class="text-danger fs-6">(you cannot change the category while editing)</p>
-              </div>
-             
+                <div class="form-group mb-3 py-2">
+                  <label for="name">Offer percent
+                  </label>
+                  <input name="percent" type="number" value="{{offerDetails.offer.percent}}"
+                    class="form-control validate" />
+                </div>
+                <div class="form-group mb-3">
+                  <label for="category">Category:</label><span class="text-success"> {{offerDetails.category}}</span>
+                  <input class="d-none" type="text" name="categoryId" value="{{offerDetails._id}}">
+                  <p class="text-danger fs-6">(you cannot change the category while editing)</p>
+                </div>
+
                 <div class="form-group mb-3 py-2">
                   <label for="stock">Valid from
                   </label>
-                  <input name="valid_from" type="date" value="{{offerDetails.offer.valid_from}}"  class="form-control validate" required />
+                  <input name="valid_from" type="date" value="{{offerDetails.offer.valid_from}}"
+                    class="form-control validate" required />
                 </div>
                 <div class="form-group mb-3 py-2">
                   <label for="material type">Valid till
                   </label>
-                  <input name="valid_till" type="date" value="{{offerDetails.offer.valid_till}}" class="form-control validate" />
+                  <input name="valid_till" type="date" value="{{offerDetails.offer.valid_till}}"
+                    class="form-control validate" />
                 </div>
+              </div>
+              <div class="col-12 py-2">
+                <button type="submit" class="btn btn-dark text-uppercase">Edit offer</button>
+              </div>
             </div>
-            <div class="col-12 py-2">
-              <button type="submit" class="btn btn-dark text-uppercase">Edit offer</button>
-            </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

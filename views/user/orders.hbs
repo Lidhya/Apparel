@@ -19,7 +19,8 @@
         <div class="card rounded-5 mb-5">
           <div class="card-body px-0 pt-0">
             <div class="d-flex head flex-wrap align-items-center p-3 justify-content-around text-white rounded-top">
-              <p class="my-auto mx-auto border rounded p-2 col-12 col-md-2">Ordered on: {{this.date}} <br>at {{this.time}}</p>
+              <p class="my-auto mx-auto border rounded p-2 col-12 col-md-2">Ordered on: {{this.date}} <br>at
+                {{this.time}}</p>
               <p class="my-auto mx-auto col-12 col-md-2">Order {{this.status}}</p>
               <p class="my-auto mx-auto col-12 col-md-2">Total amount &#x20b9;{{this.total}}</p>
               <p class="my-auto mx-auto col-12 col-md-2">Payment through {{this.payment_method}}</p>
@@ -27,26 +28,31 @@
               {{#ifCond this.delivery_status 'Cancelled'}}
               {{else}}
               {{#ifNot this.delivery_status 'Delivered'}}
-              <a class="btn p-2 col-12 col-md-1 text-danger border" onclick="confirmation('{{this._id}}')">Cancel order</a>
+              <a class="btn p-2 col-12 col-md-1 text-danger border" onclick="confirmation('{{this._id}}')">Cancel
+                order</a>
               {{/ifNot}}
               {{/ifCond}}
             </div>
             <div class="row d-flex justify-content-around align-items-center ms-1">
 
               <div class="col-md-4 col-xl-4 ">
-            {{#each this.products}}
+                {{#each this.products}}
                 <img style="height: 5rem; width: 5rem;" class="m-2 rounded-5" src="/product-images/{{item}}-0.jpg"
                   alt="product image">
-                  <a href="/product-details/{{item}}" class="text-dark"> <p class="lead fw-normal mb-2">{{name}}</p></a> <br>
-            {{/each}}
+                <a href="/product-details/{{item}}" class="text-dark">
+                  <p class="lead fw-normal mb-2">{{name}}</p>
+                </a> <br>
+                {{/each}}
               </div>
-             
+
               <div class="col-md-3 col-lg-3 col-xl-3">
-                <p class="lead fw-normal mb-2"> <span class="fw-bold">Delivery address</span><br> {{this.delivery_details.address}} {{this.delivery_details.city}} {{this.delivery_details.pincode}}</p>
+                <p class="lead fw-normal mb-2"> <span class="fw-bold">Delivery address</span><br>
+                  {{this.delivery_details.address}} {{this.delivery_details.city}} {{this.delivery_details.pincode}}</p>
               </div>
 
               <div class="col-md-2 col-lg-2 col-xl-2">
-                <p class="lead fw-normal mb-2"><span class="fw-bold">Contact info</span><br>{{this.delivery_details.phone}}</p>
+                <p class="lead fw-normal mb-2"><span class="fw-bold">Contact
+                    info</span><br>{{this.delivery_details.phone}}</p>
               </div>
 
             </div>

@@ -9,7 +9,7 @@
             </div>
           </div>
           <form action="/admin/edit-coupon/{{coupon._id}}" method="post" id="coupon-form">
-          {{#if couponErr}}
+            {{#if couponErr}}
             <p class="alert alert-danger">{{couponErr}}</p>
             {{/if}}
             <div class="row pb-3">
@@ -29,7 +29,8 @@
               <div class="form-group mb-3 py-2">
                 <label for="Minimum purchase">Minimum purchase
                 </label>
-                <input name="minimum_purchase" type="number" class="form-control validate" value="{{coupon.minimum_purchase}}" />
+                <input name="minimum_purchase" type="number" class="form-control validate"
+                  value="{{coupon.minimum_purchase}}" />
               </div>
 
               <div class="form-group mb-3 py-2">
@@ -41,7 +42,7 @@
               <div class="form-group mb-3 py-2">
                 <label for="Valid till">Valid till
                 </label>
-                <input name="valid_till" type="date" class="form-control validate" value="{{coupon.valid_till}}"  />
+                <input name="valid_till" type="date" class="form-control validate" value="{{coupon.valid_till}}" />
               </div>
 
               <div class="col-12 py-2">

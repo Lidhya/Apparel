@@ -17,60 +17,62 @@ module.exports = {
     placeOrder: (order, products, total, userId) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const { title, name, address, city, pincode, phone, payment_method } = order
-                let date = new Date()
-                let fDate = moment(date).format('YYYY-MM-DD')
-                let time = moment(date).format('LTS');
-                let status = payment_method === 'COD' ? 'Placed' : 'Pending'
-                if (payment_method === 'Wallet') {
-                    db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) }).then(async (userData) => {
-                        if (userData.wallet.balance < total) {
-                            let err = 'Insufficient balance'
-                            reject(err)
-                        } else {
-                            await db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({ _id: objectId(userId) }, {
-                                $set: { "wallet.last_added": new Date() },
-                                $inc: {
-                                    "wallet.balance": -total
-                                }
-                            })
-                        }
-                    })
-                }
-
-                let orderObj = {
-                    delivery_details: {
-                        title: title,
-                        name: name,
-                        address: address,
-                        city: city,
-                        pincode: pincode,
-                        phone: phone
-                    },
-                    userId: objectId(order.userId),
-                    payment_method: payment_method,
-                    products: products,
-                    total: total,
-                    date: fDate,
-                    time: time,
-                    ordered_date: new Date(),
-                    status: status,
-                    delivery_status: 'Pending'
-                }
-
-                db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then(async (response) => {
-                    for (var x in products) {
-                        console.log(products[x].item)
-                        await db.get().collection(collection.PRODUCT_COLLECTION).updateOne({ "_id": objectId(products[x].item) },
-                            {
-                                $inc: { stock: -products[x].quantity }
-                            })
+                if (total) {
+                    const { title, name, address, city, pincode, phone, payment_method } = order
+                    let date = new Date()
+                    let fDate = moment(date).format('YYYY-MM-DD')
+                    let time = moment(date).format('LTS');
+                    let status = payment_method === 'COD' ? 'Placed' : 'Pending'
+                    if (payment_method === 'Wallet') {
+                        db.get().collection(collection.USER_COLLECTION).findOne({ _id: objectId(userId) }).then(async (userData) => {
+                            if (userData.wallet.balance < total) {
+                                let err = 'Insufficient balance'
+                                reject(err)
+                            } else {
+                                await db.get().collection(collection.USER_COLLECTION).findOneAndUpdate({ _id: objectId(userId) }, {
+                                    $set: { "wallet.last_added": new Date() },
+                                    $inc: {
+                                        "wallet.balance": -total
+                                    }
+                                })
+                            }
+                        })
                     }
-                    db.get().collection(collection.CART_COLLECTION).deleteOne({ user: objectId(order.userId) })
-                    resolve(response.insertedId)
-                }).catch((err) => {
-                    reject(err)
-                })
+
+                    let orderObj = {
+                        delivery_details: {
+                            title: title,
+                            name: name,
+                            address: address,
+                            city: city,
+                            pincode: pincode,
+                            phone: phone
+                        },
+                        userId: objectId(order.userId),
+                        payment_method: payment_method,
+                        products: products,
+                        total: total,
+                        date: fDate,
+                        time: time,
+                        ordered_date: new Date(),
+                        status: status,
+                        delivery_status: 'Pending'
+                    }
+
+                    db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then(async (response) => {
+                        for (var x in products) {
+                            console.log(products[x].item)
+                            await db.get().collection(collection.PRODUCT_COLLECTION).updateOne({ "_id": objectId(products[x].item) },
+                                {
+                                    $inc: { stock: -products[x].quantity }
+                                })
+                        }
+                        db.get().collection(collection.CART_COLLECTION).deleteOne({ user: objectId(order.userId) })
+                        resolve(response.insertedId)
+                    }).catch((err) => {
+                        reject(err)
+                    })
+                } else { reject(err) }
             } catch (err) {
                 reject(err)
             }
@@ -139,7 +141,7 @@ module.exports = {
                     $set: {
                         status: "Placed"
                     }
-                }).then(() => {
+                }).then((data) => {
                     resolve()
                 }).catch((err) => {
                     reject(err)

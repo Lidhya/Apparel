@@ -50,7 +50,6 @@ module.exports = {
         },
       });
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (err) {
       return err

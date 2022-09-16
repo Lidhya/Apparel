@@ -1,156 +1,160 @@
-
 <section class="pt-5">
-<div class="container pt-5">
-  <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
-     <h4 class="text-dark text-center fw-light">ORDER DETAILS</h4>
-   {{#if updateStatus}}
-    <p style="color: green;">{{updateStatus}}</p>
-   {{/if}}
-   
-  <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
-  <thead>
-    <tr>
-      <th scope="col">SL No.</th>
-      <th scope="col">Products bought</th>
-      <th scope="col">Ordered on </th>
-      <th scope="col">Customer details</th>
-      <th scope="col">Delivery Address</th>
-      <th scope="col">Payment method</th>
-      <th scope="col">₹ Total</th>
-      <th scope="col">Order status</th>
-      <th scope="col">Delivery status</th>
-      <th scope="col">Options</th>
-    </tr>
-  </thead>
-  <tbody>
-      {{#each orders}}
-    <tr>
-      <td></td>
-      <td>
- {{#each this.products}}
-        <p>
-  <a  data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-    {{name}}
-  </a>
-</p>
-<div class="collapse" id="collapseExample">
-  <div class="card card-body">
-    <img style="height: 50px; width: 50px;" class="py-1 rounded-5" src="/product-images/{{item}}-0.jpg"alt="product image"> 
-   quantity: {{quantity}}
-   size: {{size}}
+  <div class="container pt-5">
+    <div class="p-3 mt-3 mb-5 rounded" style="background-color: white;">
+      <h4 class="text-dark text-center fw-light">ORDER DETAILS</h4>
+      {{#if updateStatus}}
+      <p style="color: green;">{{updateStatus}}</p>
+      {{/if}}
+
+      <table class="table table-light mt-5 display nowrap" style="width:100%" id="table1">
+        <thead>
+          <tr>
+            <th scope="col">SL No.</th>
+            <th scope="col">Products bought</th>
+            <th scope="col">Ordered on </th>
+            <th scope="col">Customer details</th>
+            <th scope="col">Delivery Address</th>
+            <th scope="col">Payment method</th>
+            <th scope="col">₹ Total</th>
+            <th scope="col">Order status</th>
+            <th scope="col">Delivery status</th>
+            <th scope="col">Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each orders}}
+          <tr>
+            <td></td>
+            <td>
+              {{#each this.products}}
+              <p>
+                <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+                  aria-controls="collapseExample">
+                  {{name}}
+                </a>
+              </p>
+              <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                  <img style="height: 50px; width: 50px;" class="py-1 rounded-5" src="/product-images/{{item}}-0.jpg"
+                    alt="product image">
+                  quantity: {{quantity}}
+                  size: {{size}}
+                </div>
+              </div>
+              {{/each}}
+
+            </td>
+            <td>{{this.date}}</td>
+            <td>ID: {{this.userId}} <br> {{this.delivery_details.name}} <br>+91{{this.delivery_details.phone}}</td>
+            <td>{{this.delivery_details.name}} <br>
+              {{this.delivery_details.address}}<br>
+              {{this.delivery_details.city}}<br>
+              {{this.delivery_details.pincode}}</td>
+            <td>{{this.payment_method}}</td>
+            <td>&#x20b9; {{this.total}}</td>
+            {{#ifCond this.delivery_status 'Cancelled'}}
+            <td>
+              <p class="text-danger">CANCELLED</p>
+            </td>
+            {{else}}
+            {{#ifCond this.status 'Pending'}}
+            <td>
+              <form action="/admin/update-order/{{this._id}}" method="post">
+                <select name="status" id="update">
+                  <option class="text-danger" value="{{this.status}}">Pending</option>
+                  <option class="text-success" value="Success">Placed</option>
+                </select>
+                <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
+              </form>
+            </td>
+            {{else}}
+            <td class="text-success">{{this.status}}</td>
+            {{/ifCond}}
+            {{/ifCond}}
+            <td>
+              {{#ifCond this.delivery_status 'Cancelled'}}
+              <p class="text-danger">CANCELLED</p>
+              {{else}}
+              {{#ifNot this.delivery_status 'Delivered'}}
+              <form action="/admin/update-status/{{this._id}}" method="post">
+                <select name="status" id="update">
+                  <option class="text-dark" value="{{this.delivery_status}}">{{this.delivery_status}}</option>
+                  <option class="text-dark" value="Shipped">Shipped</option>
+                  <option class="text-success" value="Delivered">Delivered</option>
+                </select>
+                <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
+              </form>
+              {{else}}
+              <p class="text-success">DELIVERED</p>
+              {{/ifNot}}
+              {{/ifCond}}
+            </td>
+            <td>
+              {{#ifCond this.delivery_status 'Cancelled'}}
+              <p class="text-danger">CANCELLED</p>
+              {{else}}
+              {{#ifCond this.delivery_status 'Delivered'}}
+              <p class="text-success">DELIVERED</p>
+              {{else}}
+              <a class="btn btn-danger p-2" onclick="confirmation('{{this._id}}')">Cancel order</a>
+              {{/ifCond}}
+              {{/ifCond}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
-  {{/each}}
-       
-      </td>
-      <td>{{this.date}}</td> 
-      <td>ID: {{this.userId}} <br> {{this.delivery_details.name}} <br>+91{{this.delivery_details.phone}}</td>
-      <td>{{this.delivery_details.name}} <br>
-        {{this.delivery_details.address}}<br>
-        {{this.delivery_details.city}}<br>
-        {{this.delivery_details.pincode}}</td>
-      <td>{{this.payment_method}}</td>
-      <td>&#x20b9; {{this.total}}</td>
-      {{#ifCond this.delivery_status 'Cancelled'}}
-      <td> <p class="text-danger">CANCELLED</p></td>
-      {{else}}
-      {{#ifCond this.status 'Pending'}}
-      <td><form action="/admin/update-order/{{this._id}}" method="post">
-        <select name="status" id="update">
-        <option class="text-danger" value="{{this.status}}">Pending</option>
-        <option class="text-success" value="Success">Placed</option>
-        </select> 
-      <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
-      </form>
-      </td>
-      {{else}}
-      <td class="text-success">{{this.status}}</td>
-      {{/ifCond}}
-      {{/ifCond}}
-      <td>
-          {{#ifCond this.delivery_status 'Cancelled'}}
-           <p class="text-danger">CANCELLED</p>
-          {{else}}
-        {{#ifNot this.delivery_status 'Delivered'}}
-        <form action="/admin/update-status/{{this._id}}" method="post">
-        <select name="status" id="update">
-        <option class="text-dark" value="{{this.delivery_status}}">{{this.delivery_status}}</option>
-        <option class="text-dark" value="Shipped">Shipped</option>
-        <option class="text-success" value="Delivered">Delivered</option>
-        </select> 
-      <button type="submit" class="btn p-1"><i class="fa-solid fa-arrow-up"></i></button>
-      </form>
-      {{else}}
-       <p class="text-success">DELIVERED</p>
-      {{/ifNot}}
-          {{/ifCond}}
-      </td>
-      <td>
-          {{#ifCond this.delivery_status 'Cancelled'}}
-           <p class="text-danger">CANCELLED</p>
-          {{else}}
-          {{#ifCond this.delivery_status 'Delivered'}}
-           <p class="text-success">DELIVERED</p>
-         {{else}}
-         <a  class="btn btn-danger p-2" onclick="confirmation('{{this._id}}')" >Cancel order</a>
-         {{/ifCond}}
-         {{/ifCond}}
-      </td>
-    </tr>
-     {{/each}}
-  </tbody>
-</table>
-</div>
-</div>
 
 </section>
 
-<script> 
- $(document).ready(function() {
-    var table = $('#table1').DataTable( {
-        rowReorder: {
-            selector: 'td:nth-child(2)'
-        },
-        responsive: true,
-         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-        $('td:eq(0)', nRow).html(iDisplayIndexFull +1);
-    }
-    } );
- });
-
- jQuery('#update').validate({
-      rules:{
-       status:'required'
-
+<script>
+  $(document).ready(function () {
+    var table = $('#table1').DataTable({
+      rowReorder: {
+        selector: 'td:nth-child(2)'
       },
-      messages:{
-       status:{
-        required:'update needed'
-       }
-      },
-      submitHandler:function(form){
-        form.submit();
+      responsive: true,
+      "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+        $('td:eq(0)', nRow).html(iDisplayIndexFull + 1);
       }
-    })
+    });
+  });
+
+  jQuery('#update').validate({
+    rules: {
+      status: 'required'
+
+    },
+    messages: {
+      status: {
+        required: 'update needed'
+      }
+    },
+    submitHandler: function (form) {
+      form.submit();
+    }
+  })
 
 </script>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  function confirmation(id){
+  function confirmation(id) {
     Swal.fire({
-  title: 'Are you sure?',
-  text: "You won't be able to revert this!",
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Yes, cancel it!'
-}).then((result) => {
-  if (result.isConfirmed) {   
-    location.href = `/admin/cancel-order/${id}`    
-  }
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        location.href = `/admin/cancel-order/${id}`
+      }
 
-})
+    })
   }
 </script>

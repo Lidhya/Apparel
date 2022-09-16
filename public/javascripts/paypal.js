@@ -7,7 +7,6 @@ paypal
       })
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
           return response.id;
         });
     },
@@ -34,7 +33,7 @@ paypal
           //     "\n\nSee console for all available details"
           // );  
           $('#checkout-btn').trigger('click')
-          
+
 
           // When ready to go live, remove the alert and show a success message within this page. For example:
           // var element = document.getElementById('paypal-button-container');
@@ -46,4 +45,3 @@ paypal
   })
   .render("#paypal-button-container");
 
-  

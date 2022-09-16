@@ -51,7 +51,7 @@ method.handlebars.registerHelper('ifNot', function (v1, v2, options) {
 
 // database connection
 db.connect((err) => {
-  if (err) console.log('connection error' + err)
+  if (err) console.log('Database connection error' + err)
   else console.log('Database connected')
 })
 

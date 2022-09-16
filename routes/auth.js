@@ -60,7 +60,7 @@ router.post('/sendOTP', verifyLogin, (req, res, next) => {
 				});
 				
 			// res.status(200).send({ phone, hash: fullHash, otp });  // this bypass otp via api only for development instead hitting twilio api all the time
-
+			
 			res.render('user/otp-confirm', { phone, hash: fullHash });          // Use this way in Production
 		}).catch((err) => {
 			req.session.authErr = err
@@ -86,18 +86,15 @@ router.post('/verifyOTP', verifyLogin, (req, res, next) => {
 				var err = 'Timeout. Please try again'
 				req.session.authErr = err
 				res.redirect('/otp')
-				//res.status(504).send({ msg: 'Timeout. Please try again' })
 			}
 		}
 		let data = `${phone}.${otp}.${expires}`;
 		let newCalculatedHash = crypto.createHmac('sha256', smsKey).update(data).digest('hex');
 		if (newCalculatedHash === hashValue) {
-			console.log('user confirmed');
 			req.session.loggedIn = true
 			req.session.user
 			res.redirect('/')
 		} else {
-			console.log('not authenticated');
 			var err = 'Incorrect OTP'
 			req.session.authErr = err
 			return res.redirect('/otp')
