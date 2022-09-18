@@ -54,14 +54,13 @@ module.exports = {
                         total: total,
                         date: fDate,
                         time: time,
-                        ordered_date: new Date(),
+                        ordered_date: date,
                         status: status,
                         delivery_status: 'Pending'
                     }
 
                     db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then(async (response) => {
                         for (var x in products) {
-                            console.log(products[x].item)
                             await db.get().collection(collection.PRODUCT_COLLECTION).updateOne({ "_id": objectId(products[x].item) },
                                 {
                                     $inc: { stock: -products[x].quantity }

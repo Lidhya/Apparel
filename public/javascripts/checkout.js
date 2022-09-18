@@ -15,7 +15,7 @@ $(document).ready(function () {
       url: '/place-order',
       method: 'post',
       data: $("#checkout-form").serialize(),
-      success: (response) => {
+      success: function(response){
         if (response.codSuccess) {
           location.replace('/order-success')
         } else if (response.walletSuccess) {
@@ -35,9 +35,6 @@ $(document).ready(function () {
             location.replace('/cart')
           })
         }
-      },
-      error: (err) => {
-        alert('payment failed')
       }
     })
   })

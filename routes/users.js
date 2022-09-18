@@ -101,6 +101,7 @@ router.get('/product-details/:id', verifyLogin, async (req, res, next) => {
   try{
     const proId = req.params.id;
     const products = await productHelpers.getAllProducts()
+    let isMultipleSize=true
   productHelpers.getProductDetails(proId).then(async (productDetails) => {
     let { sizes, actual_price, discount_price, categoryId}=productDetails
     const category = await offerHelpers.getOffer(categoryId)
@@ -108,7 +109,9 @@ router.get('/product-details/:id', verifyLogin, async (req, res, next) => {
       let offerPrice = parseInt((actual_price / 100) * category.offer.percent)
       discount_price = parseFloat(actual_price - offerPrice)
     }
-    const isMultipleSize= Array.isArray(sizes)
+    if(typeof(sizes)==='string'){
+      isMultipleSize=false
+    }
     const cartCount = await userHelpers.getCartCount(req.session.user._id)
     res.setHeader('cache-control', 'no-store')
     res.render('user/product-details', { title: '| Product details', productDetails, user: req.session.user, cartCount, products, category, isMultipleSize });
@@ -249,6 +252,8 @@ router.get('/checkout', verifyLogin, async function (req, res, next) {
       'orderAddress': req.session.orderAddress
     });
     req.session.addressErr = false
+  }else{
+    res.redirect('/cart')
   }
    }catch(err){
    next(err)
