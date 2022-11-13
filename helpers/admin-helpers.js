@@ -2,8 +2,6 @@ const db = require('../config/connection')
 const collection = require('../config/collection')
 const Promise = require('promise')
 const moment = require('moment');
-const { HighriskSpecialPrefixInstance } = require('twilio/lib/rest/voice/v1/dialingPermissions/country/highriskSpecialPrefix');
-const { reject } = require('promise');
 const objectId = require('mongodb').ObjectId
 
 

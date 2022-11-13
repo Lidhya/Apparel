@@ -101,7 +101,7 @@ router.get('/product-details/:id', verifyLogin, async (req, res, next) => {
   try{
     const proId = req.params.id;
     const products = await productHelpers.getAllProducts()
-    let isMultipleSize=true
+    let isMultipleSize=1
   productHelpers.getProductDetails(proId).then(async (productDetails) => {
     let { sizes, actual_price, discount_price, categoryId}=productDetails
     const category = await offerHelpers.getOffer(categoryId)
@@ -110,7 +110,7 @@ router.get('/product-details/:id', verifyLogin, async (req, res, next) => {
       discount_price = parseFloat(actual_price - offerPrice)
     }
     if(typeof(sizes)==='string'){
-      isMultipleSize=false
+      isMultipleSize=0
     }
     const cartCount = await userHelpers.getCartCount(req.session.user._id)
     res.setHeader('cache-control', 'no-store')
@@ -316,10 +316,8 @@ router.post('/place-order', verifyLogin, async function (req, res, next) {
 
     } else if (req.body['payment_method'] === 'Paypal') {                   //----------if paypal
       orderHelpers.changePaymentStatus(orderId).then(() => {
-        console.log('success paypal');
         res.json({ "paypal": true });
       }).catch((err) => {
-        console.log('error paypal');
         res.json({ "status": false })
       })
 
