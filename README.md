@@ -33,6 +33,6 @@ Create a new branch for your feature
 
 Make your changes and commit them
 
-Push your changes to your fork
+This is my first project using node.js, express.js, mongodb and handlebars.
 
 Create a pull request to merge your changes into the main branch
