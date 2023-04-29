@@ -4,6 +4,7 @@
 
 
 <h6>
+
 User authentication and authorization
 
 Product catalog with categories and search functionality
@@ -17,7 +18,6 @@ Order history and tracking
 Admin side with sales statistics, 
 
 product and user management and tracking
-
 
 </h6>
 
